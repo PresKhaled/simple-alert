@@ -1,4 +1,17 @@
-name: "uc_alert"
+name: uc_alert
+
+version: 0.0.1
+
+description: UCAlert is an alert with pre-defined styles for display famous messages to normal user, like success, error ...etc, with the ability to customization.
+
+repository: https://github.com/PresKhaled/uc-alert
+
+issue_tracker: https://github.com/PresKhaled/uc-alert/issues
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.17.0"
+ 
+dependencies:
+  flutter:
+    sdk: flutter
