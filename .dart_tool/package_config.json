@@ -3,45 +3,45 @@
   "packages": [
     {
       "name": "characters",
-      "rootUri": "file:///D:/Mobile/flutter/.pub-cache/hosted/pub.dartlang.org/characters-1.1.0-nullsafety.3",
+      "rootUri": "file:///D:/Mobile/flutter/.pub-cache/hosted/pub.dartlang.org/characters-1.1.0",
       "packageUri": "lib/",
-      "languageVersion": "2.10"
+      "languageVersion": "2.12"
     },
     {
       "name": "collection",
-      "rootUri": "file:///D:/Mobile/flutter/.pub-cache/hosted/pub.dartlang.org/collection-1.15.0-nullsafety.3",
+      "rootUri": "file:///D:/Mobile/flutter/.pub-cache/hosted/pub.dartlang.org/collection-1.15.0",
       "packageUri": "lib/",
-      "languageVersion": "2.10"
+      "languageVersion": "2.12"
     },
     {
       "name": "flutter",
       "rootUri": "file:///D:/Mobile/flutter/packages/flutter",
       "packageUri": "lib/",
-      "languageVersion": "2.10"
+      "languageVersion": "2.12"
     },
     {
       "name": "meta",
-      "rootUri": "file:///D:/Mobile/flutter/.pub-cache/hosted/pub.dartlang.org/meta-1.3.0-nullsafety.3",
+      "rootUri": "file:///D:/Mobile/flutter/.pub-cache/hosted/pub.dartlang.org/meta-1.3.0",
       "packageUri": "lib/",
-      "languageVersion": "2.10"
+      "languageVersion": "2.12"
     },
     {
       "name": "sky_engine",
       "rootUri": "file:///D:/Mobile/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
-      "languageVersion": "1.11"
+      "languageVersion": "2.12"
     },
     {
       "name": "typed_data",
-      "rootUri": "file:///D:/Mobile/flutter/.pub-cache/hosted/pub.dartlang.org/typed_data-1.3.0-nullsafety.3",
+      "rootUri": "file:///D:/Mobile/flutter/.pub-cache/hosted/pub.dartlang.org/typed_data-1.3.0",
       "packageUri": "lib/",
-      "languageVersion": "2.10"
+      "languageVersion": "2.12"
     },
     {
       "name": "vector_math",
-      "rootUri": "file:///D:/Mobile/flutter/.pub-cache/hosted/pub.dartlang.org/vector_math-2.1.0-nullsafety.3",
+      "rootUri": "file:///D:/Mobile/flutter/.pub-cache/hosted/pub.dartlang.org/vector_math-2.1.0",
       "packageUri": "lib/",
-      "languageVersion": "2.10"
+      "languageVersion": "2.12"
     },
     {
       "name": "uc_alert",
@@ -50,7 +50,7 @@
       "languageVersion": "2.7"
     }
   ],
-  "generated": "2021-01-11T05:48:06.807793Z",
+  "generated": "2021-07-05T03:41:19.068488Z",
   "generator": "pub",
-  "generatorVersion": "2.10.4"
+  "generatorVersion": "2.12.3"
 }

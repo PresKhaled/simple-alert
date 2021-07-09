@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'package:uc_alert/uc_alert.dart';
+import 'package:uc_alert/zero_alert.dart';
 
 void main() {
   runApp(MyApp());
@@ -23,10 +22,6 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.blue,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
-        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -53,6 +48,17 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+
+  void _incrementCounter() {
+    setState(() {
+      // This call to setState tells the Flutter framework that something has
+      // changed in this State, which causes it to rerun the build method below
+      // so that the display can reflect the updated values. If we changed
+      // _counter without calling setState(), then the build method would not be
+      // called again, and so nothing would appear to happen.
+      _counter++;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,23 +105,18 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => UCAlert(
-          originContext: context,
-          duration: Duration(seconds: 3),
-          type: UCAlertType.error,
-          icon: Icon(Icons.wifi_off_outlined, size: 28, color: Colors.white),
-          title: Text('لا يوجد اتصال بالإنترنت!', style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.bold
-          )),
-          subTitle: Text('تحقق من اتصال الجهاز بالإنترنت.', style: TextStyle(
-            color: Colors.white,
-          ))
-        ),
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-    ), // This trailing comma makes auto-formatting nicer for build methods.
+        onPressed: () => ZeroAlert(
+          context: context,
+          color: Colors.teal,
+          icon: Icon(Icons.wifi_off_outlined),
+          shape: ZAlertShape.rounded,
+          label: 'الوصول للشبكة غير متوفر',
+          // subTitle: 'تحقق من اتصال الجهاز بالإنترنت.',
+        ), //_incrementCounter,
+
+        tooltip: '',
+        child: Icon(Icons.airplanemode_on),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
