@@ -1,12 +1,12 @@
-name: uc_alert
+name: zero_alert
 
 version: 0.0.1
 
-description: UCAlert is an alert with pre-defined styles for display famous messages to normal user, like success, error ...etc, with the ability to customization.
+description: ZeroAlert is an alert with pre-defined styles for display famous messages to normal user, like success, error ...etc, with the ability to customization.
 
-repository: https://github.com/PresKhaled/uc-alert
+repository: https://github.com/PresKhaled/zero-alert
 
-issue_tracker: https://github.com/PresKhaled/uc-alert/issues
+issue_tracker: https://github.com/PresKhaled/zero-alert/issues
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
