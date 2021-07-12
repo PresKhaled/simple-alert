@@ -44,13 +44,13 @@
       "languageVersion": "2.12"
     },
     {
-      "name": "uc_alert",
+      "name": "zero_alert",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "2.7"
     }
   ],
-  "generated": "2021-07-05T03:41:19.068488Z",
+  "generated": "2021-07-12T15:23:23.885959Z",
   "generator": "pub",
   "generatorVersion": "2.12.3"
 }

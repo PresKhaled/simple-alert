@@ -23,7 +23,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  uc_alert:
+  zero_alert:
     # git: https://github.com/PresKhaled/uc-alert
     path: ../
 

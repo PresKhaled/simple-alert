@@ -1,30 +1,36 @@
+/*
+* This file is a part of "Zero alert" project.
+* Khaled Mohsen <pres.kbayomy@gmail.com>
+* Copyrights (BSD-3-Clause), LICENSE.
+*/
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
 import '../zero_alert.dart';
 
-/// A pre-defined alerts that suits most of known user-need messages.
+/// Regular alert with predefined styles for some common cases.
 ///
 /// The parameters [context], [icon], [title], [subTitle] is required.
 class ZeroAlert {
   final BuildContext context;
-  ZAlertDuration duration;
   final ZAlertType type;
   final Alignment alignment;
-  final TextDirection textDirection;
+  ZAlertDuration duration;
+  double borderRadius;
+  Map<String, dynamic> boxShadow;
   Color color;
   final ZAlertBrightness brightness;
   final ZAlertShape shape;
   ShapeBorder selectedShape;
-  double borderRadius;
+  final TextDirection textDirection;
   final Icon icon;
   final String label;
   TextStyle labelStyle;
   final String subTitle;
   TextStyle subTitleStyle;
+  OverlayEntry _overlayEntry;
   //List<BoxShadow> boxShadow;
-  Map<String, dynamic> boxShadow;
 
   ZeroAlert({
     @required this.context,
@@ -56,7 +62,7 @@ class ZeroAlert {
 
     switch (duration) {
       case ZAlertDuration.quick:
-        selectedDuration = Duration(seconds: 120);
+        selectedDuration = Duration(seconds: 3);
         break;
 
       case ZAlertDuration.medium:
@@ -72,14 +78,14 @@ class ZeroAlert {
       case ZAlertBrightness.dark:
         boxShadow = {
           'color': Colors.black26,
-          'elevation': 5.0,
+          'elevation': 7.0,
         };
         break;
 
       case ZAlertBrightness.system: // TODO: Handle.
         boxShadow = {
           'color': Colors.black26,
-          'elevation': 5.0,
+          'elevation': 7.0,
         };
         break;
 
@@ -135,7 +141,7 @@ class ZeroAlert {
         break;
     }
 
-    OverlayEntry _overlayEntry =
+    _overlayEntry =
         OverlayEntry(builder: (BuildContext context) => _build(context));
 
     Overlay.of(context).insert(_overlayEntry);
@@ -150,7 +156,7 @@ class ZeroAlert {
         child: Directionality(
           textDirection: textDirection,
           child: Container(
-            width: MediaQuery.of(context).size.width / 1.7,
+            width: MediaQuery.of(context).size.width / 1.5,
             margin: EdgeInsets.symmetric(vertical: 41.0),
             child: Material(
               color: color,
@@ -164,39 +170,43 @@ class ZeroAlert {
                   : selectedShape,
               elevation: boxShadow['elevation'],
               shadowColor: boxShadow['color'],
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 7.0, horizontal: 11.0),
-                child: Row(
-                  //mainAxisSize: MainAxisSize.min,
+              child: GestureDetector(
+                onTap: () => _overlayEntry.remove(),
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 7.0, horizontal: 11.0),
+                  child: Row(
+                    //mainAxisSize: MainAxisSize.min,
 
-                  children: [
-                    if (icon != null)
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 9.0),
-                        child: CircleAvatar(
-                          backgroundColor: Colors.white,
-                          child: icon,
-                          radius: 15.0,
+                    children: [
+                      if (icon != null)
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 9.0),
+                          child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            child: icon,
+                            radius: 15.0,
+                          ),
+                        ),
+                      Flexible(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              label,
+                              style: labelStyle,
+                            ),
+                            if (subTitle != null)
+                              Text(
+                                subTitle,
+                                style: subTitleStyle,
+                              ),
+                          ],
                         ),
                       ),
-                    Flexible(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            label,
-                            style: labelStyle,
-                          ),
-                          if (subTitle != null)
-                            Text(
-                              subTitle,
-                              style: subTitleStyle,
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

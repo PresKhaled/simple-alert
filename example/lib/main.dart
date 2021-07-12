@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:uc_alert/zero_alert.dart';
+import 'package:zero_alert/zero_alert.dart';
 
 void main() {
   runApp(MyApp());
