@@ -1,25 +1,25 @@
 /*
-* This file is a part of "Zero alert" project.
+* This file is a part of "SimpleAlert" project.
 * Khaled Mohsen <pres.kbayomy@gmail.com>
 * Copyrights (BSD-3-Clause), LICENSE.
 */
 import 'package:flutter/material.dart';
 
-import '../zero_alert.dart';
+import '../simple_alert.dart';
 
 /// Regular alert with predefined styles for some common cases.
 ///
 /// The parameters [context], [icon], [title], [subTitle] are required.
-class ZeroAlert {
+class SimpleAlert {
   final BuildContext context;
-  final ZAlertType type;
+  final SimpleAlertType type;
   final Alignment alignment;
-  final ZAlertDuration duration;
+  final SimpleAlertDuration duration;
   final double? borderRadius;
   late final Map<String, dynamic> boxShadow;
   late final Color? color;
-  final ZAlertBrightness brightness;
-  final ZAlertShape shape;
+  final SimpleAlertBrightness brightness;
+  final SimpleAlertShape shape;
   late final ShapeBorder selectedShape;
   final TextDirection textDirection;
   final Icon? icon;
@@ -34,14 +34,14 @@ class ZeroAlert {
   ZeroAlert({
     required this.context,
     required this.label,
-    this.type = ZAlertType.normal,
-    this.duration = ZAlertDuration.quick,
+    this.type = SimpleAlertType.normal,
+    this.duration = SimpleAlertDuration.quick,
     this.textDirection = TextDirection.rtl,
     this.alignment = Alignment.topCenter,
     this.color,
-    this.brightness = ZAlertBrightness.light,
+    this.brightness = SimpleAlertBrightness.light,
     this.icon,
-    this.shape = ZAlertShape.defaultRadius,
+    this.shape = SimpleAlertShape.defaultRadius,
     this.borderRadius,
     this.labelStyle = const TextStyle(
       fontSize: 16,
@@ -60,35 +60,35 @@ class ZeroAlert {
 
     // TODO: Accept a custom duration.
     switch (duration) {
-      case ZAlertDuration.quick:
+      case SimpleAlertDuration.quick:
         selectedDuration = Duration(seconds: 3);
         break;
 
-      case ZAlertDuration.medium:
+      case SimpleAlertDuration.medium:
         selectedDuration = Duration(seconds: 5);
         break;
 
-      case ZAlertDuration.long:
+      case SimpleAlertDuration.long:
         selectedDuration = Duration(seconds: 7);
         break;
     }
 
     switch (brightness) {
-      case ZAlertBrightness.dark:
+      case SimpleAlertBrightness.dark:
         boxShadow = {
           'color': Colors.black26,
           'elevation': 7.0,
         };
         break;
 
-      case ZAlertBrightness.system: // TODO: Handle.
+      case SimpleAlertBrightness.system: // TODO: Handle.
         boxShadow = {
           'color': Colors.black26,
           'elevation': 7.0,
         };
         break;
 
-      case ZAlertBrightness.light:
+      case SimpleAlertBrightness.light:
       default:
         /*boxShadow = [
           BoxShadow(
@@ -107,16 +107,16 @@ class ZeroAlert {
     // If the [color] specified with the type, color will applied.
     if (color == null) {
       switch (type) {
-        case ZAlertType.success:
+        case SimpleAlertType.success:
           color = Colors.green;
           break;
-        case ZAlertType.failed:
+        case SimpleAlertType.failed:
           color = Colors.red;
           break;
-        case ZAlertType.info:
+        case SimpleAlertType.info:
           color = Colors.lightBlue;
           break;
-        case ZAlertType.normal:
+        case SimpleAlertType.normal:
           color = Colors.grey;
           break;
       }
@@ -124,19 +124,19 @@ class ZeroAlert {
 
     // TODO: Make the border radius [int] only, and modify the [Material] and [InkWell].
     switch (shape) {
-      case ZAlertShape.defaultRadius:
+      case SimpleAlertShape.defaultRadius:
         selectedShape = RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(7.0),
         );
         break;
 
-      case ZAlertShape.sharp:
+      case SimpleAlertShape.sharp:
         selectedShape = RoundedRectangleBorder(
           borderRadius: BorderRadius.zero,
         );
         break;
 
-      case ZAlertShape.rounded:
+      case SimpleAlertShape.rounded:
         selectedShape = StadiumBorder();
         break;
     }

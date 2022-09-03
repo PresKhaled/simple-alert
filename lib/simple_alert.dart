@@ -22,10 +22,10 @@
 ///     )
 ///   )
 /// ```
-library zero_alert;
+library simple_alert;
 
-export 'src/enums/zalert_brightness.dart';
-export 'src/enums/zalert_duration.dart';
-export 'src/enums/zalert_shape.dart';
-export 'src/enums/zalert_type.dart';
-export 'src/zero_alert.dart';
+export 'src/enums/simple_alert_brightness.dart';
+export 'src/enums/simple_alert_duration.dart';
+export 'src/enums/simple_alert_shape.dart';
+export 'src/enums/simple_alert_type.dart';
+export 'src/simple_alert.dart';

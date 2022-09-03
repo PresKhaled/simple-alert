@@ -1,4 +1,4 @@
-enum ZAlertDuration {
+enum SimpleAlertDuration {
   quick,
   medium,
   long,

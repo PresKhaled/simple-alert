@@ -1,4 +1,4 @@
-enum ZAlertBrightness {
+enum SimpleAlertBrightness {
   light,
   dark,
   system,
