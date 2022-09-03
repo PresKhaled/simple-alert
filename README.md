@@ -1,2 +1,2 @@
-# UCAlert
-UCAlert is an "alert" for flutter apps, written with UC project style.
+# ZeroAlert
+The package contains a set of pre-defined alerts with the ability to customize, for Flutter applications.
