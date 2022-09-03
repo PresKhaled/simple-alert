@@ -17,7 +17,7 @@ class SimpleAlert {
   final SimpleAlertDuration duration;
   final double? borderRadius;
   late final Map<String, dynamic> boxShadow;
-  late final Color? color;
+  Color? color;
   final SimpleAlertBrightness brightness;
   final SimpleAlertShape shape;
   late final ShapeBorder selectedShape;
