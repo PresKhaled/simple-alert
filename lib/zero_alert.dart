@@ -24,8 +24,8 @@
 /// ```
 library zero_alert;
 
-export 'src/zalert_brightness.dart';
-export 'src/zalert_duration.dart';
-export 'src/zalert_shape.dart';
-export 'src/zalert_type.dart';
+export 'src/enums/zalert_brightness.dart';
+export 'src/enums/zalert_duration.dart';
+export 'src/enums/zalert_shape.dart';
+export 'src/enums/zalert_type.dart';
 export 'src/zero_alert.dart';

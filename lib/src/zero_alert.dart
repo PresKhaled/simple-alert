@@ -3,37 +3,37 @@
 * Khaled Mohsen <pres.kbayomy@gmail.com>
 * Copyrights (BSD-3-Clause), LICENSE.
 */
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import '../zero_alert.dart';
 
 /// Regular alert with predefined styles for some common cases.
 ///
-/// The parameters [context], [icon], [title], [subTitle] is required.
+/// The parameters [context], [icon], [title], [subTitle] are required.
 class ZeroAlert {
   final BuildContext context;
   final ZAlertType type;
   final Alignment alignment;
-  ZAlertDuration duration;
-  double borderRadius;
-  Map<String, dynamic> boxShadow;
-  Color color;
+  final ZAlertDuration duration;
+  final double? borderRadius;
+  late final Map<String, dynamic> boxShadow;
+  late final Color? color;
   final ZAlertBrightness brightness;
   final ZAlertShape shape;
-  ShapeBorder selectedShape;
+  late final ShapeBorder selectedShape;
   final TextDirection textDirection;
-  final Icon icon;
+  final Icon? icon;
   final String label;
-  TextStyle labelStyle;
-  final String subTitle;
-  TextStyle subTitleStyle;
-  OverlayEntry _overlayEntry;
+  final TextStyle labelStyle;
+  final String? subTitle;
+  final TextStyle subTitleStyle;
+  late final OverlayEntry _overlayEntry;
+  late final Future _delayedFuture; // [Future.delayed]
   //List<BoxShadow> boxShadow;
 
   ZeroAlert({
-    @required this.context,
+    required this.context,
+    required this.label,
     this.type = ZAlertType.normal,
     this.duration = ZAlertDuration.quick,
     this.textDirection = TextDirection.rtl,
@@ -43,7 +43,6 @@ class ZeroAlert {
     this.icon,
     this.shape = ZAlertShape.defaultRadius,
     this.borderRadius,
-    @required this.label,
     this.labelStyle = const TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.bold,
@@ -56,10 +55,10 @@ class ZeroAlert {
     ),
   })  : assert(context != null),
         /*assert(icon != null),*/
-        assert(label != null)
-  /*assert(subTitle != null)*/ {
+        assert(label != null) /*assert(subTitle != null)*/ {
     Duration selectedDuration;
 
+    // TODO: Accept a custom duration.
     switch (duration) {
       case ZAlertDuration.quick:
         selectedDuration = Duration(seconds: 3);
@@ -123,6 +122,7 @@ class ZeroAlert {
       }
     }
 
+    // TODO: Make the border radius [int] only, and modify the [Material] and [InkWell].
     switch (shape) {
       case ZAlertShape.defaultRadius:
         selectedShape = RoundedRectangleBorder(
@@ -141,12 +141,11 @@ class ZeroAlert {
         break;
     }
 
-    _overlayEntry =
-        OverlayEntry(builder: (BuildContext context) => _build(context));
+    _overlayEntry = OverlayEntry(builder: (BuildContext context) => _build(context));
 
-    Overlay.of(context).insert(_overlayEntry);
+    Overlay.of(context)?.insert(_overlayEntry);
 
-    Future.delayed(selectedDuration).whenComplete(() => _overlayEntry.remove());
+    _delayedFuture = Future.delayed(selectedDuration).whenComplete(() => _overlayEntry.remove());
   }
 
   Widget _build(BuildContext context) {
@@ -165,16 +164,19 @@ class ZeroAlert {
               ),
               shape: (borderRadius != null)
                   ? RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(borderRadius),
+                      borderRadius: BorderRadius.circular(borderRadius!),
                     )
                   : selectedShape,
               elevation: boxShadow['elevation'],
               shadowColor: boxShadow['color'],
-              child: GestureDetector(
-                onTap: () => _overlayEntry.remove(),
+              // TODO: Fix the splash area [InkWell > onTap].
+              child: InkWell(
+                onTap: () {
+                  _delayedFuture.ignore();
+                  _overlayEntry.remove();
+                },
                 child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 7.0, horizontal: 11.0),
+                  padding: EdgeInsets.symmetric(vertical: 7.0, horizontal: 11.0),
                   child: Row(
                     //mainAxisSize: MainAxisSize.min,
 
@@ -199,7 +201,7 @@ class ZeroAlert {
                             ),
                             if (subTitle != null)
                               Text(
-                                subTitle,
+                                subTitle!,
                                 style: subTitleStyle,
                               ),
                           ],

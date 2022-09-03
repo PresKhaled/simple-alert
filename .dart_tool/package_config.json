@@ -3,7 +3,7 @@
   "packages": [
     {
       "name": "characters",
-      "rootUri": "file:///D:/Mobile/flutter/.pub-cache/hosted/pub.dartlang.org/characters-1.1.0",
+      "rootUri": "file:///D:/Mobile/flutter/.pub-cache/hosted/pub.dartlang.org/characters-1.2.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -20,8 +20,14 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "material_color_utilities",
+      "rootUri": "file:///D:/Mobile/flutter/.pub-cache/hosted/pub.dartlang.org/material_color_utilities-0.1.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.13"
+    },
+    {
       "name": "meta",
-      "rootUri": "file:///D:/Mobile/flutter/.pub-cache/hosted/pub.dartlang.org/meta-1.3.0",
+      "rootUri": "file:///D:/Mobile/flutter/.pub-cache/hosted/pub.dartlang.org/meta-1.7.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -39,18 +45,18 @@
     },
     {
       "name": "vector_math",
-      "rootUri": "file:///D:/Mobile/flutter/.pub-cache/hosted/pub.dartlang.org/vector_math-2.1.0",
+      "rootUri": "file:///D:/Mobile/flutter/.pub-cache/hosted/pub.dartlang.org/vector_math-2.1.1",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "2.14"
     },
     {
       "name": "zero_alert",
       "rootUri": "../",
       "packageUri": "lib/",
-      "languageVersion": "2.7"
+      "languageVersion": "2.12"
     }
   ],
-  "generated": "2021-07-12T15:23:23.885959Z",
+  "generated": "2022-09-03T14:54:05.928564Z",
   "generator": "pub",
-  "generatorVersion": "2.12.3"
+  "generatorVersion": "2.16.1"
 }
