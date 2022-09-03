@@ -31,7 +31,7 @@ class SimpleAlert {
   late final Future _delayedFuture; // [Future.delayed]
   //List<BoxShadow> boxShadow;
 
-  ZeroAlert({
+  SimpleAlert({
     required this.context,
     required this.label,
     this.type = SimpleAlertType.normal,
