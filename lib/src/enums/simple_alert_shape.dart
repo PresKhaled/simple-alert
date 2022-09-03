@@ -1,4 +1,4 @@
-enum ZAlertShape {
+enum SimpleAlertShape {
   sharp,
   defaultRadius,
   rounded,

@@ -1,4 +1,4 @@
-enum ZAlertType {
+enum SimpleAlertType {
   success,
   failed,
   info,
