@@ -109,10 +109,13 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => SimpleAlert(
           context: context,
-          icon: Icon(Icons.wifi_off_outlined),
+          title: 'This title is mandatory',
+          subTitle: 'But the description is optional',
+          leading: const Icon(Icons.wifi_off_outlined),
+          loading: true,
           shape: SimpleAlertShape.rounded,
-          label: 'الوصول للشبكة غير متوفر',
-          color: Colors.teal,
+          customDuration: const Duration(seconds: 15),
+          type: SimpleAlertType.info,
         ), //_incrementCounter,
 
         tooltip: '',
