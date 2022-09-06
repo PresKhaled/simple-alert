@@ -31,6 +31,7 @@ class SimpleAlert {
   final TextStyle subTitleStyle;
   late final OverlayEntry _overlayEntry;
   late final Future _delayedFuture;
+  final ValueNotifier<bool>? remove;
 
   SimpleAlert({
     required this.context,
@@ -56,6 +57,7 @@ class SimpleAlert {
       fontWeight: FontWeight.bold,
       color: Colors.white,
     ),
+    this.remove,
   }) {
     shadowValues = _getShadowValues();
 
@@ -64,6 +66,15 @@ class SimpleAlert {
     Overlay.of(context)?.insert(_overlayEntry);
 
     _delayedFuture = Future.delayed(_getDuration()).whenComplete(() => _overlayEntry.remove());
+
+    if (remove != null) {
+      remove!.addListener(() {
+        if (_overlayEntry.mounted && remove!.value) {
+          _delayedFuture.ignore();
+          _overlayEntry.remove();
+        }
+      });
+    }
   }
 
   Widget _build(BuildContext context) {
@@ -159,6 +170,9 @@ class SimpleAlert {
 
       case SimpleAlertDuration.long:
         return const Duration(seconds: 7);
+
+      case SimpleAlertDuration.day:
+        return const Duration(days: 1);
 
       case SimpleAlertDuration.quick:
       default:
