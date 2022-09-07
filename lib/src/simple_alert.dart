@@ -6,6 +6,8 @@
 import 'package:flutter/material.dart';
 
 import '../simple_alert.dart';
+import 'Alert.dart';
+import 'ControllerState.dart';
 
 /// Regular alert with preset colors for some common situations.
 ///
@@ -32,6 +34,7 @@ class SimpleAlert {
   late final OverlayEntry _overlayEntry;
   late final Future _delayedFuture;
   final ValueNotifier<bool>? remove;
+  final Duration animatedOpacityDuration;
 
   SimpleAlert({
     required this.context,
@@ -57,15 +60,31 @@ class SimpleAlert {
       fontWeight: FontWeight.bold,
       color: Colors.white,
     ),
+    this.animatedOpacityDuration = const Duration(milliseconds: 300),
     this.remove,
   }) {
     shadowValues = _getShadowValues();
 
-    _overlayEntry = OverlayEntry(builder: (BuildContext context) => _build(context));
+    _overlayEntry = OverlayEntry(
+      builder: (BuildContext context) => Alert(
+        child: _build(context),
+        animatedOpacityDuration: animatedOpacityDuration,
+      ),
+    );
 
     Overlay.of(context)?.insert(_overlayEntry);
 
-    _delayedFuture = Future.delayed(_getDuration()).whenComplete(() => _overlayEntry.remove());
+    // Wait for initializing.
+    animationController.addListener(() {
+      final AnimationController? controller = animationController.value;
+      if (controller != null) {
+        controller.forward();
+      }
+    });
+
+    _delayedFuture = Future.delayed(_getDuration()).whenComplete(() {
+      animationController.value!.reverse().whenComplete(() => _overlayEntry.remove());
+    });
 
     if (remove != null) {
       remove!.addListener(() {
@@ -97,8 +116,10 @@ class SimpleAlert {
                 shadowColor: shadowValues['color'],
                 child: InkWell(
                   onTap: () {
-                    _delayedFuture.ignore();
-                    _overlayEntry.remove();
+                    animationController.value!.reverse().whenComplete(() {
+                      _delayedFuture.ignore();
+                      _overlayEntry.remove();
+                    });
                   },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 11.0),
