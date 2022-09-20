@@ -7,12 +7,12 @@ import 'package:flutter/material.dart';
 
 import '../simple_alert.dart';
 import 'Alert.dart';
-import 'ControllerState.dart';
+import 'mixins/AnimationMixin.dart';
 
 /// Regular alert with preset colors for some common situations.
 ///
 /// The parameters [context], and [label] are mandatory.
-class SimpleAlert {
+class SimpleAlert with AnimationMixin {
   final BuildContext context;
   final SimpleAlertType type;
   final Alignment alignment;
@@ -68,6 +68,7 @@ class SimpleAlert {
     _overlayEntry = OverlayEntry(
       builder: (BuildContext context) => Alert(
         child: _build(context),
+        animationController: animationController,
         animatedOpacityDuration: animatedOpacityDuration,
       ),
     );
@@ -77,9 +78,8 @@ class SimpleAlert {
     // Wait for initializing.
     animationController.addListener(() {
       final AnimationController? controller = animationController.value;
-      if (controller != null) {
-        controller.forward();
-      }
+
+      if (controller != null) controller.forward();
     });
 
     _delayedFuture = Future.delayed(_getDuration()).whenComplete(() {
