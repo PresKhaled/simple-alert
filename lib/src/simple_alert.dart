@@ -82,15 +82,13 @@ class SimpleAlert with AnimationMixin {
       if (controller != null) controller.forward();
     });
 
-    _delayedFuture = Future.delayed(_getDuration()).whenComplete(() {
-      animationController.value!.reverse().whenComplete(() => _overlayEntry.remove());
-    });
+    _delayedFuture = Future.delayed(_getDuration()).whenComplete(() => _dispose());
 
     if (remove != null) {
       remove!.addListener(() {
         if (_overlayEntry.mounted && remove!.value) {
           _delayedFuture.ignore();
-          _overlayEntry.remove();
+          _dispose();
         }
       });
     }
@@ -271,5 +269,12 @@ class SimpleAlert with AnimationMixin {
       default:
         return BorderRadius.circular(255.0);
     }
+  }
+
+  _dispose() {
+    animationController.value!.reverse().whenComplete(() {
+      animationController.value!.dispose();
+      _overlayEntry.remove();
+    });
   }
 }

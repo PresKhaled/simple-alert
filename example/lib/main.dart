@@ -50,12 +50,16 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  // ValueNotifier<bool> _dataReceived = ValueNotifier(false);
+  ValueNotifier<bool> dataReceived = ValueNotifier(false);
+
   @override
   void initState() {
     super.initState();
 
-    // Future.delayed(Duration(seconds: 5), () => _dataReceived.value = true);
+    Future.delayed(Duration(seconds: 2), () {
+      dataReceived.value = true;
+      print(dataReceived.value);
+    });
   }
 
   void _incrementCounter() {
@@ -121,10 +125,10 @@ class _MyHomePageState extends State<MyHomePage> {
           leading: const Icon(Icons.wifi_off_outlined),
           loading: true,
           shape: SimpleAlertShape.rounded,
-          duration: SimpleAlertDuration.medium,
+          duration: SimpleAlertDuration.day,
           // customDuration: const Duration(seconds: 15),
-          type: SimpleAlertType.info,
-          // remove: _dataReceived,
+          type: SimpleAlertType.success,
+          remove: dataReceived,
         ), //_incrementCounter,
 
         tooltip: '',

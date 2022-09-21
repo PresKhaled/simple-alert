@@ -39,13 +39,6 @@ class _AlertState extends State<Alert> with SingleTickerProviderStateMixin {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-
-    widget.animationController.value!.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Opacity(
       opacity: _opacity,
