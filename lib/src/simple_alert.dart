@@ -186,12 +186,12 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
                                     radius: 15.0,
                                   ),
                                 ),
-                              Flexible(
+                              Expanded(
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     // Title and subtitle.
-                                    Container(
+                                    Expanded(
                                       child: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         mainAxisAlignment: MainAxisAlignment.start,
@@ -203,7 +203,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
                                           ),
                                           if (subTitle != null)
                                             Text(
-                                              subTitle!,
+                                              subTitle! + subTitle!,
                                               style: subTitleStyle,
                                             ),
                                         ],
@@ -211,7 +211,8 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
                                     ),
 
                                     // Actions
-                                    Flexible(
+                                    SizedBox(
+                                      width: 96.0,
                                       child: SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
                                         child: Theme(
@@ -219,6 +220,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
                                             iconTheme: themeData.iconTheme.copyWith(color: Colors.white),
                                           ),
                                           child: Row(
+                                            mainAxisSize: MainAxisSize.min,
                                             children: [
                                               if (actions != null) ...actions!,
 
@@ -357,7 +359,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
 
   /// Close the alert.
   void _close() {
-    widthAnimationController.value!.dispose();
+    widthAnimationController.value?.dispose();
 
     opacityAnimationController.value!.reverse().whenComplete(() {
       _delayedFuture.ignore();
