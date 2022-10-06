@@ -17,7 +17,7 @@ class Alert extends StatefulWidget {
 }
 
 class _AlertState extends State<Alert> with SingleTickerProviderStateMixin {
-  late Animation<double> _animation;
+  late Animation<double> _opacityAnimation;
   double _opacity = 0.0;
 
   @override
@@ -29,13 +29,13 @@ class _AlertState extends State<Alert> with SingleTickerProviderStateMixin {
       duration: widget.animatedOpacityDuration,
     );
 
-    widget.animationController.value!.addListener(() {
-      setState(() => _opacity = _animation.value);
-    });
-
-    _animation = widget.animationController.value!.drive(
+    _opacityAnimation = widget.animationController.value!.drive(
       Tween(begin: 0.0, end: 1.0),
     );
+
+    widget.animationController.value!.addListener(() {
+      setState(() => _opacity = _opacityAnimation.value);
+    });
   }
 
   @override
