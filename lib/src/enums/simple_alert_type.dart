@@ -1,6 +1,7 @@
 enum SimpleAlertType {
-  success,
-  failed,
-  info,
   normal,
+  success,
+  info,
+  warning,
+  danger,
 }

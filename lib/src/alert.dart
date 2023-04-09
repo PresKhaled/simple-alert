@@ -6,11 +6,11 @@ class Alert extends StatefulWidget {
   final Duration animatedOpacityDuration;
 
   const Alert({
-    Key? key,
+    super.key,
     required this.child,
     required this.animationController,
     required this.animatedOpacityDuration,
-  }) : super(key: key);
+  });
 
   @override
   State<Alert> createState() => _AlertState();

@@ -2,5 +2,5 @@ enum SimpleAlertDuration {
   quick,
   medium,
   long,
-  day,
+  day, // TODO: Remove
 }

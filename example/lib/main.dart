@@ -1,157 +1,179 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_alert/simple_alert.dart';
 
 void main() {
-  runApp(const MyApp());
+  SimpleAlertPreferences(
+    // duration: SimpleAlertDuration.day,
+    icons: const SimpleAlertIcons(
+      normal: FluentIcons.chat_24_regular,
+      success: FluentIcons.checkmark_circle_24_regular,
+      info: FluentIcons.info_24_regular,
+      warning: FluentIcons.warning_24_regular,
+      danger: FluentIcons.error_circle_24_regular,
+    ),
+  );
+
+  runApp(const SimpleAlertExample());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class SimpleAlertExample extends StatelessWidget {
+  const SimpleAlertExample({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'SimpleAlert',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.teal,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MainPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class MainPage extends StatefulWidget {
+  const MainPage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MainPage> createState() => _MainPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _MainPageState extends State<MainPage> {
+  final TextStyle titleStyle = const TextStyle(fontSize: 18.0);
+  final double spacing = 5.0;
+  final List<SimpleAlertType> alertTypes = [
+    SimpleAlertType.normal,
+    SimpleAlertType.success,
+    SimpleAlertType.info,
+    SimpleAlertType.warning,
+    SimpleAlertType.danger,
+  ];
   ValueNotifier<bool> dataReceived = ValueNotifier(false);
 
   @override
   void initState() {
     super.initState();
 
-    Future.delayed(Duration(seconds: 2), () {
-      dataReceived.value = true;
-      print(dataReceived.value);
-    });
-  }
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+    Future.delayed(
+      const Duration(seconds: 5),
+      () {
+        dataReceived.value = true;
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: const Text('Simple alert'),
+        centerTitle: true,
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Light theme',
+                style: titleStyle,
+              ),
+              Wrap(
+                spacing: spacing,
+                children: <Widget>[
+                  // Alert types.
+                  ...List.generate(
+                    alertTypes.length,
+                    (int index) => ElevatedButton(
+                      onPressed: () => SimpleAlert(
+                        context: context,
+                        type: alertTypes[index],
+                        brightness: Brightness.light,
+                        title: 'Simple alert title',
+                        description: 'Some words describe the work performed',
+                        closeOnPress: false,
+                        withClose: true,
+                      ),
+                      child: Text(
+                        alertTypes[index].toString().split('.').last, // .toUpperCase(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 25.0),
+              Text(
+                'Dark theme',
+                style: titleStyle,
+              ),
+              Wrap(
+                spacing: spacing,
+                children: <Widget>[
+                  // Alert types.
+                  ...List.generate(
+                    alertTypes.length,
+                    (int index) => ElevatedButton(
+                      onPressed: () => SimpleAlert(
+                        context: context,
+                        type: alertTypes[index],
+                        brightness: Brightness.dark,
+                        title: 'Simple alert title',
+                        description: 'Some words describe the work performed',
+                        closeOnPress: false,
+                        withClose: true,
+                      ),
+                      child: Text(
+                        alertTypes[index].toString().split('.').last,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 25.0),
+              Text(
+                'Other',
+                style: titleStyle,
+              ),
+              Wrap(
+                spacing: spacing,
+                children: <Widget>[
+                  ElevatedButton(
+                    onPressed: () => SimpleAlert(
+                      context: context,
+                      title: 'Simple alert title',
+                      description: 'Some words describe the work performed',
+                    ),
+                    child: Text('Close on press'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => SimpleAlert(
+                      context: context,
+                      title: 'Simple alert title',
+                      description: 'Some words describe the work performed',
+                      closeOnPress: false,
+                      withClose: true,
+                      withProgressBar: true,
+                    ),
+                    child: Text('Progress bar'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => SimpleAlert(
+                      context: context,
+                      title: 'Simple alert title',
+                      duration: SimpleAlertDuration.day,
+                      removalSignal: dataReceived,
+                    ),
+                    child: Text('Removal signal'),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => SimpleAlert(
-          context: context,
-          title: 'This title is mandatory',
-          subTitle: 'But the description is optional',
-          // centerContent: true,
-          leading: const Icon(Icons.check),
-          // loading: true,
-          // shape: SimpleAlertShape.rounded,
-          // duration: SimpleAlertDuration.long,
-          customDuration: const Duration(seconds: 15),
-          type: SimpleAlertType.success,
-          // remove: dataReceived,
-          closeOnPress: false,
-          withClose: true,
-          // customCloseIcon: Icon(Icons.adb_rounded),
-          // closeTooltip: 'إغلاق',
-          withProgressBar: true,
-          actions: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.adb_rounded),
-              tooltip: 'Action 0',
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.adb_rounded),
-              tooltip: 'Action 1',
-            ),
-          ],
-        ), //_incrementCounter,
-
-        tooltip: '',
-        child: Icon(Icons.airplanemode_on),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

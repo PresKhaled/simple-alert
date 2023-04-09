@@ -45,7 +45,7 @@ class _ProgressBarState extends State<ProgressBar> with SingleTickerProviderStat
     return Container(
       width: _width,
       height: 5.0,
-      margin: const EdgeInsets.only(top: 5.0),
+      margin: const EdgeInsets.only(top: 8.0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(BORDER_RADIUS),
