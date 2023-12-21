@@ -3,17 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:simple_alert/simple_alert.dart';
 
 void main() {
-  SimpleAlertPreferences(
-    // duration: SimpleAlertDuration.day,
-    icons: const SimpleAlertIcons(
-      normal: FluentIcons.chat_24_regular,
-      success: FluentIcons.checkmark_circle_24_regular,
-      info: FluentIcons.info_24_regular,
-      warning: FluentIcons.warning_24_regular,
-      danger: FluentIcons.error_circle_24_regular,
-    ),
-  );
-
   runApp(const SimpleAlertExample());
 }
 
@@ -22,6 +11,19 @@ class SimpleAlertExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // First initialization contains [context].
+    SimpleAlertPreferences(
+      context: context,
+      // duration: SimpleAlertDuration.day,
+      icons: const SimpleAlertIcons(
+        normal: FluentIcons.chat_24_regular,
+        success: FluentIcons.checkmark_circle_24_regular,
+        info: FluentIcons.info_24_regular,
+        warning: FluentIcons.warning_24_regular,
+        danger: FluentIcons.error_circle_24_regular,
+      ),
+    );
+
     return MaterialApp(
       title: 'SimpleAlert',
       debugShowCheckedModeBanner: false,
@@ -50,19 +52,6 @@ class _MainPageState extends State<MainPage> {
     SimpleAlertType.warning,
     SimpleAlertType.danger,
   ];
-  ValueNotifier<bool> dataReceived = ValueNotifier(false);
-
-  @override
-  void initState() {
-    super.initState();
-
-    Future.delayed(
-      const Duration(seconds: 5),
-      () {
-        dataReceived.value = true;
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -153,6 +142,16 @@ class _MainPageState extends State<MainPage> {
                       context: context,
                       title: 'Simple alert title',
                       description: 'Some words describe the work performed',
+                      withClose: true,
+                      withProgressBar: true,
+                    ),
+                    child: Text('Progress bar (closeOnPress)'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => SimpleAlert(
+                      context: context,
+                      title: 'Simple alert title',
+                      description: 'Some words describe the work performed',
                       closeOnPress: false,
                       withClose: true,
                       withProgressBar: true,
@@ -160,13 +159,44 @@ class _MainPageState extends State<MainPage> {
                     child: Text('Progress bar'),
                   ),
                   ElevatedButton(
-                    onPressed: () => SimpleAlert(
-                      context: context,
-                      title: 'Simple alert title',
-                      duration: SimpleAlertDuration.day,
-                      removalSignal: dataReceived,
-                    ),
+                    onPressed: () {
+                      final ValueNotifier<bool> dataReceived = ValueNotifier(false);
+
+                      Future.delayed(
+                        const Duration(seconds: 5),
+                        () {
+                          dataReceived.value = true;
+                        },
+                      );
+
+                      SimpleAlert(
+                        context: context,
+                        title: 'Simple alert title',
+                        duration: SimpleAlertDuration.day,
+                        removalSignal: dataReceived,
+                      );
+                    },
                     child: Text('Removal signal'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      final ValueNotifier<bool> dataReceived = ValueNotifier(false);
+
+                      Future.delayed(
+                        const Duration(seconds: 5),
+                        () {
+                          dataReceived.value = true;
+                        },
+                      );
+
+                      SimpleAlert.loading(
+                        context: context,
+                        title: 'Simple alert title',
+                        type: SimpleAlertType.success,
+                        removalSignal: dataReceived,
+                      );
+                    },
+                    child: Text('Loading'),
                   ),
                 ],
               ),

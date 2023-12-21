@@ -29,7 +29,7 @@ class _ProgressBarState extends State<ProgressBar> with SingleTickerProviderStat
     widget.animationController.value = AnimationController(
       vsync: this,
       duration: widget.alertDuration,
-    );
+    )..forward();
 
     _widthAnimation = widget.animationController.value!.drive(
       Tween(begin: widget.alertWidth, end: 0.0),
@@ -38,6 +38,14 @@ class _ProgressBarState extends State<ProgressBar> with SingleTickerProviderStat
     widget.animationController.value!.addListener(() {
       setState(() => _width = _widthAnimation.value);
     });
+  }
+
+  @override
+  void dispose() {
+    widget.animationController.value!.stop();
+    widget.animationController.value!.dispose();
+
+    super.dispose();
   }
 
   @override

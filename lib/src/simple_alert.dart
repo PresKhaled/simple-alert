@@ -3,20 +3,29 @@
 * Khaled Mohsen <pres.kbayomy@gmail.com>
 * Copyrights (BSD-3-Clause), LICENSE.
 */
-import 'package:flutter/material.dart';
-import 'package:simple_alert/src/progress_bar.dart';
 
-import '../simple_alert.dart';
-import 'alert.dart';
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:simple_alert/src/simple_alert_route.dart';
 import 'constants.dart';
 import 'mixins/OpacityAnimationMixin.dart';
 import 'mixins/WidthAnimationMixin.dart';
+import 'simple_alert_preferences.dart';
+import 'alert.dart';
+import 'progress_bar.dart';
+import 'misc/simple_alert_icons.dart';
+import 'enums/simple_alert_shape.dart';
+import 'enums/simple_alert_duration.dart';
+import 'enums/simple_alert_type.dart';
 
 /// Regular alert with preset colors for some common situations.
 ///
 /// The parameters [context], and [label] are mandatory.
 class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   final BuildContext context;
+  final String? routeName;
   final String title;
   final String? description;
   final Alignment? alignment;
@@ -38,14 +47,20 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   final ValueNotifier<bool>? removalSignal;
 
   late final ShapeBorder selectedShape;
-  late final OverlayEntry _overlayEntry;
-  late final Future _delayedFuture;
   late final SimpleAlertType simpleAlertType = (type ?? SimpleAlertPreferences().type);
   late final Brightness simpleAlertBrightness = (brightness ?? Theme.of(context).brightness);
-  bool closing = false;
+  bool _closing = false;
+  bool _stopDecreasingRemainingDuration = false;
+  //////////////////////////
+  BuildContext? _simpleAlertRouteContext;
+  late final Duration _duration;
+  final ValueNotifier<int?> _remainingDurationInMilliseconds = ValueNotifier<int?>(null);
+  VoidCallback? _removalSignalListener;
+  VoidCallback? _remainingDurationListener;
 
   SimpleAlert({
     required this.context,
+    this.routeName,
     required this.title,
     this.description,
     this.alignment,
@@ -70,54 +85,85 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     this.centerContent = false,
     this.closeOnPress = true,
     this.withClose = false,
+
     /// Has the priority over [withClose].
     this.withProgressBar = false,
     this.actions,
     this.removalSignal,
   }) {
-    _overlayEntry = OverlayEntry(
-      builder: (BuildContext context) => Alert(
-        child: _build(context),
-        animationController: opacityAnimationController,
-        animatedOpacityDuration: animatedOpacityDuration,
+    _duration = _getDuration();
+    _remainingDurationInMilliseconds.value = _duration.inMilliseconds;
+
+    Navigator.of(context).push(
+      SimpleAlertRoute(
+        settings: RouteSettings(
+          name: routeName,
+        ),
+        builder: (BuildContext context) {
+          _simpleAlertRouteContext = context;
+
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _remainingDurationListener = () {
+              if (_remainingDurationInMilliseconds.value! <= 0 && !_closing) _close();
+            };
+
+            Future.doWhile(
+              () async {
+                if (_remainingDurationInMilliseconds.value! <= 0 || _closing) return false;
+
+                await Future.delayed(
+                  Duration(milliseconds: 100),
+                );
+
+                if (!_stopDecreasingRemainingDuration && !_closing) {
+                  _remainingDurationInMilliseconds.value = (_remainingDurationInMilliseconds.value! - 100);
+                }
+
+                return true; // Continue
+              },
+            );
+
+            _remainingDurationInMilliseconds.addListener(_remainingDurationListener!);
+          });
+
+          return PopScope(
+            canPop: false,
+            onPopInvoked: (bool status) {
+              if (status) return;
+
+              _close();
+            },
+            child: Alert(
+              child: _build(context),
+              animationController: opacityAnimationController,
+              animatedOpacityDuration: animatedOpacityDuration,
+            ),
+          );
+        },
       ),
     );
 
-    Overlay.of(context).insert(_overlayEntry);
-
-    // Wait for initializing.
-    opacityAnimationController.addListener(() {
-      final AnimationController? controller = opacityAnimationController.value;
-
-      if (controller != null) controller.forward();
-    });
-
-    // Wait for initializing.
-    widthAnimationController.addListener(() {
-      final AnimationController? controller = widthAnimationController.value;
-
-      if (controller != null) controller.forward();
-    });
-
-    _delayedFuture = Future.delayed(_getDuration()).whenComplete(() => _close());
-
     if (removalSignal != null) {
-      removalSignal!.addListener(() {
-        if (_overlayEntry.mounted && removalSignal!.value) {
+      _removalSignalListener = () {
+        if (context.mounted && removalSignal!.value && !_closing) {
           _close();
         }
-      });
+      };
+
+      removalSignal!.addListener(_removalSignalListener!);
     }
   }
 
   SimpleAlert.loading({
     required BuildContext context,
     required String title,
+    SimpleAlertType? type,
     SimpleAlertShape? shape,
     BorderRadius? borderRadius,
     ValueNotifier<bool>? removalSignal,
   }) : this(
           context: context,
+          type: type,
           shape: shape,
           borderRadius: borderRadius,
           title: title,
@@ -133,145 +179,144 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     return SafeArea(
       child: Align(
         alignment: (alignment ?? SimpleAlertPreferences().alignment),
-        child: Container(
-          width: _alertWidth,
-          margin: const EdgeInsets.symmetric(vertical: 41.0),
-          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          child: ClipRRect(
-            borderRadius: _getBorderRadius(),
-            child: Material(
-              color: _getBackgroundColor(),
-              /*textStyle: const TextStyle(
-                color: Colors.white,
-              ),*/
-              child: InkWell(
-                onTap: ((closeOnPress && !withProgressBar) ? () => _close() : null),
-                splashColor: ((closeOnPress && !withProgressBar) ? null : Colors.transparent),
-                focusColor: ((closeOnPress && !withProgressBar) ? null : Colors.transparent),
-                child: GestureDetector(
-                  onTapDown: (withProgressBar
-                      ? (TapDownDetails tapDownDetails) {
-                          if (widthAnimationController.hasListeners && widthAnimationController.value != null) {
-                            widthAnimationController.value!.stop(canceled: false);
-                          }
-                        }
-                      : null),
-                  onTapUp: (withProgressBar
-                      ? (TapUpDetails tapUpDetails) {
-                          if (widthAnimationController.hasListeners && widthAnimationController.value != null) {
-                            widthAnimationController.value!.forward();
-                          }
-                        }
-                      : null),
-                  child: Padding(
-                    padding: const EdgeInsets.all(11.0),
-                    child: Theme(
-                      data: themeData.copyWith(
-                        iconTheme: themeData.iconTheme.copyWith(color: _getForegroundColor()),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Flexible(
-                            child: Row(
-                              children: [
-                                // Loading
-                                if (loading)
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 9.0),
-                                    child: CircleAvatar(
-                                      backgroundColor: Colors.white70,
-                                      child: SizedBox(
-                                        width: 17.0,
-                                        height: 17.0,
-                                        child: CircularProgressIndicator(
-                                          color: _getBackgroundColor(),
-                                          strokeWidth: 2.0,
-                                        ),
+        child: GestureDetector(
+          onTap: () {
+            if (closeOnPress && !withProgressBar) _close();
+          },
+          onTapDown: (withProgressBar
+              ? (TapDownDetails tapDownDetails) {
+                  if (widthAnimationController.value != null) {
+                    widthAnimationController.value!.stop(canceled: false);
+
+                    _stopDecreasingRemainingDuration = true;
+                  }
+                }
+              : null),
+          onTapUp: (withProgressBar
+              ? (TapUpDetails tapUpDetails) {
+                  _stopDecreasingRemainingDuration = false;
+
+                  if (widthAnimationController.value != null) {
+                    widthAnimationController.value!.forward();
+                  }
+                }
+              : null),
+          child: Container(
+            width: _alertWidth,
+            margin: const EdgeInsets.symmetric(vertical: 41.0),
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: ClipRRect(
+              borderRadius: _getBorderRadius(),
+              child: Material(
+                color: _getBackgroundColor(),
+                /*textStyle: const TextStyle(
+                  color: Colors.white,
+                ),*/
+                child: Padding(
+                  padding: const EdgeInsets.all(11.0),
+                  child: Theme(
+                    data: themeData.copyWith(
+                      iconTheme: themeData.iconTheme.copyWith(color: _getForegroundColor()),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Flexible(
+                          child: Row(
+                            children: [
+                              // Loading
+                              if (loading)
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 9.0),
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.white70,
+                                    child: SizedBox.square(
+                                      dimension: 18.0,
+                                      child: CircularProgressIndicator(
+                                        color: _getBackgroundColor(),
+                                        strokeWidth: 2.0,
                                       ),
-                                      radius: 15.0,
                                     ),
+                                    radius: 15.0,
                                   ),
+                                ),
 
-                                // Icon
-                                if (!loading)
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 9.0),
-                                    child: _getIcon(),
-                                  ),
+                              // Icon
+                              if (!loading)
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 9.0),
+                                  child: _getIcon(),
+                                ),
 
-                                // Texts
-                                Expanded(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      // Title and description.
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              (centerContent ? CrossAxisAlignment.center : CrossAxisAlignment.start),
-                                          children: [
+                              // Texts
+                              Expanded(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    // Title and description.
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: (centerContent ? CrossAxisAlignment.center : CrossAxisAlignment.start),
+                                        children: [
+                                          Text(
+                                            title,
+                                            style: (SimpleAlertPreferences().titleStyle as TextStyle).copyWith(
+                                              color: _getForegroundColor(),
+                                            ),
+                                          ),
+                                          if (description != null) SizedBox(height: 5.0),
+                                          if (description != null)
                                             Text(
-                                              title,
-                                              style: (SimpleAlertPreferences().titleStyle as TextStyle).copyWith(
+                                              description!,
+                                              style: (SimpleAlertPreferences().descriptionStyle as TextStyle).copyWith(
                                                 color: _getForegroundColor(),
                                               ),
                                             ),
-                                            if (description != null) SizedBox(height: 5.0),
-                                            if (description != null)
-                                              Text(
-                                                description!,
-                                                style:
-                                                    (SimpleAlertPreferences().descriptionStyle as TextStyle).copyWith(
-                                                  color: _getForegroundColor(),
-                                                ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    // Actions
+                                    ConstrainedBox(
+                                      constraints: const BoxConstraints(maxWidth: 92.0),
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            if (actions != null) ...actions!,
+
+                                            // Close
+                                            if (withClose)
+                                              IconButton(
+                                                onPressed: () => _close(),
+                                                icon: Icon(SimpleAlertPreferences().icons.close),
+                                                splashRadius: ICON_BUTTON_SPLASH_RADIUS,
+                                                tooltip: SimpleAlertPreferences().closeTooltip,
                                               ),
                                           ],
                                         ),
                                       ),
-
-                                      // Actions
-                                      ConstrainedBox(
-                                        constraints: const BoxConstraints(maxWidth: 92.0),
-                                        child: SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              if (actions != null) ...actions!,
-
-                                              // Close
-                                              if (withClose)
-                                                IconButton(
-                                                  onPressed: () => _close(),
-                                                  icon: Icon(SimpleAlertPreferences().icons.close),
-                                                  splashRadius: ICON_BUTTON_SPLASH_RADIUS,
-                                                  tooltip: SimpleAlertPreferences().closeTooltip,
-                                                ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (withProgressBar)
+                          Flexible(
+                            child: ProgressBar(
+                              animationController: widthAnimationController,
+                              alertWidth: _alertWidth,
+                              alertDuration: _getDuration(),
                             ),
                           ),
-                          if (withProgressBar)
-                            Flexible(
-                              child: ProgressBar(
-                                animationController: widthAnimationController,
-                                alertWidth: _alertWidth,
-                                alertDuration: _getDuration(),
-                              ),
-                            ),
-                        ],
-                      ),
+                      ],
                     ),
                   ),
                 ),
@@ -296,7 +341,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
         return const Duration(seconds: 3);
 
       case SimpleAlertDuration.long:
-        return const Duration(seconds: 7);
+        return const Duration(seconds: 8);
 
       case SimpleAlertDuration.day:
         return const Duration(days: 1);
@@ -439,25 +484,22 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
 
   /// Close the alert.
   void _close() {
-     // The close button or the alarm can be pressed more than once because the degree of opacity (animation) is constantly changing, which will cause the function to run more than once and cause errors.
-    if (closing) return;
+    // The close button or the alarm can be pressed more than once because the degree of opacity (animation) is constantly changing,
+    // which will cause the function to run more than once and cause errors.
+    if (_closing) return;
 
-    closing = true;
+    _closing = true;
 
-    widthAnimationController.value?.removeListener(() {});
-    widthAnimationController.value?.dispose();
-    widthAnimationController.removeListener(() {});
-    widthAnimationController.dispose();
+    removalSignal?.removeListener(_removalSignalListener!);
 
-    opacityAnimationController.value!.reverse().whenComplete(() {
-      opacityAnimationController.value!.removeListener(() {});
-      opacityAnimationController.value!.dispose();
-      opacityAnimationController.removeListener(() {});
-      opacityAnimationController.dispose();
+    if (_remainingDurationInMilliseconds.value != null) {
+      _remainingDurationInMilliseconds.removeListener(_remainingDurationListener!);
+    }
 
-      _delayedFuture.ignore();
-
-      _overlayEntry.remove();
-    });
+    if (_simpleAlertRouteContext!.mounted) {
+      opacityAnimationController.value!.reverse().whenComplete(() {
+        Navigator.of(_simpleAlertRouteContext!).pop(true);
+      });
+    }
   }
 }

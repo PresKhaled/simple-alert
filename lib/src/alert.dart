@@ -27,7 +27,7 @@ class _AlertState extends State<Alert> with SingleTickerProviderStateMixin {
     widget.animationController.value = AnimationController(
       vsync: this,
       duration: widget.animatedOpacityDuration,
-    );
+    )..forward();
 
     _opacityAnimation = widget.animationController.value!.drive(
       Tween(begin: 0.0, end: 1.0),
@@ -36,6 +36,14 @@ class _AlertState extends State<Alert> with SingleTickerProviderStateMixin {
     widget.animationController.value!.addListener(() {
       setState(() => _opacity = _opacityAnimation.value);
     });
+  }
+
+  @override
+  void dispose() {
+    widget.animationController.value!.stop();
+    widget.animationController.value!.dispose();
+
+    super.dispose();
   }
 
   @override

@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart' show Alignment, BorderRadius, FontWeight, TextStyle, TooltipThemeData;
+import 'package:flutter/material.dart' show Alignment, BorderRadius, BuildContext, FontWeight, TextStyle, Theme, ThemeData, TooltipThemeData;
 
 import '../simple_alert.dart';
 
 class SimpleAlertPreferences {
+  static BuildContext? _context;
   Alignment? _alignment;
   SimpleAlertShape? _shape;
   BorderRadius? _borderRadius;
@@ -26,10 +27,14 @@ class SimpleAlertPreferences {
   TooltipThemeData? get tooltipThemeData => _tooltipThemeData;
   String get closeTooltip => _closeTooltip!;
   SimpleAlertDuration get duration => _duration!;
+  // BuildContext? get context => _context;
+
+  // set context(BuildContext? context) => (_context = context);
 
   static final SimpleAlertPreferences _instance = SimpleAlertPreferences._internal();
 
   factory SimpleAlertPreferences({
+    BuildContext? context,
     Alignment alignment = Alignment.topCenter,
     SimpleAlertShape shape = SimpleAlertShape.defaultRadius,
     BorderRadius? borderRadius,
@@ -42,18 +47,23 @@ class SimpleAlertPreferences {
     String closeTooltip = 'Close',
     SimpleAlertDuration duration = SimpleAlertDuration.medium,
   }) {
+    final ThemeData? themeData = ((context != null && context.mounted) ? Theme.of(context) : null);
+
     _instance._alignment ??= alignment;
     _instance._shape ??= shape;
     _instance._borderRadius ??= borderRadius;
     _instance._type ??= type;
     _instance._icons ??= icons;
     _instance._iconsSize ??= iconsSize;
-    _instance._titleStyle ??= (titleStyle ?? TextStyle(fontSize: 18.0));
-    _instance._descriptionStyle ??= (descriptionStyle ??
+    _instance._titleStyle ??= (titleStyle ??
+        themeData?.textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+        ) ??
         TextStyle(
-          fontSize: 16.0,
+          fontSize: 18.0,
           fontWeight: FontWeight.bold,
         ));
+    _instance._descriptionStyle ??= (descriptionStyle ?? themeData?.textTheme.titleMedium ?? TextStyle(fontSize: 18.0));
     _instance._tooltipThemeData ??= tooltipThemeData;
     _instance._closeTooltip ??= closeTooltip;
     _instance._duration ??= duration;
