@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' show Alignment, BorderRadius, BuildContext, FontWeight, TextStyle, Theme, ThemeData, TooltipThemeData;
+import 'package:flutter/material.dart' show Alignment, BorderRadius, BuildContext, Color, Colors, FontWeight, TextStyle, Theme, ThemeData, TooltipThemeData;
 
 import '../simple_alert.dart';
 
@@ -10,6 +10,7 @@ class SimpleAlertPreferences {
   SimpleAlertType? _type;
   SimpleAlertIcons? _icons;
   double? _iconsSize;
+  Color? _iconsColor;
   TextStyle? _titleStyle;
   TextStyle? _descriptionStyle;
   TooltipThemeData? _tooltipThemeData;
@@ -22,6 +23,7 @@ class SimpleAlertPreferences {
   SimpleAlertType get type => _type!;
   SimpleAlertIcons get icons => _icons!;
   double get iconsSize => _iconsSize!;
+  Color? get iconsColor => _iconsColor;
   TextStyle get titleStyle => _titleStyle!;
   TextStyle get descriptionStyle => _descriptionStyle!;
   TooltipThemeData? get tooltipThemeData => _tooltipThemeData;
@@ -34,6 +36,7 @@ class SimpleAlertPreferences {
   static final SimpleAlertPreferences _instance = SimpleAlertPreferences._internal();
 
   factory SimpleAlertPreferences({
+    /// Add with first initialization.
     BuildContext? context,
     Alignment alignment = Alignment.topCenter,
     SimpleAlertShape shape = SimpleAlertShape.defaultRadius,
@@ -41,6 +44,7 @@ class SimpleAlertPreferences {
     SimpleAlertType type = SimpleAlertType.info,
     SimpleAlertIcons icons = const SimpleAlertIcons(),
     double iconsSize = 28.0,
+    Color? iconsColor,
     TextStyle? titleStyle,
     TextStyle? descriptionStyle,
     TooltipThemeData? tooltipThemeData,
@@ -55,15 +59,16 @@ class SimpleAlertPreferences {
     _instance._type ??= type;
     _instance._icons ??= icons;
     _instance._iconsSize ??= iconsSize;
+    _instance._iconsColor ??= iconsColor;
     _instance._titleStyle ??= (titleStyle ??
         themeData?.textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.bold,
         ) ??
-        TextStyle(
+        const TextStyle(
           fontSize: 18.0,
           fontWeight: FontWeight.bold,
         ));
-    _instance._descriptionStyle ??= (descriptionStyle ?? themeData?.textTheme.titleMedium ?? TextStyle(fontSize: 18.0));
+    _instance._descriptionStyle ??= (descriptionStyle ?? themeData?.textTheme.titleMedium ?? const TextStyle(fontSize: 18.0));
     _instance._tooltipThemeData ??= tooltipThemeData;
     _instance._closeTooltip ??= closeTooltip;
     _instance._duration ??= duration;

@@ -175,6 +175,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   Widget _build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final double _alertWidth = MediaQuery.of(context).size.width;
+    final Color foregroundColor = _getForegroundColor();
 
     return SafeArea(
       child: Align(
@@ -216,7 +217,21 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
                   padding: const EdgeInsets.all(11.0),
                   child: Theme(
                     data: themeData.copyWith(
-                      iconTheme: themeData.iconTheme.copyWith(color: _getForegroundColor()),
+                      iconTheme: themeData.iconTheme.copyWith(
+                        color: (SimpleAlertPreferences().iconsColor ?? foregroundColor),
+                      ),
+                      iconButtonTheme: IconButtonThemeData(
+                        style: (themeData.iconButtonTheme.style?.copyWith(
+                              foregroundColor: MaterialStatePropertyAll<Color>(
+                                (SimpleAlertPreferences().iconsColor ?? foregroundColor),
+                              ),
+                            ) ??
+                            ButtonStyle(
+                              foregroundColor: MaterialStatePropertyAll<Color>(
+                                (SimpleAlertPreferences().iconsColor ?? foregroundColor),
+                              ),
+                            )),
+                      ),
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -265,7 +280,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
                                           Text(
                                             title,
                                             style: (SimpleAlertPreferences().titleStyle).copyWith(
-                                              color: _getForegroundColor(),
+                                              color: foregroundColor,
                                             ),
                                           ),
                                           if (description != null) const SizedBox(height: 5.0),
@@ -273,8 +288,8 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
                                             Text(
                                               description!,
                                               style: SimpleAlertPreferences().descriptionStyle.copyWith(
-                                                color: _getForegroundColor(),
-                                              ),
+                                                    color: foregroundColor,
+                                                  ),
                                             ),
                                         ],
                                       ),
