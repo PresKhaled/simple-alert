@@ -86,7 +86,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     this.closeOnPress = true,
     this.withClose = false,
 
-    /// Has the priority over [withClose].
+    /// Has the priority over [closeOnPress].
     this.withProgressBar = false,
     this.actions,
     this.removalSignal,
@@ -112,7 +112,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
                 if (_remainingDurationInMilliseconds.value! <= 0 || _closing) return false;
 
                 await Future.delayed(
-                  Duration(milliseconds: 100),
+                  const Duration(milliseconds: 100),
                 );
 
                 if (!_stopDecreasingRemainingDuration && !_closing) {
@@ -264,15 +264,15 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
                                         children: [
                                           Text(
                                             title,
-                                            style: (SimpleAlertPreferences().titleStyle as TextStyle).copyWith(
+                                            style: (SimpleAlertPreferences().titleStyle).copyWith(
                                               color: _getForegroundColor(),
                                             ),
                                           ),
-                                          if (description != null) SizedBox(height: 5.0),
+                                          if (description != null) const SizedBox(height: 5.0),
                                           if (description != null)
                                             Text(
                                               description!,
-                                              style: (SimpleAlertPreferences().descriptionStyle as TextStyle).copyWith(
+                                              style: SimpleAlertPreferences().descriptionStyle.copyWith(
                                                 color: _getForegroundColor(),
                                               ),
                                             ),

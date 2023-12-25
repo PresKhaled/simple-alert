@@ -16,11 +16,11 @@ class SimpleAlertRoute<T> extends PopupRoute<T> {
 
   @override
   Widget buildModalBarrier() {
-    return Offstage();
+    return const Offstage();
   }
 
   @override
-  Duration get transitionDuration => Duration(seconds: 0);
+  Duration get transitionDuration => const Duration(seconds: 0);
 
   @override
   Color? get barrierColor => null;
