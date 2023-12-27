@@ -18,7 +18,8 @@ class SimpleAlertPreferences {
   String? _closeTooltip;
   SimpleAlertDuration? _duration;
 
-  /// Only the alignment related to the top and bottom works.
+  /// Currently: When more than one alert is displayed in the center of the screen at the same time,
+  /// they will appear on top of each other.
   AlignmentDirectional get alignmentDirectional => _alignmentDirectional!;
   double? get width => _width;
   SimpleAlertShape get shape => _shape!;
@@ -39,7 +40,8 @@ class SimpleAlertPreferences {
     /// Add with first initialization.
     BuildContext? context,
 
-    /// Only the alignment related to the top and bottom works.
+    /// Currently: When more than one alert is displayed in the center of the screen at the same time,
+    /// they will appear on top of each other.
     AlignmentDirectional alignmentDirectional = AlignmentDirectional.topStart,
     double? width,
     SimpleAlertShape shape = SimpleAlertShape.defaultRadius,

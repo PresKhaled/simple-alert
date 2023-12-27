@@ -33,7 +33,8 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   final String title;
   final String? description;
 
-  /// Only the alignment related to the top and bottom works.
+  /// Currently: When more than one alert is displayed in the center of the screen at the same time,
+  /// they will appear on top of each other.
   final AlignmentDirectional? alignmentDirectional;
   final double? width;
   final SimpleAlertShape? shape;
