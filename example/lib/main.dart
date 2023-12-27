@@ -63,144 +63,170 @@ class _MainPageState extends State<MainPage> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(15.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Light theme',
-                style: titleStyle,
-              ),
-              Wrap(
-                spacing: spacing,
-                children: <Widget>[
-                  // Alert types.
-                  ...List.generate(
-                    alertTypes.length,
-                    (int index) => ElevatedButton(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Light theme',
+                  style: titleStyle,
+                ),
+                Wrap(
+                  spacing: spacing,
+                  children: <Widget>[
+                    // Alert types.
+                    ...List.generate(
+                      alertTypes.length,
+                      (int index) => ElevatedButton(
+                        onPressed: () => SimpleAlert(
+                          context: context,
+                          type: alertTypes[index],
+                          brightness: Brightness.light,
+                          title: 'Simple alert title',
+                          description: 'Some words describe the work performed',
+                          closeOnPress: false,
+                          withClose: true,
+                        ),
+                        child: Text(
+                          alertTypes[index].toString().split('.').last, // .toUpperCase(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 25.0),
+                Text(
+                  'Dark theme',
+                  style: titleStyle,
+                ),
+                Wrap(
+                  spacing: spacing,
+                  children: <Widget>[
+                    // Alert types.
+                    ...List.generate(
+                      alertTypes.length,
+                      (int index) => ElevatedButton(
+                        onPressed: () => SimpleAlert(
+                          context: context,
+                          type: alertTypes[index],
+                          brightness: Brightness.dark,
+                          title: 'Simple alert title',
+                          description: 'Some words describe the work performed',
+                          closeOnPress: false,
+                          withClose: true,
+                        ),
+                        child: Text(
+                          alertTypes[index].toString().split('.').last,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 25.0),
+                Text(
+                  'Other',
+                  style: titleStyle,
+                ),
+                Wrap(
+                  spacing: spacing,
+                  children: <Widget>[
+                    ElevatedButton(
                       onPressed: () => SimpleAlert(
                         context: context,
-                        type: alertTypes[index],
-                        brightness: Brightness.light,
                         title: 'Simple alert title',
                         description: 'Some words describe the work performed',
-                        closeOnPress: false,
-                        withClose: true,
                       ),
-                      child: Text(
-                        alertTypes[index].toString().split('.').last, // .toUpperCase(),
-                      ),
+                      child: Text('Close on press'),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 25.0),
-              Text(
-                'Dark theme',
-                style: titleStyle,
-              ),
-              Wrap(
-                spacing: spacing,
-                children: <Widget>[
-                  // Alert types.
-                  ...List.generate(
-                    alertTypes.length,
-                    (int index) => ElevatedButton(
+                    ElevatedButton(
                       onPressed: () => SimpleAlert(
                         context: context,
-                        type: alertTypes[index],
-                        brightness: Brightness.dark,
                         title: 'Simple alert title',
                         description: 'Some words describe the work performed',
+                        alignmentDirectional: AlignmentDirectional.topEnd,
+                        withClose: true,
+                        withProgressBar: true,
+                      ),
+                      child: Text('Progress bar (closeOnPress, topEnd)'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => SimpleAlert(
+                        context: context,
+                        title: 'Simple alert title',
+                        description: 'Some words describe the work performed',
+                        alignmentDirectional: AlignmentDirectional.center,
                         closeOnPress: false,
                         withClose: true,
+                        withProgressBar: true,
                       ),
-                      child: Text(
-                        alertTypes[index].toString().split('.').last,
-                      ),
+                      child: Text('Progress bar (center)'),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 25.0),
-              Text(
-                'Other',
-                style: titleStyle,
-              ),
-              Wrap(
-                spacing: spacing,
-                children: <Widget>[
-                  ElevatedButton(
-                    onPressed: () => SimpleAlert(
-                      context: context,
-                      title: 'Simple alert title',
-                      description: 'Some words describe the work performed',
+                    ElevatedButton(
+                      onPressed: () {
+                        final ValueNotifier<bool> dataReceived = ValueNotifier(false);
+
+                        Future.delayed(
+                          const Duration(seconds: 5),
+                          () {
+                            dataReceived.value = true;
+                          },
+                        );
+
+                        SimpleAlert(
+                          context: context,
+                          title: 'Simple alert title',
+                          alignmentDirectional: AlignmentDirectional.bottomStart,
+                          duration: SimpleAlertDuration.day,
+                          removalSignal: dataReceived,
+                        );
+                      },
+                      child: Text('Removal signal (bottomStart)'),
                     ),
-                    child: Text('Close on press'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => SimpleAlert(
-                      context: context,
-                      title: 'Simple alert title',
-                      description: 'Some words describe the work performed',
-                      withClose: true,
-                      withProgressBar: true,
+                    ElevatedButton(
+                      onPressed: () {
+                        final ValueNotifier<bool> dataReceived = ValueNotifier(false);
+
+                        Future.delayed(
+                          const Duration(seconds: 5),
+                              () {
+                            dataReceived.value = true;
+                          },
+                        );
+
+                        SimpleAlert(
+                          context: context,
+                          title: 'Simple alert title',
+                          alignmentDirectional: AlignmentDirectional.bottomCenter,
+                          duration: SimpleAlertDuration.day,
+                          removalSignal: dataReceived,
+                        );
+                      },
+                      child: Text('Removal signal (bottomCenter)'),
                     ),
-                    child: Text('Progress bar (closeOnPress)'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => SimpleAlert(
-                      context: context,
-                      title: 'Simple alert title',
-                      description: 'Some words describe the work performed',
-                      closeOnPress: false,
-                      withClose: true,
-                      withProgressBar: true,
+                    ElevatedButton(
+                      onPressed: () {
+                        final ValueNotifier<bool> dataReceived = ValueNotifier(false);
+
+                        Future.delayed(
+                          const Duration(seconds: 5),
+                          () {
+                            dataReceived.value = true;
+                          },
+                        );
+
+                        SimpleAlert.loading(
+                          context: context,
+                          title: 'Simple alert title',
+                          type: SimpleAlertType.success,
+                          removalSignal: dataReceived,
+                        );
+                      },
+                      child: Text('Loading'),
                     ),
-                    child: Text('Progress bar'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      final ValueNotifier<bool> dataReceived = ValueNotifier(false);
-
-                      Future.delayed(
-                        const Duration(seconds: 5),
-                        () {
-                          dataReceived.value = true;
-                        },
-                      );
-
-                      SimpleAlert(
-                        context: context,
-                        title: 'Simple alert title',
-                        duration: SimpleAlertDuration.day,
-                        removalSignal: dataReceived,
-                      );
-                    },
-                    child: Text('Removal signal'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      final ValueNotifier<bool> dataReceived = ValueNotifier(false);
-
-                      Future.delayed(
-                        const Duration(seconds: 5),
-                        () {
-                          dataReceived.value = true;
-                        },
-                      );
-
-                      SimpleAlert.loading(
-                        context: context,
-                        title: 'Simple alert title',
-                        type: SimpleAlertType.success,
-                        removalSignal: dataReceived,
-                      );
-                    },
-                    child: Text('Loading'),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart' show Alignment, BorderRadius, BuildContext, Color, Colors, FontWeight, TextStyle, Theme, ThemeData, TooltipThemeData;
+import 'package:flutter/material.dart'
+    show Alignment, AlignmentDirectional, BorderRadius, BuildContext, Color, Colors, FontWeight, Offset, TextStyle, Theme, ThemeData, TooltipThemeData;
 
 import '../simple_alert.dart';
 
 class SimpleAlertPreferences {
-  static BuildContext? _context;
-  Alignment? _alignment;
+  AlignmentDirectional? _alignmentDirectional;
+  double? _width;
   SimpleAlertShape? _shape;
   BorderRadius? _borderRadius;
   SimpleAlertType? _type;
@@ -17,7 +18,9 @@ class SimpleAlertPreferences {
   String? _closeTooltip;
   SimpleAlertDuration? _duration;
 
-  Alignment get alignment => _alignment!;
+  /// Only the alignment related to the top and bottom works.
+  AlignmentDirectional get alignmentDirectional => _alignmentDirectional!;
+  double? get width => _width;
   SimpleAlertShape get shape => _shape!;
   BorderRadius? get borderRadius => _borderRadius;
   SimpleAlertType get type => _type!;
@@ -29,16 +32,16 @@ class SimpleAlertPreferences {
   TooltipThemeData? get tooltipThemeData => _tooltipThemeData;
   String get closeTooltip => _closeTooltip!;
   SimpleAlertDuration get duration => _duration!;
-  // BuildContext? get context => _context;
-
-  // set context(BuildContext? context) => (_context = context);
 
   static final SimpleAlertPreferences _instance = SimpleAlertPreferences._internal();
 
   factory SimpleAlertPreferences({
     /// Add with first initialization.
     BuildContext? context,
-    Alignment alignment = Alignment.topCenter,
+
+    /// Only the alignment related to the top and bottom works.
+    AlignmentDirectional alignmentDirectional = AlignmentDirectional.topStart,
+    double? width,
     SimpleAlertShape shape = SimpleAlertShape.defaultRadius,
     BorderRadius? borderRadius,
     SimpleAlertType type = SimpleAlertType.info,
@@ -53,7 +56,8 @@ class SimpleAlertPreferences {
   }) {
     final ThemeData? themeData = ((context != null && context.mounted) ? Theme.of(context) : null);
 
-    _instance._alignment ??= alignment;
+    _instance._alignmentDirectional ??= alignmentDirectional;
+    _instance._width ??= width;
     _instance._shape ??= shape;
     _instance._borderRadius ??= borderRadius;
     _instance._type ??= type;
