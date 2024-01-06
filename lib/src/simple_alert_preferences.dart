@@ -5,7 +5,7 @@ import '../simple_alert.dart';
 
 class SimpleAlertPreferences {
   AlignmentDirectional? _alignmentDirectional;
-  double? _width;
+  double Function()? _getWidth;
   SimpleAlertShape? _shape;
   BorderRadius? _borderRadius;
   SimpleAlertType? _type;
@@ -21,7 +21,7 @@ class SimpleAlertPreferences {
   /// Currently: When more than one alert is displayed in the center of the screen at the same time,
   /// they will appear on top of each other.
   AlignmentDirectional get alignmentDirectional => _alignmentDirectional!;
-  double? get width => _width;
+  double Function()? get getWidth => _getWidth;
   SimpleAlertShape get shape => _shape!;
   BorderRadius? get borderRadius => _borderRadius;
   SimpleAlertType get type => _type!;
@@ -42,8 +42,8 @@ class SimpleAlertPreferences {
 
     /// Currently: When more than one alert is displayed in the center of the screen at the same time,
     /// they will appear on top of each other.
-    AlignmentDirectional alignmentDirectional = AlignmentDirectional.topStart,
-    double? width,
+    AlignmentDirectional alignmentDirectional = AlignmentDirectional.topCenter,
+    double Function()? getWidth,
     SimpleAlertShape shape = SimpleAlertShape.defaultRadius,
     BorderRadius? borderRadius,
     SimpleAlertType type = SimpleAlertType.info,
@@ -59,7 +59,7 @@ class SimpleAlertPreferences {
     final ThemeData? themeData = ((context != null && context.mounted) ? Theme.of(context) : null);
 
     _instance._alignmentDirectional ??= alignmentDirectional;
-    _instance._width ??= width;
+    _instance._getWidth ??= getWidth;
     _instance._shape ??= shape;
     _instance._borderRadius ??= borderRadius;
     _instance._type ??= type;

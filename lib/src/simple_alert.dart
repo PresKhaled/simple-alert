@@ -210,7 +210,8 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     final ThemeData themeData = Theme.of(context);
     // final double screenHeight = MediaQuery.of(context).size.height;
     // final bool rtl = (Directionality.maybeOf(context) == TextDirection.rtl);
-    final double alertWidth = (width ?? SimpleAlertPreferences().width ?? MediaQuery.of(context).size.width);
+    final double? widthFromPreferences = ((SimpleAlertPreferences().getWidth != null) ? SimpleAlertPreferences().getWidth!() : null);
+    final double alertWidth = (width ?? widthFromPreferences ?? MediaQuery.of(context).size.width);
     final Color foregroundColor = _getForegroundColor();
 
     return SafeArea(
@@ -240,6 +241,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
               print('_fromCenter: $_fromCenter');
               print('topOrBottom: $topOrBottom');*/
 
+              // TODO: Check the "top" property when the device is rotated with alerts on the screen.
               return Positioned(
                 key: _alertKey,
                 width: alertWidth,
@@ -271,15 +273,15 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
                           }
                         : null),
                     child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 4.0),
-                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      margin: const EdgeInsets.symmetric(vertical: 5.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 13.0),
                       child: ClipRRect(
                         borderRadius: _getBorderRadius(),
                         child: Material(
                           color: _getBackgroundColor(),
                           /*textStyle: const TextStyle(
-                  color: Colors.white,
-                ),*/
+                            color: Colors.white,
+                          ),*/
                           child: Padding(
                             padding: const EdgeInsets.all(11.0),
                             child: Theme(

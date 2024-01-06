@@ -1,3 +1,4 @@
+import 'package:example/screen_breakpoints.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_alert/simple_alert.dart';
@@ -6,15 +7,21 @@ void main() {
   runApp(const SimpleAlertExample());
 }
 
-class SimpleAlertExample extends StatelessWidget {
+class SimpleAlertExample extends StatefulWidget {
   const SimpleAlertExample({super.key});
 
+  @override
+  State<SimpleAlertExample> createState() => _SimpleAlertExampleState();
+}
+
+class _SimpleAlertExampleState extends State<SimpleAlertExample> with ScreenBreakpoints {
   @override
   Widget build(BuildContext context) {
     // First initialization contains [context].
     SimpleAlertPreferences(
       context: context,
       // duration: SimpleAlertDuration.day,
+      getWidth: () => super.getMainContentWidth(context),
       icons: const SimpleAlertIcons(
         normal: FluentIcons.chat_24_regular,
         success: FluentIcons.checkmark_circle_24_regular,
@@ -188,7 +195,7 @@ class _MainPageState extends State<MainPage> {
 
                         Future.delayed(
                           const Duration(seconds: 5),
-                              () {
+                          () {
                             dataReceived.value = true;
                           },
                         );
