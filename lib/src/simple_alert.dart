@@ -572,7 +572,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   }
 
   /// Close the alert.
-  void _close() {
+  Future<void> _close() async {
     // The close button or the alarm can be pressed more than once because the degree of opacity (animation) is constantly changing,
     // which will cause the function to run more than once and cause errors.
     if (_closing) return;
@@ -586,14 +586,16 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     }
 
     if (_simpleAlertRouteContext!.mounted) {
-      opacityAnimationController.value!.reverse().whenComplete(() {
-        Navigator.of(_simpleAlertRouteContext!).removeRoute(
+      await opacityAnimationController.value!.reverse();
+
+      if (Navigator.canPop(_simpleAlertRouteContext!) && _simpleAlertRoute.isActive) {
+        Navigator.maybeOf(_simpleAlertRouteContext!)?.removeRoute(
           _simpleAlertRoute,
         );
-
-        _simpleAlertsThatAreCurrentlyDisplayed.value = _simpleAlertsThatAreCurrentlyDisplayed.value..remove(_simpleAlertRouteName);
-        _simpleAlertsThatAreCurrentlyDisplayed.notifyListeners();
-      });
+      }
     }
+
+    _simpleAlertsThatAreCurrentlyDisplayed.value = _simpleAlertsThatAreCurrentlyDisplayed.value..remove(_simpleAlertRouteName);
+    _simpleAlertsThatAreCurrentlyDisplayed.notifyListeners();
   }
 }

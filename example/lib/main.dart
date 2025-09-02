@@ -37,7 +37,10 @@ class _SimpleAlertExampleState extends State<SimpleAlertExample> with ScreenBrea
       theme: ThemeData(
         primarySwatch: Colors.teal,
       ),
-      home: const MainPage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const MainPage(),
+      },
     );
   }
 }
@@ -66,6 +69,18 @@ class _MainPageState extends State<MainPage> {
       appBar: AppBar(
         title: const Text('Simple alert'),
         centerTitle: true,
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 100),
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.popUntil(
+              context,
+                  (route) => (route.settings.name == '/'),
+            );
+          },
+          child: Text('Close all'),
+        ),
       ),
       body: SafeArea(
         child: Padding(
@@ -121,6 +136,7 @@ class _MainPageState extends State<MainPage> {
                           description: 'Some words describe the work performed',
                           closeOnPress: false,
                           withClose: true,
+                          animatedOpacityDuration: Duration(seconds: 3)
                         ),
                         child: Text(
                           alertTypes[index].toString().split('.').last,
