@@ -173,10 +173,6 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
       },
     );
 
-    Navigator.of(context).push(
-      _simpleAlertRoute,
-    );
-
     if (removalSignal != null) {
       _removalSignalListener = () {
         if (context.mounted && removalSignal!.value && !_closing) {
@@ -186,6 +182,16 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
 
       removalSignal!.addListener(_removalSignalListener!);
     }
+
+    Navigator.of(context).push(_simpleAlertRoute).whenComplete(() {
+      /*
+        Try to run the [_close] method commands after closing the route,
+          as the route may be closed by [Navigator] from any external location,
+          and the [_close] method contains code to delete listeners.
+      */
+
+      _close();
+    });
   }
 
   SimpleAlert.loading({
@@ -223,6 +229,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
           ValueListenableBuilder(
             valueListenable: _simpleAlertsThatAreCurrentlyDisplayed,
             builder: (BuildContext context, Map<String, Map<String, dynamic>> simpleAlertsThatAreCurrentlyDisplayed, Widget? child) {
+              // TODO: Fix position.
               final int indexOf = simpleAlertsThatAreCurrentlyDisplayed.keys.toList().indexOf(_simpleAlertRouteName); // All [Size]s before the current [SimpleAlert].
               final Iterable<Map<String, dynamic>> alertsDataOfSameDirection = simpleAlertsThatAreCurrentlyDisplayed.values
                   .take(
@@ -595,7 +602,9 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
       }
     }
 
-    _simpleAlertsThatAreCurrentlyDisplayed.value = _simpleAlertsThatAreCurrentlyDisplayed.value..remove(_simpleAlertRouteName);
+    _simpleAlertsThatAreCurrentlyDisplayed.value = {
+      ..._simpleAlertsThatAreCurrentlyDisplayed.value,
+    }..remove(_simpleAlertRouteName);
     _simpleAlertsThatAreCurrentlyDisplayed.notifyListeners();
   }
 }
