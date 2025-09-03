@@ -1,5 +1,5 @@
 name: simple_alert
-description: ZeroAlert is an alert with pre-defined styles for display famous messages to normal user, like success, error ...etc, with the ability to customization.
+description: A set of pre-defined alerts with the ability to customize.
 version: 0.0.1
 
 repository: https://github.com/PresKhaled/zero-alert
