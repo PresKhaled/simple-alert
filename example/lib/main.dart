@@ -106,6 +106,7 @@ class _MainPageState extends State<MainPage> {
                           brightness: Brightness.light,
                           title: 'Simple alert title',
                           description: 'Some words describe the work performed',
+                          duration: SimpleAlertDuration.long,
                           closeOnPress: false,
                           withClose: true,
                         ),
@@ -136,7 +137,7 @@ class _MainPageState extends State<MainPage> {
                           description: 'Some words describe the work performed',
                           closeOnPress: false,
                           withClose: true,
-                          animatedOpacityDuration: Duration(seconds: 3)
+                          // animatedOpacityDuration: Duration(seconds: 3)
                         ),
                         child: Text(
                           alertTypes[index].toString().split('.').last,

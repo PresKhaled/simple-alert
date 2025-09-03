@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart'
-    show Alignment, AlignmentDirectional, BorderRadius, BuildContext, Color, Colors, FontWeight, Offset, TextStyle, Theme, ThemeData, TooltipThemeData;
+import 'package:flutter/material.dart' show Alignment, AlignmentDirectional, BorderRadius, BuildContext, Color, Colors, FontWeight, Offset, TextStyle, Theme, ThemeData, TooltipThemeData;
 
 import '../simple_alert.dart';
 
@@ -17,9 +16,6 @@ class SimpleAlertPreferences {
   TooltipThemeData? _tooltipThemeData;
   String? _closeTooltip;
   SimpleAlertDuration? _duration;
-
-  /// Currently: When more than one alert is displayed in the center of the screen at the same time,
-  /// they will appear on top of each other.
   AlignmentDirectional get alignmentDirectional => _alignmentDirectional!;
   double Function()? get getWidth => _getWidth;
   SimpleAlertShape get shape => _shape!;
@@ -39,9 +35,6 @@ class SimpleAlertPreferences {
   factory SimpleAlertPreferences({
     /// Add with first initialization.
     BuildContext? context,
-
-    /// Currently: When more than one alert is displayed in the center of the screen at the same time,
-    /// they will appear on top of each other.
     AlignmentDirectional alignmentDirectional = AlignmentDirectional.topCenter,
     double Function()? getWidth,
     SimpleAlertShape shape = SimpleAlertShape.defaultRadius,
