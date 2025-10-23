@@ -33,6 +33,7 @@ dependencies:
   simple_alert:
     path: ../
   fluentui_system_icons: ^1.1.198
+  path_provider: ^2.0.15
 
 
   # The following adds the Cupertino Icons font to your application.

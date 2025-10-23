@@ -1,3 +1,7 @@
+/// A simple alert package for Flutter that displays customizable alerts using `Overlay` and `Route`.
+///
+/// It supports displaying multiple alerts simultaneously, automatic positioning,
+/// and handles device orientation changes.
 library simple_alert;
 
 export 'src/simple_alert_preferences.dart';
