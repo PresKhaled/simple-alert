@@ -16,8 +16,8 @@ import 'package:flutter/material.dart' show IconData, Icons;
 /// ```dart
 /// SimpleAlertPreferences(
 ///   icons: SimpleAlertIcons(
-///     info: Icons.help_outline,
-///     success: Icons.thumb_up,
+///     info: Icons.info_outline,
+///     success: Icons.check_circle,
 ///   ),
 /// );
 /// ```

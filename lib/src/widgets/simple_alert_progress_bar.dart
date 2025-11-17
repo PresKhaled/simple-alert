@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
-import 'constants.dart';
+import '../misc/constants.dart';
 
 /// A widget that displays a progress bar which animates its width from full to zero.
 ///
 /// This progress bar is typically used to visually indicate a countdown or duration
 /// for an alert. It utilizes an [AnimationController] to drive the animation
 /// and reflects the remaining time visually.
-class ProgressBar extends StatefulWidget {
+class SimpleAlertProgressBar extends StatefulWidget {
   /// A [ValueNotifier] that holds the [AnimationController] for the width animation.
   ///
-  /// This controller is created and managed by the [ProgressBar] widget internally.
+  /// This controller is created and managed by the [SimpleAlertProgressBar] widget internally.
   /// It is exposed through this [ValueNotifier] to allow external observation
   /// and control of the animation's lifecycle. The notifier is initially `null`
-  /// and is set within the [initState] of the [_ProgressBarState].
+  /// and is set within the [initState] of the [_SimpleAlertProgressBarState].
   final ValueNotifier<AnimationController?> animationController;
 
   /// The initial width of the progress bar, typically matching the width of the alert.
@@ -25,11 +25,11 @@ class ProgressBar extends StatefulWidget {
   /// its full width to zero.
   final Duration alertDuration;
 
-  /// Creates a [ProgressBar] widget.
+  /// Creates a [SimpleAlertProgressBar] widget.
   ///
   /// The [animationController], [alertWidth], and [alertDuration] parameters
   /// must not be null.
-  const ProgressBar({
+  const SimpleAlertProgressBar({
     super.key,
     required this.animationController,
     required this.alertWidth,
@@ -37,10 +37,10 @@ class ProgressBar extends StatefulWidget {
   });
 
   @override
-  State<ProgressBar> createState() => _ProgressBarState();
+  State<SimpleAlertProgressBar> createState() => _SimpleAlertProgressBarState();
 }
 
-class _ProgressBarState extends State<ProgressBar> with SingleTickerProviderStateMixin {
+class _SimpleAlertProgressBarState extends State<SimpleAlertProgressBar> with SingleTickerProviderStateMixin {
   late Animation<double> _widthAnimation;
   late double _width = widget.alertWidth;
 

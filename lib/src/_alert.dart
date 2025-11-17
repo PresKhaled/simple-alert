@@ -57,27 +57,27 @@ class _AlertState extends State<Alert> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    // Initialize the AnimationController and assign it to the ValueNotifier.
+    // Initialize the [AnimationController] and assign it to the [ValueNotifier].
     // This controller manages the fade-in animation for the alert.
     widget.animationController.value = AnimationController(
       vsync: this,
       duration: widget.animatedOpacityDuration,
     )..forward(); // Start the animation immediately.
 
-    // Create a Tween animation for opacity from 0.0 to 1.0, driven by the controller.
+    // Create a [Tween] animation for opacity from 0.0 to 1.0, driven by the controller.
     _opacityAnimation = widget.animationController.value!.drive(
       Tween(begin: 0.0, end: 1.0),
     );
 
     // Add a listener to the animation to update the opacity and trigger a rebuild.
     widget.animationController.value!.addListener(() {
-      setState(() => _opacity = _opacityAnimation.value);
+      setState(() => (_opacity = _opacityAnimation.value));
     });
   }
 
   @override
   void dispose() {
-    // Stop and dispose of the AnimationController to free up resources.
+    // Stop and dispose of the [AnimationController] to free up resources.
     widget.animationController.value!.stop();
     widget.animationController.value!.dispose();
 

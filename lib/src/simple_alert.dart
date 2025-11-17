@@ -8,171 +8,14 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:simple_alert/src/progress_bar.dart';
-import 'package:simple_alert/src/simple_alert_route.dart';
 
 import '../simple_alert.dart';
-import 'alert.dart';
-import 'constants.dart';
-import 'mixins/OpacityAnimationMixin.dart';
-import 'mixins/WidthAnimationMixin.dart';
-
-// ============================================================================
-// Core Alert Manager (Backend Layer)
-// ============================================================================
-
-/// Manages the state and lifecycle of all displayed alerts.
-/// This class separates business logic from UI concerns.
-class _AlertManager {
-  static final _AlertManager _instance = _AlertManager._internal();
-  factory _AlertManager() => _instance;
-  _AlertManager._internal();
-
-  final ValueNotifier<Map<String, _AlertData>> _displayedAlerts = ValueNotifier<Map<String, _AlertData>>({});
-
-  ValueNotifier<Map<String, _AlertData>> get displayedAlerts => _displayedAlerts;
-
-  void registerAlert(String routeName, _AlertData data) {
-    _displayedAlerts.value = {
-      ..._displayedAlerts.value,
-      routeName: data,
-    };
-  }
-
-  void unregisterAlert(String routeName) {
-    if (_displayedAlerts.value.containsKey(routeName)) {
-      final newMap = Map<String, _AlertData>.from(_displayedAlerts.value);
-      newMap.remove(routeName);
-      _displayedAlerts.value = newMap;
-    }
-  }
-
-  void updateAlertSize(String routeName, Size size) {
-    if (_displayedAlerts.value.containsKey(routeName)) {
-      final data = _displayedAlerts.value[routeName]!;
-      data.size = size;
-      _displayedAlerts.notifyListeners();
-    }
-  }
-
-  List<_AlertData> getAlertsInSameDirection(
-    String currentRouteName,
-    AlignmentDirectional alignment,
-  ) {
-    final alerts = _displayedAlerts.value;
-    final keys = alerts.keys.toList();
-    final currentIndex = keys.indexOf(currentRouteName);
-
-    if (currentIndex == -1) return [];
-
-    final bool fromTop = _isTopAligned(alignment);
-    final bool fromCenter = _isCenterAligned(alignment);
-    final bool fromBottom = _isBottomAligned(alignment);
-
-    return keys.take(currentIndex).map((key) => alerts[key]!).where((data) => data.fromTop == fromTop && data.fromCenter == fromCenter && data.fromBottom == fromBottom).toList();
-  }
-
-  static bool _isTopAligned(AlignmentDirectional alignment) {
-    return [
-      AlignmentDirectional.topStart,
-      AlignmentDirectional.topCenter,
-      AlignmentDirectional.topEnd,
-    ].contains(alignment);
-  }
-
-  static bool _isCenterAligned(AlignmentDirectional alignment) {
-    return [
-      AlignmentDirectional.centerStart,
-      AlignmentDirectional.center,
-      AlignmentDirectional.centerEnd,
-    ].contains(alignment);
-  }
-
-  static bool _isBottomAligned(AlignmentDirectional alignment) {
-    return [
-      AlignmentDirectional.bottomStart,
-      AlignmentDirectional.bottomCenter,
-      AlignmentDirectional.bottomEnd,
-    ].contains(alignment);
-  }
-
-  void dispose() {
-    _displayedAlerts.dispose();
-  }
-}
-
-/// Data model for alert information.
-class _AlertData {
-  Size size;
-  final bool fromTop;
-  final bool fromCenter;
-  final bool fromBottom;
-
-  _AlertData({
-    required this.size,
-    required this.fromTop,
-    required this.fromCenter,
-    required this.fromBottom,
-  });
-}
-
-// ============================================================================
-// Timer Controller (Backend Layer)
-// ============================================================================
-
-/// Manages the countdown timer for alert auto-dismissal.
-class _AlertTimerController {
-  final Duration duration;
-  final ValueNotifier<int> remainingMilliseconds;
-  final VoidCallback onComplete;
-
-  Timer? _timer;
-  bool _isPaused = false;
-  bool _isDisposed = false;
-
-  _AlertTimerController({
-    required this.duration,
-    required this.onComplete,
-  }) : remainingMilliseconds = ValueNotifier<int>(duration.inMilliseconds);
-
-  void start() {
-    if (_isDisposed) return;
-
-    _timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
-      if (_isDisposed) {
-        timer.cancel();
-        return;
-      }
-
-      if (!_isPaused && remainingMilliseconds.value > 0) {
-        remainingMilliseconds.value -= 100;
-
-        if (remainingMilliseconds.value <= 0) {
-          onComplete();
-        }
-      }
-    });
-  }
-
-  void pause() {
-    _isPaused = true;
-  }
-
-  void resume() {
-    _isPaused = false;
-  }
-
-  void dispose() {
-    _isDisposed = true;
-    _timer?.cancel();
-    _timer = null;
-    remainingMilliseconds.dispose();
-  }
-}
-
-// ============================================================================
-// SimpleAlert Main Class (Presentation Layer)
-// ============================================================================
+import 'backend/alert_manager.dart';
+import 'backend/alert_timer_controller.dart';
+import 'misc/constants.dart';
+import 'mixins/simple_alert_opacity_animation_mixin.dart';
+import 'mixins/simple_alert_width_animation_mixin.dart';
+import 'widgets/simple_alert_route_content.dart';
 
 /// A comprehensive alert system that displays customizable alerts using `Overlay` and `Route`.
 ///
@@ -205,46 +48,108 @@ class _AlertTimerController {
 /// ```
 class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   // Configuration Properties
+  /// The build context from which the alert is shown.
   final BuildContext context;
+
+  /// An optional unique name for the alert's route. If null, a random one is generated.
   final String? routeName;
+
+  /// The main title text displayed in the alert.
   final String title;
+
+  /// An optional detailed description text for the alert.
   final String? description;
+
+  /// The alignment of the alert on the screen. Defaults to [SimpleAlertPreferences().alignmentDirectional].
   final AlignmentDirectional? alignmentDirectional;
+
+  /// The specified width of the alert. If null, it will default to the screen width or a preference.
   final double? width;
+
+  /// The shape of the alert container. Defaults to [SimpleAlertPreferences().shape].
   final SimpleAlertShape? shape;
+
+  /// The border radius for the alert's corners. Overrides [shape] if specified.
   final BorderRadius? borderRadius;
+
+  /// The brightness theme for the alert. Defaults to the current `Theme.of(context).brightness`.
   final Brightness? brightness;
+
+  /// The predefined type of the alert (e.g., success, warning). Defaults to [SimpleAlertPreferences().type].
   final SimpleAlertType? type;
+
+  /// The background color of the alert. Overrides the default color based on [type] and [brightness].
   final Color? backgroundColor;
+
+  /// The foreground color of the alert (text, icons). Overrides the default color based on [brightness].
   final Color? foregroundColor;
+
+  /// The predefined duration for auto-dismissal. Defaults to [SimpleAlertPreferences().duration].
   final SimpleAlertDuration? duration;
+
+  /// A custom duration for auto-dismissal. Overrides [duration] if specified.
   final Duration? customDuration;
+
+  /// The duration of the opacity animation when the alert appears or disappears.
   final Duration animatedOpacityDuration;
+
+  /// If true, the alert will display a loading indicator instead of a type icon.
   final bool loading;
+
+  /// If true, the alert's content (title and description) will be horizontally centered.
   final bool centerContent;
+
+  /// If true, the alert will close when pressed, unless [withProgressBar] is true.
   final bool closeOnPress;
+
+  /// If true, a close button will be displayed in the alert.
   final bool withClose;
+
+  /// If true, a progress bar indicating the remaining duration will be displayed.
   final bool withProgressBar;
+
+  /// An optional list of [IconButton] widgets to display as actions in the alert.
   final List<IconButton>? actions;
+
+  /// An optional [ValueNotifier<bool>] that, when its value becomes true, triggers the alert's dismissal.
   final ValueNotifier<bool>? removalSignal;
 
   // Computed Properties
+  /// The resolved alert type, either specified or from preferences.
   late final SimpleAlertType _resolvedType;
+
+  /// The resolved brightness theme, either specified or from the context.
   late final Brightness _resolvedBrightness;
+
+  /// The resolved alignment for the alert, either specified or from preferences.
   late final AlignmentDirectional _resolvedAlignment;
+
+  /// The resolved duration for the alert's display time.
   late final Duration _resolvedDuration;
 
   // Internal State
-  final _AlertManager _alertManager = _AlertManager();
+  /// The alert manager responsible for tracking active alerts.
+  final AlertManager _alertManager = AlertManager();
+
+  /// The unique route name for this specific alert instance.
   late final String _routeName;
+
+  /// The Flutter route object for this alert.
   late final Route<void> _route;
-  late final _AlertTimerController _timerController;
 
+  /// The controller for managing the alert's auto-dismissal timer.
+  late final AlertTimerController _timerController;
+
+  /// A global key used to obtain the render box of the alert for size calculations.
   final GlobalKey _alertKey = GlobalKey();
-  BuildContext? _routeContext;
-  Orientation? _currentOrientation;
 
+  /// The build context of the alert's route, available once the route is built.
+  BuildContext? _routeContext;
+
+  /// A flag indicating if the alert is currently in the process of closing.
   bool _isClosing = false;
+
+  /// The listener for the [removalSignal] [ValueNotifier].
   VoidCallback? _removalSignalListener;
 
   /// Creates a [SimpleAlert] instance with specified properties.
@@ -272,14 +177,19 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     this.actions,
     this.removalSignal,
   }) {
+    // Validate input properties to ensure they are valid.
     _validateInputs();
+    // Initialize properties that depend on other configurations or preferences.
     _initializeProperties();
+    // Set up the timer controller for auto-dismissal.
     _setupTimerController();
+    // Configure the listener for the external removal signal.
     _setupRemovalSignal();
+    // Build the Flutter route for displaying the alert.
     _buildRoute();
   }
 
-  /// Creates a loading [SimpleAlert] instance.
+  /// Creates a loading [SimpleAlert] instance with predefined properties for a loading state.
   SimpleAlert.loading({
     required BuildContext context,
     required String title,
@@ -294,7 +204,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
           borderRadius: borderRadius,
           title: title,
           loading: true,
-          closeOnPress: false,
+          closeOnPress: false, // Loading alerts typically don't close on press.
           removalSignal: removalSignal,
         );
 
@@ -302,6 +212,8 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   // Initialization Methods
   // ============================================================================
 
+  /// Validates the constructor inputs to ensure properties like title,
+  /// customDuration, and width have valid values.
   void _validateInputs() {
     assert(title.isNotEmpty, 'Title cannot be empty');
 
@@ -314,21 +226,30 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     }
   }
 
+  /// Initializes various properties based on specified values or global preferences.
+  ///
+  /// This includes resolving the alert type, brightness, alignment, duration,
+  /// and generating a route name if not specified.
   void _initializeProperties() {
-    _resolvedType = type ?? SimpleAlertPreferences().type;
+    _resolvedType = (type ?? SimpleAlertPreferences().type) as SimpleAlertType;
     _resolvedBrightness = brightness ?? Theme.of(context).brightness;
     _resolvedAlignment = alignmentDirectional ?? SimpleAlertPreferences().alignmentDirectional;
     _resolvedDuration = _calculateDuration();
     _routeName = routeName ?? 'SimpleAlert#${Random().nextInt(999999999)}';
   }
 
+  /// Sets up the [AlertTimerController] with the resolved duration
+  /// and the [_close] method as the completion callback.
   void _setupTimerController() {
-    _timerController = _AlertTimerController(
+    _timerController = AlertTimerController(
       duration: _resolvedDuration,
       onComplete: _close,
     );
   }
 
+  /// Sets up a listener for the [removalSignal] [ValueNotifier].
+  ///
+  /// When the [removalSignal]'s value becomes `true`, the alert is closed.
   void _setupRemovalSignal() {
     if (removalSignal != null) {
       _removalSignalListener = () {
@@ -340,10 +261,46 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     }
   }
 
+  /// Builds the [SimpleAlertRoute] instance using the resolved route name
+  /// and specifies [_buildRouteContent] as its builder.
   void _buildRoute() {
     _route = SimpleAlertRoute(
       settings: RouteSettings(name: _routeName),
-      builder: _buildRouteContent,
+      builder: (routeContext) => SimpleAlertRouteContent(
+        routeContext: routeContext,
+        onFirstFrameBuilt: _onFirstFrameBuilt,
+        closeAlert: _close,
+        opacityAnimationController: opacityAnimationController,
+        animatedOpacityDuration: animatedOpacityDuration,
+        // Properties for SimpleAlertSafeAreaWrapper
+        alertKey: _alertKey,
+        resolvedAlignment: _resolvedAlignment,
+        alertWidth: _calculateAlertWidth(MediaQuery.sizeOf(routeContext).width), // Initial width calculation
+        calculateVerticalOffset: _calculateVerticalOffset,
+        alertManager: _alertManager,
+        routeName: _routeName,
+        updateAlertSize: _alertManager.updateAlertSize,
+        // Pass-through properties for SimpleAlertInteractiveContainer
+        title: title,
+        description: description,
+        withProgressBar: withProgressBar,
+        closeOnPress: closeOnPress,
+        onTap: _handleTap,
+        onTapDown: _handleTapDown,
+        onTapUp: _handleTapUp,
+        onTapCancel: _handleTapCancel,
+        getBorderRadius: _getBorderRadius,
+        getBackgroundColor: _getBackgroundColor,
+        loading: loading,
+        centerContent: centerContent,
+        actions: actions,
+        withClose: withClose,
+        widthAnimationController: widthAnimationController,
+        resolvedDuration: _resolvedDuration,
+        getForegroundColor: _getForegroundColor,
+        getIcon: _getIcon,
+        onClosePressed: _close,
+      ),
     );
   }
 
@@ -351,106 +308,44 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   // Route Building
   // ============================================================================
 
-  Widget _buildRouteContent(BuildContext context) {
-    _routeContext = context;
-    _currentOrientation ??= MediaQuery.orientationOf(context);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) => _onFirstFrameBuilt());
-
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (bool didPop, dynamic result) {
-        if (!didPop) _close();
-      },
-      child: Alert(
-        animationController: opacityAnimationController,
-        animatedOpacityDuration: animatedOpacityDuration,
-        child: _buildAlertContent(context),
-      ),
-    );
-  }
-
+  /// Called after the first frame of the alert is built to register its size and start the timer.
+  ///
+  /// This method:
+  /// - Safely checks if the alert widget is rendered and has a size.
+  /// - Creates an `AlertData` object with the alert's size and alignment properties.
+  /// - Registers this `AlertData` with the `AlertManager`.
+  /// - Starts the auto-dismissal timer.
   void _onFirstFrameBuilt() {
+    // Ensure the alert widget is rendered before attempting to get its size.
     if (_alertKey.currentContext == null) return;
 
     final renderBox = _alertKey.currentContext!.findRenderObject() as RenderBox?;
+    // Ensure the render box exists and has a size.
     if (renderBox == null || !renderBox.hasSize) return;
 
-    final alertData = _AlertData(
+    // Create alert data with its size and alignment properties.
+    final alertData = AlertData(
       size: renderBox.size,
-      fromTop: _AlertManager._isTopAligned(_resolvedAlignment),
-      fromCenter: _AlertManager._isCenterAligned(_resolvedAlignment),
-      fromBottom: _AlertManager._isBottomAligned(_resolvedAlignment),
+      fromTop: AlertManager.isTopAligned(_resolvedAlignment),
+      fromCenter: AlertManager.isCenterAligned(_resolvedAlignment),
+      fromBottom: AlertManager.isBottomAligned(_resolvedAlignment),
     );
 
-    _alertManager.registerAlert(_routeName, alertData);
-    _timerController.start();
+    _alertManager.registerAlert(_routeName, alertData); // Register the alert with its data.
+    _timerController.start(); // Start the auto-dismissal timer.
   }
 
   // ============================================================================
   // UI Building
   // ============================================================================
 
-  Widget _buildAlertContent(BuildContext context) {
-    return SafeArea(
-      child: OrientationBuilder(
-        builder: (context, orientation) {
-          _handleOrientationChange(orientation);
-          return _buildPositionedAlert(context, orientation);
-        },
-      ),
-    );
-  }
-
-  void _handleOrientationChange(Orientation orientation) {
-    if (_currentOrientation != orientation) {
-      _currentOrientation = orientation;
-
-      // Update sizes for all alerts after orientation change
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        for (final routeName in _alertManager.displayedAlerts.value.keys) {
-          final key = _alertKey;
-          if (key.currentContext != null) {
-            final renderBox = key.currentContext!.findRenderObject() as RenderBox?;
-            if (renderBox != null && renderBox.hasSize) {
-              _alertManager.updateAlertSize(routeName, renderBox.size);
-            }
-          }
-        }
-      });
-    }
-  }
-
-  Widget _buildPositionedAlert(BuildContext context, Orientation orientation) {
-    final mediaSize = MediaQuery.sizeOf(context);
-    final alertWidth = _calculateAlertWidth(mediaSize.width);
-
-    return Stack(
-      alignment: _resolvedAlignment,
-      fit: StackFit.expand,
-      children: [
-        ValueListenableBuilder<Map<String, _AlertData>>(
-          valueListenable: _alertManager.displayedAlerts,
-          builder: (context, displayedAlerts, child) {
-            final offsetY = _calculateVerticalOffset(
-              displayedAlerts,
-              orientation,
-              mediaSize.height,
-            );
-
-            return Positioned(
-              key: _alertKey,
-              width: alertWidth,
-              top: (_AlertManager._isTopAligned(_resolvedAlignment) || _AlertManager._isCenterAligned(_resolvedAlignment)) ? offsetY : null,
-              bottom: _AlertManager._isBottomAligned(_resolvedAlignment) ? offsetY : null,
-              child: _buildAlertContainer(context, alertWidth),
-            );
-          },
-        ),
-      ],
-    );
-  }
-
+  /// Calculates the effective width of the alert.
+  ///
+  /// It prioritizes the specified `width`, then a width from `SimpleAlertPreferences`,
+  /// and finally defaults to the `screenWidth`.
+  ///
+  /// [screenWidth] The current width of the screen.
+  /// Returns the calculated width for the alert.
   double _calculateAlertWidth(double screenWidth) {
     if (width != null) return width!;
 
@@ -458,178 +353,35 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     return widthFromPreferences ?? screenWidth;
   }
 
+  /// Calculates the vertical offset required to position the current alert,
+  /// considering other alerts already displayed in the same direction.
+  ///
+  /// This ensures that alerts stack vertically without overlapping.
+  ///
+  /// [displayedAlerts] A map of currently displayed alerts.
+  /// [orientation] The current device orientation.
+  /// [screenHeight] The total height of the screen.
+  /// Returns the vertical offset for the alert.
   double _calculateVerticalOffset(
-    Map<String, _AlertData> displayedAlerts,
+    Map<String, AlertData> displayedAlerts,
     Orientation orientation,
     double screenHeight,
   ) {
+    // Get alerts that are in the same direction and are displayed before the current one.
     final previousAlerts = _alertManager.getAlertsInSameDirection(
       _routeName,
       _resolvedAlignment,
     );
 
+    // Define an average height for calculating initial base offset, considering orientation.
     final averageHeight = orientation == Orientation.portrait ? 70.0 : 50.0;
-    final baseOffset = _AlertManager._isCenterAligned(_resolvedAlignment) ? (screenHeight / 2) - averageHeight : 0.0;
+    // Calculate a base offset, particularly for center-aligned alerts.
+    final baseOffset = AlertManager.isCenterAligned(_resolvedAlignment) ? (screenHeight / 2) - averageHeight : 0.0;
 
+    // Fold over previous alerts to accumulate their heights and determine the final offset.
     return previousAlerts.fold<double>(
       baseOffset,
       (offset, data) => offset + data.size.height,
-    );
-  }
-
-  Widget _buildAlertContainer(BuildContext context, double alertWidth) {
-    return Semantics(
-      container: true,
-      liveRegion: true,
-      label: 'تنبيه: $title',
-      hint: description ?? '',
-      child: GestureDetector(
-        onTap: _handleTap,
-        onTapDown: withProgressBar ? _handleTapDown : null,
-        onTapUp: withProgressBar ? _handleTapUp : null,
-        onTapCancel: withProgressBar ? _handleTapCancel : null,
-        child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 5.0),
-          padding: const EdgeInsets.symmetric(horizontal: 13.0),
-          child: ClipRRect(
-            borderRadius: _getBorderRadius(),
-            child: Material(
-              color: _getBackgroundColor(),
-              child: Padding(
-                padding: const EdgeInsets.all(11.0),
-                child: _buildAlertContent2(context, alertWidth),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAlertContent2(BuildContext context, double alertWidth) {
-    final themeData = Theme.of(context);
-    final foregroundColor = _getForegroundColor();
-
-    return Theme(
-      data: themeData.copyWith(
-        iconTheme: themeData.iconTheme.copyWith(
-          color: SimpleAlertPreferences().iconsColor ?? foregroundColor,
-        ),
-        iconButtonTheme: IconButtonThemeData(
-          style: ButtonStyle(
-            foregroundColor: WidgetStatePropertyAll<Color>(
-              SimpleAlertPreferences().iconsColor ?? foregroundColor,
-            ),
-          ),
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Flexible(
-            child: Row(
-              children: [
-                _buildLeadingIcon(foregroundColor),
-                Expanded(child: _buildContentSection(foregroundColor)),
-              ],
-            ),
-          ),
-          if (withProgressBar)
-            Flexible(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: ProgressBar(
-                  animationController: widthAnimationController,
-                  alertWidth: alertWidth,
-                  alertDuration: _resolvedDuration,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLeadingIcon(Color foregroundColor) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 9.0),
-      child: loading
-          ? Semantics(
-              label: 'مؤشر التحميل',
-              child: CircleAvatar(
-                backgroundColor: Colors.white70,
-                radius: 15.0,
-                child: SizedBox.square(
-                  dimension: 18.0,
-                  child: CircularProgressIndicator(
-                    color: _getBackgroundColor(),
-                    strokeWidth: 2.0,
-                  ),
-                ),
-              ),
-            )
-          : _getIcon(),
-    );
-  }
-
-  Widget _buildContentSection(Color foregroundColor) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(child: _buildTextContent(foregroundColor)),
-        _buildActionsSection(),
-      ],
-    );
-  }
-
-  Widget _buildTextContent(Color foregroundColor) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: centerContent ? CrossAxisAlignment.center : CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: SimpleAlertPreferences().titleStyle.copyWith(
-                color: foregroundColor,
-              ),
-        ),
-        if (description != null) ...[
-          const SizedBox(height: 5.0),
-          Text(
-            description!,
-            style: SimpleAlertPreferences().descriptionStyle.copyWith(
-                  color: foregroundColor,
-                ),
-          ),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildActionsSection() {
-    if (actions == null && !withClose) {
-      return const SizedBox.shrink();
-    }
-
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 92.0),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (actions != null) ...actions!,
-            if (withClose)
-              IconButton(
-                onPressed: _close,
-                icon: Icon(SimpleAlertPreferences().icons.close),
-                splashRadius: ICON_BUTTON_SPLASH_RADIUS,
-                tooltip: SimpleAlertPreferences().closeTooltip,
-              ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -637,51 +389,81 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   // Gesture Handlers
   // ============================================================================
 
+  /// Handles the tap gesture on the alert.
+  ///
+  /// If `closeOnPress` is true and `withProgressBar` is false, the alert will close.
   void _handleTap() {
     if (closeOnPress && !withProgressBar) {
       _close();
     }
   }
 
+  /// Handles the tap down gesture on the alert, specifically for progress bar interaction.
+  ///
+  /// If a progress bar is present, it stops the width animation and pauses the timer.
+  /// This allows the user to "hold" the alert to keep it open.
+  ///
+  /// [details] Details about the tap down event.
   void _handleTapDown(TapDownDetails details) {
     if (widthAnimationController.value != null) {
-      widthAnimationController.value!.stop(canceled: false);
-      _timerController.pause();
+      widthAnimationController.value!.stop(canceled: false); // Stop progress bar animation.
+      _timerController.pause(); // Pause auto-dismissal timer.
     }
   }
 
+  /// Handles the tap up gesture on the alert, specifically for progress bar interaction.
+  ///
+  /// Resumes the timer and progress bar animation after a tap up.
+  ///
+  /// [details] Details about the tap up event.
   void _handleTapUp(TapUpDetails details) {
     _resumeTimer();
   }
 
+  /// Handles the tap cancel gesture on the alert, specifically for progress bar interaction.
+  ///
+  /// Resumes the timer and progress bar animation if a tap was cancelled.
   void _handleTapCancel() {
     _resumeTimer();
   }
 
+  /// Resumes the auto-dismissal timer and the progress bar animation if present.
   void _resumeTimer() {
-    _timerController.resume();
+    _timerController.resume(); // Resume the timer.
     if (widthAnimationController.value != null) {
-      widthAnimationController.value!.forward();
+      widthAnimationController.value!.forward(); // Continue progress bar animation.
     }
   }
 
   // ============================================================================
-  // Helper Methods
+  // Utility Methods
   // ============================================================================
 
+  /// Calculates the effective duration for the alert's display.
+  ///
+  /// It prioritizes `customDuration`, then `duration` (from preferences if null),
+  /// and finally maps `SimpleAlertDuration` enums to specific `Duration` values.
+  ///
+  /// Returns the calculated [Duration].
   Duration _calculateDuration() {
     if (customDuration != null) return customDuration!;
 
-    final alertDuration = duration ?? SimpleAlertPreferences().duration;
+    final alertDuration = (duration ?? SimpleAlertPreferences().duration);
 
     return switch (alertDuration) {
       SimpleAlertDuration.quick => const Duration(seconds: 3),
+      SimpleAlertDuration.medium => const Duration(seconds: 5),
       SimpleAlertDuration.long => const Duration(seconds: 8),
       SimpleAlertDuration.day => const Duration(days: 1),
-      SimpleAlertDuration.medium => const Duration(seconds: 5),
     };
   }
 
+  /// Determines the background color of the alert based on its resolved type and brightness.
+  ///
+  /// If `backgroundColor` is specified, it is used. Otherwise, default colors are
+  /// provided for different alert types and brightness modes.
+  ///
+  /// Returns the resolved [Color] for the background.
   Color _getBackgroundColor() {
     if (backgroundColor != null) return backgroundColor!;
 
@@ -696,19 +478,31 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     };
   }
 
+  /// Determines the foreground color (text and icons) of the alert based on its resolved brightness.
+  ///
+  /// If `foregroundColor` is specified, it is used. Otherwise, it defaults to black for dark mode
+  /// and white for light mode.
+  ///
+  /// Returns the resolved [Color] for the foreground.
   Color _getForegroundColor() {
     if (foregroundColor != null) return foregroundColor!;
 
     return _resolvedBrightness == Brightness.dark ? Colors.black : Colors.white;
   }
 
+  /// Determines the [BorderRadius] for the alert's container.
+  ///
+  /// It prioritizes `borderRadius`, then a preference from `SimpleAlertPreferences`,
+  /// and finally defaults based on the `shape` property.
+  ///
+  /// Returns the resolved [BorderRadius].
   BorderRadius _getBorderRadius() {
     if (borderRadius != null) return borderRadius!;
 
     final preferenceBorderRadius = SimpleAlertPreferences().borderRadius;
     if (preferenceBorderRadius != null) return preferenceBorderRadius;
 
-    final alertShape = shape ?? SimpleAlertPreferences().shape;
+    final alertShape = (shape ?? SimpleAlertPreferences().shape);
 
     return switch (alertShape) {
       SimpleAlertShape.defaultRadius => BorderRadius.circular(BORDER_RADIUS),
@@ -717,16 +511,21 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     };
   }
 
+  /// Retrieves the appropriate icon for the alert based on its resolved type.
+  ///
+  /// It also assigns a semantic label for accessibility purposes.
+  ///
+  /// Returns an [Icon] widget.
   Icon _getIcon() {
     final icons = SimpleAlertPreferences().icons;
     final size = SimpleAlertPreferences().iconsSize;
 
     final (iconData, semanticLabel) = switch (_resolvedType) {
-      SimpleAlertType.normal => (icons.normal, 'أيقونة تنبيه عادي'),
-      SimpleAlertType.success => (icons.success, 'أيقونة نجاح'),
-      SimpleAlertType.warning => (icons.warning, 'أيقونة تحذير'),
-      SimpleAlertType.danger => (icons.danger, 'أيقونة خطر'),
-      SimpleAlertType.info => (icons.info, 'أيقونة معلومات'),
+      SimpleAlertType.normal => (icons.normal, 'Normal alert icon'),
+      SimpleAlertType.success => (icons.success, 'Success alert icon'),
+      SimpleAlertType.warning => (icons.warning, 'Warning alert icon'),
+      SimpleAlertType.danger => (icons.danger, 'Danger alert icon'),
+      SimpleAlertType.info => (icons.info, 'Information alert icon'),
     };
 
     return Icon(
@@ -740,23 +539,36 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   // Lifecycle Methods
   // ============================================================================
 
+  /// Initiates the closing sequence for the alert.
+  ///
+  /// This asynchronous method:
+  /// - Prevents multiple closing attempts.
+  /// - Calls `_cleanup` to dispose of listeners and timers.
+  /// - Reverses the opacity animation.
+  /// - Removes the alert's route from the Navigator if it's active.
+  /// - Unregisters the alert from the `AlertManager`.
   Future<void> _close() async {
     if (_isClosing) return;
     _isClosing = true;
 
-    _cleanup();
+    _cleanup(); // Dispose of timers and listeners.
 
     if (_routeContext != null && _routeContext!.mounted) {
+      // Reverse the opacity animation for a smooth dismissal.
       await opacityAnimationController.value?.reverse();
 
+      // Check if the route can be popped and is still active before removing.
       if (Navigator.canPop(_routeContext!) && _route.isActive) {
         Navigator.maybeOf(_routeContext!)?.removeRoute(_route);
       }
     }
 
-    _alertManager.unregisterAlert(_routeName);
+    _alertManager.unregisterAlert(_routeName); // Remove alert from the manager.
   }
 
+  /// Cleans up resources associated with the alert, such as listeners and timers.
+  ///
+  /// This method is called during the closing process to prevent memory leaks.
   void _cleanup() {
     if (_removalSignalListener != null) {
       removalSignal?.removeListener(_removalSignalListener!);
@@ -766,12 +578,16 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     _timerController.dispose();
   }
 
-  /// Displays the [SimpleAlert] by pushing it onto the Navigator.
+  /// Displays the [SimpleAlert] by pushing its route onto the Navigator.
+  ///
+  /// Throws a [StateError] if the context is not mounted.
+  /// When the route completes (e.g., alert is dismissed), the `_close` method is called.
   void show() {
     if (!context.mounted) {
       throw StateError('Cannot show alert: context is not mounted');
     }
 
+    // Push the alert's route onto the navigator and call _close when it completes.
     Navigator.of(context).push(_route).whenComplete(_close);
   }
 }

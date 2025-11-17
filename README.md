@@ -1,3 +1,6 @@
-# Simple Alert
+### Simple Alert
 
-The package contains a set of pre-defined alerts with the ability to customize.
+A flexible Flutter package for displaying customizable and dynamic in-app alerts.
+It supports multiple, automatically positioned, and responsive alerts with various types,
+durations, and appearance options. Features include progress bars, action buttons,
+and dismissal controls, all designed to enhance user experience with informative notifications.

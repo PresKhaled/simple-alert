@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart' show Alignment, AlignmentDirectional, BorderRadius, BuildContext, Color, Colors, FontWeight, Offset, TextStyle, Theme, ThemeData, TooltipThemeData;
+import 'package:flutter/material.dart' show AlignmentDirectional, BorderRadius, BuildContext, Color, FontWeight, TextStyle, Theme, ThemeData, TooltipThemeData, Colors;
 
-import '../simple_alert.dart';
 import 'enums/simple_alert_duration.dart';
 import 'enums/simple_alert_shape.dart';
 import 'enums/simple_alert_type.dart';
@@ -27,22 +26,22 @@ import 'misc/simple_alert_icons.dart';
 /// SimpleAlert(
 ///   context: context,
 ///   title: 'Customized Alert',
-/// ).show(); // Will use the globally set preferences.
+/// ); // Will use the globally set preferences.
 /// ```
 class SimpleAlertPreferences {
-  AlignmentDirectional? _alignmentDirectional;
-  double Function()? _getWidth;
-  SimpleAlertShape? _shape;
-  BorderRadius? _borderRadius;
-  SimpleAlertType? _type;
-  SimpleAlertIcons? _icons;
-  double? _iconsSize;
-  Color? _iconsColor;
-  TextStyle? _titleStyle;
-  TextStyle? _descriptionStyle;
-  TooltipThemeData? _tooltipThemeData;
-  String? _closeTooltip;
-  SimpleAlertDuration? _duration;
+  late AlignmentDirectional? _alignmentDirectional;
+  late double Function()? _getWidth;
+  late SimpleAlertShape? _shape;
+  late BorderRadius? _borderRadius;
+  late SimpleAlertType? _type;
+  late SimpleAlertIcons? _icons;
+  late double? _iconsSize;
+  late Color? _iconsColor;
+  late TextStyle? _titleStyle;
+  late TextStyle? _descriptionStyle;
+  late TooltipThemeData? _tooltipThemeData;
+  late String? _closeTooltip;
+  late SimpleAlertDuration? _duration;
 
   /// The default alignment direction for alerts.
   AlignmentDirectional get alignmentDirectional => _alignmentDirectional!;
@@ -126,13 +125,15 @@ class SimpleAlertPreferences {
         const TextStyle(
           fontSize: 18.0,
           fontWeight: FontWeight.bold,
-          color: Colors.white, // Default color if no theme is available
+          color: Colors.white, // Default color if no theme is available.
         ));
-    // Changed default description style to bodyMedium and smaller font size for better distinction.
-    _instance._descriptionStyle ??= (descriptionStyle ?? themeData?.textTheme.bodyMedium ?? const TextStyle(
-      fontSize: 14.0,
-      color: Colors.white70, // Default color if no theme is available
-    ));
+    _instance._descriptionStyle ??= (descriptionStyle ??
+        themeData?.textTheme.bodyLarge ??
+        const TextStyle(
+          fontSize: 16.0,
+          fontWeight: FontWeight.bold,
+          color: Colors.white70, // Default color if no theme is available.
+        ));
     _instance._tooltipThemeData ??= tooltipThemeData;
     _instance._closeTooltip ??= closeTooltip;
     _instance._duration ??= duration;

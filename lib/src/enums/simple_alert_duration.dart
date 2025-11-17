@@ -1,8 +1,7 @@
 /// Defines predefined durations for which a [SimpleAlert] remains visible.
 ///
 /// These durations offer common timeframes for alerts, from quick notifications
-/// to alerts that stay on screen for a full day. This allows developers to easily
-/// specify how long an alert should be displayed without needing custom [Duration] objects.
+/// to alerts that stay on screen for a full day.
 enum SimpleAlertDuration {
   /// A quick duration, typically a few seconds.
   quick,

@@ -1,9 +1,9 @@
 name: simple_alert
-description: A set of pre-defined alerts with the ability to customize.
-version: 0.0.1
+description: Multiple, customizable, responsive alerts with progress bars, action buttons, and more.
+version: 1.0.0
 
-repository: https://github.com/PresKhaled/zero-alert
-issue_tracker: https://github.com/PresKhaled/zero-alert/issues
+repository: https://github.com/PresKhaled/simple-alert
+issue_tracker: https://github.com/PresKhaled/simple-alert/issues
 
 environment:
   sdk: ">=3.0.0"
