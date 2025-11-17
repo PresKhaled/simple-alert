@@ -438,6 +438,7 @@ void main() {
 // ============================================================================
 
 class _MockBuildContext extends BuildContext {
+  @override
   final Size size;
   final Orientation orientation;
 

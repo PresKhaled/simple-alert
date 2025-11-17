@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../backend/alert_manager.dart';
-import '../simple_alert.dart';
 import 'simple_alert_interactive_container.dart';
 
 /// A widget that builds the [Positioned] widget for the alert within a [Stack].

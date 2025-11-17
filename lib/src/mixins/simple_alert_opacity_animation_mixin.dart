@@ -3,7 +3,7 @@ import 'package:flutter/material.dart' show AnimationController, ValueNotifier;
 /// A mixin that provides a [ValueNotifier] to manage an [AnimationController]
 /// for opacity animations.
 ///
-/// This mixin is designed for use by classes that need to control
+/// This mixin is designed for use by classes that must control
 /// the fade and fade-out effects of a widget. The [AnimationController]
 /// held by the [ValueNotifier] should be initialized by the consuming widget
 /// (e.g., a [StatefulWidget]'s [initState]) which provides a [TickerProvider].

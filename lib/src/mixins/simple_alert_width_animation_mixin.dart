@@ -3,7 +3,7 @@ import 'package:flutter/material.dart' show AnimationController, ValueNotifier;
 /// A mixin that provides a [ValueNotifier] to manage an [AnimationController]
 /// for width animations.
 ///
-/// This mixin is designed for use by classes that need to control
+/// This mixin is designed for use by classes that must control
 /// the animation of a widget's width, often for effects like a progress bar
 /// or a shrinking/expanding element. The [AnimationController] held by the
 /// [ValueNotifier] should be initialized by the consuming widget

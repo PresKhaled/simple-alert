@@ -92,7 +92,7 @@ class SimpleAlertRoute<T> extends PopupRoute<T> {
       Future.microtask(() {
         if (context.mounted) {
           SemanticsService.announce(
-            'تم عرض تنبيه جديد', // TODO
+            'A new alert has been displayed.', // TODO
             TextDirection.rtl,
           );
         }
@@ -110,7 +110,7 @@ class SimpleAlertRoute<T> extends PopupRoute<T> {
       Future.microtask(() {
         if (context.mounted) {
           SemanticsService.announce(
-            'تم إغلاق التنبيه', // TODO
+            'The alert has been closed.', // TODO
             TextDirection.rtl,
           );
         }

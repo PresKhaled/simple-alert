@@ -181,11 +181,11 @@ class AlertA11yUtils {
   /// Gets semantic label for alert type
   static String getTypeSemanticLabel(SimpleAlertType type) {
     return switch (type) {
-      SimpleAlertType.normal => 'تنبيه عادي',
-      SimpleAlertType.success => 'تنبيه نجاح',
-      SimpleAlertType.warning => 'تنبيه تحذير',
-      SimpleAlertType.danger => 'تنبيه خطر',
-      SimpleAlertType.info => 'تنبيه معلومات',
+      SimpleAlertType.normal => 'Normal alert', // TODO
+      SimpleAlertType.success => 'Success alert', // TODO
+      SimpleAlertType.warning => 'Warning alert', // TODO
+      SimpleAlertType.danger => 'Danger alert', // TODO
+      SimpleAlertType.info => 'Information alert', // TODO
     };
   }
 
@@ -196,13 +196,13 @@ class AlertA11yUtils {
     required bool loading,
   }) {
     if (loading) {
-      return 'جاري التحميل، انتظر من فضلك';
+      return 'Loading'; // TODO
     }
     if (withProgressBar) {
-      return 'اضغط مع الاستمرار لإيقاف العد التنازلي مؤقتاً';
+      return 'Press and hold to pause the countdown.'; // TODO
     }
     if (closeOnPress) {
-      return 'اضغط للإغلاق';
+      return 'Click to close'; // TODO
     }
     return '';
   }

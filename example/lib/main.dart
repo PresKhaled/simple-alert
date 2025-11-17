@@ -79,7 +79,7 @@ class _MainPageState extends State<MainPage> {
                   (route) => (route.settings.name == '/'),
             );
           },
-          child: Text('Close all'),
+          child: const Text('Close all'),
         ),
       ),
       body: SafeArea(
@@ -160,7 +160,7 @@ class _MainPageState extends State<MainPage> {
                         title: 'Simple alert title',
                         description: 'Some words describe the work performed',
                       ),
-                      child: Text('Close on press'),
+                      child: const Text('Close on press'),
                     ),
                     ElevatedButton(
                       onPressed: () => SimpleAlert(
@@ -171,7 +171,7 @@ class _MainPageState extends State<MainPage> {
                         withClose: true,
                         withProgressBar: true,
                       ),
-                      child: Text('Progress bar (closeOnPress, topEnd)'),
+                      child: const Text('Progress bar (closeOnPress, topEnd)'),
                     ),
                     ElevatedButton(
                       onPressed: () => SimpleAlert(
@@ -183,7 +183,7 @@ class _MainPageState extends State<MainPage> {
                         withClose: true,
                         withProgressBar: true,
                       ),
-                      child: Text('Progress bar (center)'),
+                      child: const Text('Progress bar (center)'),
                     ),
                     ElevatedButton(
                       onPressed: () {
@@ -204,7 +204,7 @@ class _MainPageState extends State<MainPage> {
                           removalSignal: dataReceived,
                         );
                       },
-                      child: Text('Removal signal (bottomStart)'),
+                      child: const Text('Removal signal (bottomStart)'),
                     ),
                     ElevatedButton(
                       onPressed: () {
@@ -225,7 +225,7 @@ class _MainPageState extends State<MainPage> {
                           removalSignal: dataReceived,
                         );
                       },
-                      child: Text('Removal signal (bottomCenter)'),
+                      child: const Text('Removal signal (bottomCenter)'),
                     ),
                     ElevatedButton(
                       onPressed: () {
@@ -245,7 +245,7 @@ class _MainPageState extends State<MainPage> {
                           removalSignal: dataReceived,
                         );
                       },
-                      child: Text('Loading'),
+                      child: const Text('Loading'),
                     ),
                   ],
                 ),

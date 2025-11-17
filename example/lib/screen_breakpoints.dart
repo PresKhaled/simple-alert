@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart' show BuildContext, MediaQuery;
-import 'package:path_provider/path_provider.dart';
+
 abstract mixin class ScreenBreakpoints {
   final double _mediaExtraSmall = 320.0,
       _mediaSmall = 480.0, // ~ (35% of devices in 2020).
@@ -10,23 +10,23 @@ abstract mixin class ScreenBreakpoints {
   String getCurrentBreakpointName(double width) {
     // final double contextWidth = (MediaQuery.of(context).size.width);
 
-    if (width <= this._mediaExtraSmall) {
+    if (width <= _mediaExtraSmall) {
       return 'xs';
     }
 
-    if (width <= this._mediaSmall) {
+    if (width <= _mediaSmall) {
       return 'sm';
     }
 
-    if (width <= this._mediaMedium) {
+    if (width <= _mediaMedium) {
       return 'md';
     }
 
-    if (width <= this._mediaLarge) {
+    if (width <= _mediaLarge) {
       return 'lg';
     }
 
-    if (width <= this._mediaExtraLarge) {
+    if (width <= _mediaExtraLarge) {
       return 'xlg';
     }
 

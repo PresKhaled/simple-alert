@@ -187,6 +187,8 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     _setupRemovalSignal();
     // Build the Flutter route for displaying the alert.
     _buildRoute();
+    // Display the alert automatically upon creation.
+    show();
   }
 
   /// Creates a loading [SimpleAlert] instance with predefined properties for a loading state.
@@ -231,7 +233,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   /// This includes resolving the alert type, brightness, alignment, duration,
   /// and generating a route name if not specified.
   void _initializeProperties() {
-    _resolvedType = (type ?? SimpleAlertPreferences().type) as SimpleAlertType;
+    _resolvedType = (type ?? SimpleAlertPreferences().type);
     _resolvedBrightness = brightness ?? Theme.of(context).brightness;
     _resolvedAlignment = alignmentDirectional ?? SimpleAlertPreferences().alignmentDirectional;
     _resolvedDuration = _calculateDuration();
@@ -467,7 +469,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   Color _getBackgroundColor() {
     if (backgroundColor != null) return backgroundColor!;
 
-    final isLight = _resolvedBrightness == Brightness.light;
+    final isLight = (_resolvedBrightness == Brightness.light);
 
     return switch (_resolvedType) {
       SimpleAlertType.normal => isLight ? const Color.fromRGBO(105, 105, 105, 1.0) : const Color.fromRGBO(229, 228, 226, 1.0),
@@ -521,11 +523,11 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     final size = SimpleAlertPreferences().iconsSize;
 
     final (iconData, semanticLabel) = switch (_resolvedType) {
-      SimpleAlertType.normal => (icons.normal, 'Normal alert icon'),
-      SimpleAlertType.success => (icons.success, 'Success alert icon'),
-      SimpleAlertType.warning => (icons.warning, 'Warning alert icon'),
-      SimpleAlertType.danger => (icons.danger, 'Danger alert icon'),
-      SimpleAlertType.info => (icons.info, 'Information alert icon'),
+      SimpleAlertType.normal => (icons.normal, 'Normal alert icon'), // TODO
+      SimpleAlertType.success => (icons.success, 'Success alert icon'), // TODO
+      SimpleAlertType.warning => (icons.warning, 'Warning alert icon'), // TODO
+      SimpleAlertType.danger => (icons.danger, 'Danger alert icon'), // TODO
+      SimpleAlertType.info => (icons.info, 'Information alert icon'), // TODO
     };
 
     return Icon(
@@ -545,13 +547,13 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   /// - Prevents multiple closing attempts.
   /// - Calls `_cleanup` to dispose of listeners and timers.
   /// - Reverses the opacity animation.
-  /// - Removes the alert's route from the Navigator if it's active.
+  /// - Deletes the alert's route from the Navigator if it's active.
   /// - Unregisters the alert from the `AlertManager`.
   Future<void> _close() async {
     if (_isClosing) return;
     _isClosing = true;
 
-    _cleanup(); // Dispose of timers and listeners.
+    _freeingUpResources(); // Dispose of timers and listeners.
 
     if (_routeContext != null && _routeContext!.mounted) {
       // Reverse the opacity animation for a smooth dismissal.
@@ -563,13 +565,13 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
       }
     }
 
-    _alertManager.unregisterAlert(_routeName); // Remove alert from the manager.
+    _alertManager.unregisterAlert(_routeName); // Delete alert from the manager.
   }
 
-  /// Cleans up resources associated with the alert, such as listeners and timers.
+  /// Freeing up resources associated with the alert, such as listeners and timers.
   ///
   /// This method is called during the closing process to prevent memory leaks.
-  void _cleanup() {
+  void _freeingUpResources() {
     if (_removalSignalListener != null) {
       removalSignal?.removeListener(_removalSignalListener!);
       _removalSignalListener = null;

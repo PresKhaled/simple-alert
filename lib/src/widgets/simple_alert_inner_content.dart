@@ -92,12 +92,15 @@ class SimpleAlertInnerContent extends StatelessWidget {
           Flexible(
             child: Row(
               children: [
+                // Leading icon or loading indicator.
                 SimpleAlertLeadingIcon(
                   loading: loading,
                   foregroundColor: foregroundColor,
                   getBackgroundColor: getBackgroundColor,
                   getIcon: getIcon,
-                ), // Leading icon or loading indicator.
+                ),
+
+                // Main content and actions.
                 Expanded(
                   child: SimpleAlertContentSection(
                     title: title,
@@ -108,7 +111,7 @@ class SimpleAlertInnerContent extends StatelessWidget {
                     withClose: withClose,
                     onClosePressed: onClosePressed,
                   ),
-                ), // Main content and actions.
+                ),
               ],
             ),
           ),

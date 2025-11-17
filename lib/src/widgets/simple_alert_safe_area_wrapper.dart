@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../backend/alert_manager.dart';
 import 'simple_alert_positioned_container.dart';
-import '../simple_alert.dart';
 
 /// A widget that wraps the alert content in a [SafeArea] and handles orientation changes.
 class SimpleAlertSafeAreaWrapper extends StatefulWidget {

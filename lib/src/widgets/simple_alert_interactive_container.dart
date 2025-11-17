@@ -78,8 +78,8 @@ class SimpleAlertInteractiveContainer extends StatelessWidget {
     return Semantics(
       container: true,
       liveRegion: true, // Announce changes to screen readers.
-      label: 'Alert: $title', // Semantic label for the alert.
-      hint: description ?? '', // Semantic hint.
+      label: 'Alert: $title', // Semantic label for the alert. // TODO
+      hint: (description ?? ''), // Semantic hint.
       child: GestureDetector(
         onTap: onTap,
         onTapDown: withProgressBar ? onTapDown : null, // Only handle tap down if progress bar is enabled.

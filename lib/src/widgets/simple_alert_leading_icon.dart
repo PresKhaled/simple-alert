@@ -30,7 +30,7 @@ class SimpleAlertLeadingIcon extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 9.0),
       child: loading
           ? Semantics(
-              label: 'Loading indicator', // Semantic label for loading indicator.
+              label: 'Loading indicator', // Semantic label for loading indicator. // TODO
               child: CircleAvatar(
                 backgroundColor: Colors.white70,
                 radius: 15.0,

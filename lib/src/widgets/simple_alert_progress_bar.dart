@@ -80,7 +80,7 @@ class _SimpleAlertProgressBarState extends State<SimpleAlertProgressBar> with Si
     // Render the progress bar as a Container with animated width.
     // A Semantics widget is used to provide accessibility information for screen readers.
     return Semantics(
-      label: 'Alert timer',
+      label: 'Alert timer', // TODO
       value: '${((_width / widget.alertWidth) * 100).round()}% remaining',
       child: Container(
         width: _width,
