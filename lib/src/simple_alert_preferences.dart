@@ -141,5 +141,19 @@ class SimpleAlertPreferences {
     return _instance;
   }
 
-  SimpleAlertPreferences._internal();
+  SimpleAlertPreferences._internal() {
+    _alignmentDirectional = null;
+    _getWidth = null;
+    _shape = null;
+    _borderRadius = null;
+    _type = null;
+    _icons = null;
+    _iconsSize = null;
+    _iconsColor = null;
+    _titleStyle = null;
+    _descriptionStyle = null;
+    _tooltipThemeData = null;
+    _closeTooltip = null;
+    _duration = null;
+  }
 }

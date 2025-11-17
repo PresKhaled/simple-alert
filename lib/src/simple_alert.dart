@@ -268,41 +268,45 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   void _buildRoute() {
     _route = SimpleAlertRoute(
       settings: RouteSettings(name: _routeName),
-      builder: (routeContext) => SimpleAlertRouteContent(
-        routeContext: routeContext,
-        onFirstFrameBuilt: _onFirstFrameBuilt,
-        closeAlert: _close,
-        opacityAnimationController: opacityAnimationController,
-        animatedOpacityDuration: animatedOpacityDuration,
-        // Properties for SimpleAlertSafeAreaWrapper
-        alertKey: _alertKey,
-        resolvedAlignment: _resolvedAlignment,
-        alertWidth: _calculateAlertWidth(MediaQuery.sizeOf(routeContext).width), // Initial width calculation
-        calculateVerticalOffset: _calculateVerticalOffset,
-        alertManager: _alertManager,
-        routeName: _routeName,
-        updateAlertSize: _alertManager.updateAlertSize,
-        // Pass-through properties for SimpleAlertInteractiveContainer
-        title: title,
-        description: description,
-        withProgressBar: withProgressBar,
-        closeOnPress: closeOnPress,
-        onTap: _handleTap,
-        onTapDown: _handleTapDown,
-        onTapUp: _handleTapUp,
-        onTapCancel: _handleTapCancel,
-        getBorderRadius: _getBorderRadius,
-        getBackgroundColor: _getBackgroundColor,
-        loading: loading,
-        centerContent: centerContent,
-        actions: actions,
-        withClose: withClose,
-        widthAnimationController: widthAnimationController,
-        resolvedDuration: _resolvedDuration,
-        getForegroundColor: _getForegroundColor,
-        getIcon: _getIcon,
-        onClosePressed: _close,
-      ),
+      builder: (BuildContext routeContext) {
+        _routeContext = routeContext; // Assign the routeContext to the field.
+
+        return SimpleAlertRouteContent(
+          routeContext: routeContext,
+          onFirstFrameBuilt: _onFirstFrameBuilt,
+          closeAlert: _close,
+          opacityAnimationController: opacityAnimationController,
+          animatedOpacityDuration: animatedOpacityDuration,
+          // Properties for SimpleAlertSafeAreaWrapper
+          alertKey: _alertKey,
+          resolvedAlignment: _resolvedAlignment,
+          alertWidth: _calculateAlertWidth(MediaQuery.sizeOf(routeContext).width), // Initial width calculation.
+          calculateVerticalOffset: _calculateVerticalOffset,
+          alertManager: _alertManager,
+          routeName: _routeName,
+          updateAlertSize: _alertManager.updateAlertSize,
+          // Pass-through properties for [SimpleAlertInteractiveContainer].
+          title: title,
+          description: description,
+          withProgressBar: withProgressBar,
+          closeOnPress: closeOnPress,
+          onTap: _handleTap,
+          onTapDown: _handleTapDown,
+          onTapUp: _handleTapUp,
+          onTapCancel: _handleTapCancel,
+          getBorderRadius: _getBorderRadius,
+          getBackgroundColor: _getBackgroundColor,
+          loading: loading,
+          centerContent: centerContent,
+          actions: actions,
+          withClose: withClose,
+          widthAnimationController: widthAnimationController,
+          resolvedDuration: _resolvedDuration,
+          getForegroundColor: _getForegroundColor,
+          getIcon: _getIcon,
+          onClosePressed: _close,
+        );
+      },
     );
   }
 
@@ -553,19 +557,18 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     if (_isClosing) return;
     _isClosing = true;
 
-    _freeingUpResources(); // Dispose of timers and listeners.
-
     if (_routeContext != null && _routeContext!.mounted) {
       // Reverse the opacity animation for a smooth dismissal.
       await opacityAnimationController.value?.reverse();
 
-      // Check if the route can be popped and is still active before removing.
-      if (Navigator.canPop(_routeContext!) && _route.isActive) {
+      // Check if the route is still active before removing.
+      if (_route.isActive) {
         Navigator.maybeOf(_routeContext!)?.removeRoute(_route);
       }
     }
 
     _alertManager.unregisterAlert(_routeName); // Delete alert from the manager.
+    _freeingUpResources(); // Dispose of timers and listeners.
   }
 
   /// Freeing up resources associated with the alert, such as listeners and timers.
@@ -578,6 +581,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     }
 
     _timerController.dispose();
+    _routeContext = null; // Clear the context when resources are freed.
   }
 
   /// Displays the [SimpleAlert] by pushing its route onto the Navigator.
