@@ -29,7 +29,7 @@ class _SimpleAlertExampleState extends State<SimpleAlertExample> with ScreenBrea
         warning: FluentIcons.warning_24_regular,
         danger: FluentIcons.error_circle_24_regular,
       ),
-    );
+    ).setLocale('ar');
 
     return MaterialApp(
       title: 'SimpleAlert',
