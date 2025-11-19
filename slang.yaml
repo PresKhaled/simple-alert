@@ -4,7 +4,7 @@ input_directory: lib/i18n
 input_file_pattern: .arb
 output_directory: lib/i18n
 output_file_name: translations.g.dart
-lazy: true
+lazy: false
 locale_handling: true
 flutter_integration: false
 namespaces: false

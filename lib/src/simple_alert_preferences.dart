@@ -118,8 +118,8 @@ class SimpleAlertPreferences {
     _instance._type ??= type;
     _instance._icons ??= icons;
     _instance._iconsSize ??= iconsSize;
-    _instance._iconsColor ??= iconsColor;
-    _instance._titleStyle ??= (titleStyle ??
+    _instance._iconsColor = iconsColor;
+    _instance._titleStyle = (titleStyle ??
         themeData?.textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.bold,
         ) ??
@@ -128,15 +128,15 @@ class SimpleAlertPreferences {
           fontWeight: FontWeight.bold,
           color: Colors.white, // Default color if no theme is available.
         ));
-    _instance._descriptionStyle ??= (descriptionStyle ??
+    _instance._descriptionStyle = (descriptionStyle ??
         themeData?.textTheme.bodyLarge ??
         const TextStyle(
           fontSize: 16.0,
           fontWeight: FontWeight.bold,
           color: Colors.white70, // Default color if no theme is available.
         ));
-    _instance._tooltipThemeData ??= tooltipThemeData;
-    _instance._closeTooltip ??= (closeTooltip ?? t.closeButtonTooltip);
+    _instance._tooltipThemeData = tooltipThemeData;
+    _instance._closeTooltip = (closeTooltip ?? t.closeButtonTooltip);
     _instance._duration ??= duration;
 
     return _instance;
@@ -169,6 +169,6 @@ class SimpleAlertPreferences {
   /// to update the locale.
   /// [locale] A string representing the language code (e.g., 'en', 'ar').
   void setLocale(String locale) {
-    LocaleSettings.setLocaleRaw(locale);
+    LocaleSettings.setLocaleRawSync(locale);
   }
 }

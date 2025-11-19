@@ -76,7 +76,7 @@ class _MainPageState extends State<MainPage> {
           onPressed: () {
             Navigator.popUntil(
               context,
-                  (route) => (route.settings.name == '/'),
+              (route) => (route.settings.name == '/'),
             );
           },
           child: const Text('Close all'),
@@ -89,6 +89,34 @@ class _MainPageState extends State<MainPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  'Languages',
+                  style: titleStyle,
+                ),
+                Wrap(
+                  spacing: spacing,
+                  children: <Widget>[
+                    ElevatedButton(
+                      onPressed: () {
+                        SimpleAlertPreferences().setLocale('ar');
+                      },
+                      child: const Text('Arabic'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        SimpleAlertPreferences().setLocale('ur');
+                      },
+                      child: const Text('Urdu'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        SimpleAlertPreferences().setLocale('tr');
+                      },
+                      child: const Text('Turkish'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 25.0),
                 Text(
                   'Light theme',
                   style: titleStyle,
