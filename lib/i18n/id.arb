@@ -1,0 +1,84 @@
+{
+  "alertSemanticLabel": "Peringatan: {title}",
+  "@alertSemanticLabel": {
+    "description": "Label semantik untuk peringatan, termasuk judulnya.",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "description": "Judul peringatan."
+      }
+    }
+  },
+  "loadingIndicatorSemanticLabel": "Memuat",
+  "@loadingIndicatorSemanticLabel": {
+    "description": "Label semantik untuk indikator pemuatan."
+  },
+  "alertTimerSemanticLabel": "Waktu peringatan",
+  "@alertTimerSemanticLabel": {
+    "description": "Label semantik untuk bilah kemajuan yang menunjukkan sisa waktu untuk peringatan."
+  },
+  "newAlertDisplayedAnnouncement": "Peringatan baru telah ditampilkan.",
+  "@newAlertDisplayedAnnouncement": {
+    "description": "Pengumuman untuk alat bantu aksesibilitas saat peringatan baru ditampilkan."
+  },
+  "alertClosedAnnouncement": "Peringatan telah ditutup.",
+  "@alertClosedAnnouncement": {
+    "description": "Pengumuman untuk alat bantu aksesibilitas saat peringatan ditutup."
+  },
+  "generalAlertType": "Peringatan normal",
+  "@generalAlertType": {
+    "description": "Jenis peringatan umum dengan desain standar, cocok untuk berbagai pesan informatif."
+  },
+  "informationAlertType": "Peringatan informasi",
+  "@informationAlertType": {
+    "description": "Jenis peringatan yang menyampaikan informasi, dibedakan oleh desain dan makna semantik tertentu."
+  },
+  "successAlertType": "Peringatan sukses",
+  "@successAlertType": {
+    "description": "Jenis peringatan yang menunjukkan operasi berhasil, dibedakan oleh desain dan makna semantik tertentu."
+  },
+  "warningAlertType": "Peringatan peringatan",
+  "@warningAlertType": {
+    "description": "Jenis peringatan yang menunjukkan peringatan, dibedakan oleh desain dan makna semantik tertentu."
+  },
+  "dangerAlertType": "Peringatan bahaya",
+  "@dangerAlertType": {
+    "description": "Jenis peringatan yang menunjukkan bahaya atau kesalahan kritis, dibedakan oleh desain dan makna semantik tertentu."
+  },
+  "normalAlertIconDescription": "Ikon peringatan normal",
+  "@normalAlertIconDescription": {
+    "description": "Deskripsi ikon yang mewakili peringatan normal."
+  },
+  "informationAlertIconDescription": "Ikon peringatan informasi",
+  "@informationAlertIconDescription": {
+    "description": "Deskripsi ikon yang mewakili peringatan informasi."
+  },
+  "successAlertIconDescription": "Ikon peringatan sukses",
+  "@successAlertIconDescription": {
+    "description": "Deskripsi ikon yang mewakili peringatan sukses."
+  },
+  "warningAlertIconDescription": "Ikon peringatan peringatan",
+  "@warningAlertIconDescription": {
+    "description": "Deskripsi ikon yang mewakili peringatan."
+  },
+  "dangerAlertIconDescription": "Ikon peringatan bahaya",
+  "@dangerAlertIconDescription": {
+    "description": "Deskripsi ikon yang mewakili peringatan bahaya."
+  },
+  "loadingSemanticHint": "Memuat",
+  "@loadingSemanticHint": {
+    "description": "Petunjuk semantik yang menunjukkan bahwa konten sedang dimuat."
+  },
+  "pressAndHoldToPauseCountdownSemanticHint": "Tekan dan tahan untuk menjeda hitung mundur.",
+  "@pressAndHoldToPauseCountdownSemanticHint": {
+    "description": "Petunjuk semantik yang menginstruksikan pengguna untuk menekan dan menahan elemen untuk menjeda hitung mundur."
+  },
+  "clickToCloseSemanticHint": "Klik untuk menutup",
+  "@clickToCloseSemanticHint": {
+    "description": "Petunjuk semantik yang menginstruksikan pengguna untuk mengklik elemen untuk menutupnya."
+  },
+  "closeButtonTooltip": "Tutup",
+  "@closeButtonTooltip": {
+    "description": "Teks tooltip untuk tombol yang menutup dialog atau elemen antarmuka."
+  }
+}

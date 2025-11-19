@@ -1,0 +1,84 @@
+{
+  "alertSemanticLabel": "انتباہ: {title}",
+  "@alertSemanticLabel": {
+    "description": "ایک انتباہ کے لیے معنیاتی لیبل، جس میں اس کا عنوان شامل ہے۔",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "description": "انتباہ کا عنوان۔"
+      }
+    }
+  },
+  "loadingIndicatorSemanticLabel": "لوڈ ہو رہا ہے",
+  "@loadingIndicatorSemanticLabel": {
+    "description": "لوڈنگ اشارے کے لیے معنیاتی لیبل۔"
+  },
+  "alertTimerSemanticLabel": "انتباہ کا ٹائمر",
+  "@alertTimerSemanticLabel": {
+    "description": "الرٹ کے لیے باقی وقت کی نشاندہی کرنے والی پیشرفت بار کے لیے معنیاتی لیبل۔"
+  },
+  "newAlertDisplayedAnnouncement": "ایک نیا انتباہ دکھایا گیا ہے۔",
+  "@newAlertDisplayedAnnouncement": {
+    "description": "ایک نیا انتباہ دکھائے جانے پر رسائی کے آلات کے لیے اعلان۔"
+  },
+  "alertClosedAnnouncement": "انتباہ بند کر دیا گیا ہے۔",
+  "@alertClosedAnnouncement": {
+    "description": "انتباہ بند ہونے پر رسائی کے آلات کے لیے اعلان۔"
+  },
+  "generalAlertType": "عام انتباہ",
+  "@generalAlertType": {
+    "description": "معیاری ڈیزائن کے ساتھ ایک عمومی انتباہ کی قسم، جو مختلف معلوماتی پیغامات کے لیے موزوں ہے۔"
+  },
+  "informationAlertType": "معلوماتی انتباہ",
+  "@informationAlertType": {
+    "description": "معلومات پہنچانے والا ایک انتباہی قسم، جو ایک مخصوص ڈیزائن اور معنیاتی مطلب سے ممتاز ہے۔"
+  },
+  "successAlertType": "کامیابی کا انتباہ",
+  "@successAlertType": {
+    "description": "کامیاب آپریشن کی نشاندہی کرنے والا ایک انتباہی قسم، جو ایک مخصوص ڈیزائن اور معنیاتی مطلب سے ممتاز ہے۔"
+  },
+  "warningAlertType": "تنبیہی انتباہ",
+  "@warningAlertType": {
+    "description": "ایک تنبیہ کی نشاندہی کرنے والا انتباہی قسم، جو ایک مخصوص ڈیزائن اور معنیاتی مطلب سے ممتاز ہے۔"
+  },
+  "dangerAlertType": "خطرناک انتباہ",
+  "@dangerAlertType": {
+    "description": "ایک اہم خطرے یا غلطی کی نشاندہی کرنے والا انتباہی قسم، جو ایک مخصوص ڈیزائن اور معنیاتی مطلب سے ممتاز ہے۔"
+  },
+  "normalAlertIconDescription": "عام انتباہ کا آئیکن",
+  "@normalAlertIconDescription": {
+    "description": "عام انتباہ کی نمائندگی کرنے والے آئیکن کی تفصیل۔"
+  },
+  "informationAlertIconDescription": "معلوماتی انتباہ کا آئیکن",
+  "@informationAlertIconDescription": {
+    "description": "معلوماتی انتباہ کی نمائندگی کرنے والے آئیکن کی تفصیل۔"
+  },
+  "successAlertIconDescription": "کامیابی کے انتباہ کا آئیکن",
+  "@successAlertIconDescription": {
+    "description": "کامیابی کے انتباہ کی نمائندگی کرنے والے آئیکن کی تفصیل۔"
+  },
+  "warningAlertIconDescription": "تنبیہی انتباہ کا آئیکن",
+  "@warningAlertIconDescription": {
+    "description": "تنبیہی انتباہ کی نمائندگی کرنے والے آئیکن کی تفصیل۔"
+  },
+  "dangerAlertIconDescription": "خطرناک انتباہ کا آئیکن",
+  "@dangerAlertIconDescription": {
+    "description": "خطرناک انتباہ کی نمائندگی کرنے والے آئیکن کی تفصیل۔"
+  },
+  "loadingSemanticHint": "لوڈ ہو رہا ہے",
+  "@loadingSemanticHint": {
+    "description": "معنیاتی اشارہ جو یہ ظاہر کرتا ہے کہ مواد فی الحال لوڈ ہو رہا ہے۔"
+  },
+  "pressAndHoldToPauseCountdownSemanticHint": "الٹی گنتی کو روکنے کے لیے دبائے رکھیں اور تھامے رکھیں۔",
+  "@pressAndHoldToPauseCountdownSemanticHint": {
+    "description": "معنیاتی اشارہ جو صارف کو الٹی گنتی روکنے کے لیے کسی عنصر کو دبانے اور تھامے رکھنے کی ہدایت کرتا ہے۔"
+  },
+  "clickToCloseSemanticHint": "بند کرنے کے لیے کلک کریں",
+  "@clickToCloseSemanticHint": {
+    "description": "معنیاتی اشارہ جو صارف کو کسی عنصر کو بند کرنے کے لیے کلک کرنے کی ہدایت کرتا ہے۔"
+  },
+  "closeButtonTooltip": "بند کریں",
+  "@closeButtonTooltip": {
+    "description": "ایک بٹن کے لیے ٹول ٹپ متن جو ایک ڈائیلاگ یا انٹرفیس عنصر کو بند کرتا ہے۔"
+  }
+}

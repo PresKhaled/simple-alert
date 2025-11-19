@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import '../../i18n/translations.g.dart';
 import '../../simple_alert.dart';
 
 // ============================================================================
@@ -181,11 +183,11 @@ class AlertA11yUtils {
   /// Gets semantic label for alert type
   static String getTypeSemanticLabel(SimpleAlertType type) {
     return switch (type) {
-      SimpleAlertType.normal => 'Normal alert', // TODO
-      SimpleAlertType.success => 'Success alert', // TODO
-      SimpleAlertType.warning => 'Warning alert', // TODO
-      SimpleAlertType.danger => 'Danger alert', // TODO
-      SimpleAlertType.info => 'Information alert', // TODO
+      SimpleAlertType.normal => t.generalAlertType,
+      SimpleAlertType.success => t.successAlertType,
+      SimpleAlertType.warning => t.warningAlertType,
+      SimpleAlertType.danger => t.dangerAlertType,
+      SimpleAlertType.info => t.informationAlertType,
     };
   }
 
@@ -196,13 +198,13 @@ class AlertA11yUtils {
     required bool loading,
   }) {
     if (loading) {
-      return 'Loading'; // TODO
+      return t.loadingSemanticHint;
     }
     if (withProgressBar) {
-      return 'Press and hold to pause the countdown.'; // TODO
+      return t.pressAndHoldToPauseCountdownSemanticHint;
     }
     if (closeOnPress) {
-      return 'Click to close'; // TODO
+      return t.clickToCloseSemanticHint;
     }
     return '';
   }
@@ -235,7 +237,7 @@ class AlertA11yUtils {
 
     await SemanticsService.announce(
       message,
-      TextDirection.rtl,
+      ui.TextDirection.rtl,
     );
   }
 }

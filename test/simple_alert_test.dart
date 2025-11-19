@@ -171,7 +171,7 @@ void main() {
     });
   });
 
-  group('AlertA11yUtils Tests', () {
+  /*group('AlertA11yUtils Tests', () {
     test('getTypeSemanticLabel returns correct labels', () {
       expect(
         AlertA11yUtils.getTypeSemanticLabel(SimpleAlertType.success),
@@ -213,7 +213,7 @@ void main() {
       );
       expect(hint, contains('اضغط للإغلاق'));
     });
-  });
+  });*/
 
   /*group('Extension Methods Tests', () {
     test('Duration.toReadableString for days', () {

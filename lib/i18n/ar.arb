@@ -1,0 +1,84 @@
+{
+  "alertSemanticLabel": "تنبيه: {title}",
+  "@alertSemanticLabel": {
+    "description": "تسمية دلالية لتنبيه، تتضمن عنوانه.",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "description": "عنوان التنبيه."
+      }
+    }
+  },
+  "loadingIndicatorSemanticLabel": "جارٍ التحميل",
+  "@loadingIndicatorSemanticLabel": {
+    "description": "تسمية دلالية لمؤشر التحميل."
+  },
+  "alertTimerSemanticLabel": "مؤقت التنبيه",
+  "@alertTimerSemanticLabel": {
+    "description": "تسمية دلالية لشريط التقدم الذي يشير إلى الوقت المتبقي للتنبيه."
+  },
+  "newAlertDisplayedAnnouncement": "تم عرض تنبيه جديد.",
+  "@newAlertDisplayedAnnouncement": {
+    "description": "إعلان لأدوات الوصول عند عرض تنبيه جديد."
+  },
+  "alertClosedAnnouncement": "تم إغلاق التنبيه.",
+  "@alertClosedAnnouncement": {
+    "description": "إعلان لأدوات الوصول عند إغلاق التنبيه."
+  },
+  "generalAlertType": "تنبيه عادي",
+  "@generalAlertType": {
+    "description": "نوع تنبيه عام بتصميم قياسي، مناسب لرسائل معلوماتية متنوعة."
+  },
+  "informationAlertType": "تنبيه معلوماتي",
+  "@informationAlertType": {
+    "description": "نوع تنبيه ينقل معلومات، يتميز بتصميم ومعنى دلالي محدد."
+  },
+  "successAlertType": "تنبيه نجاح",
+  "@successAlertType": {
+    "description": "نوع تنبيه يشير إلى عملية ناجحة، يتميز بتصميم ومعنى دلالي محدد."
+  },
+  "warningAlertType": "تنبيه تحذير",
+  "@warningAlertType": {
+    "description": "نوع تنبيه يشير إلى تحذير، يتميز بتصميم ومعنى دلالي محدد."
+  },
+  "dangerAlertType": "تنبيه خطر",
+  "@dangerAlertType": {
+    "description": "نوع تنبيه يشير إلى خطر أو خطأ حرج، يتميز بتصميم ومعنى دلالي محدد."
+  },
+  "normalAlertIconDescription": "أيقونة تنبيه عادي",
+  "@normalAlertIconDescription": {
+    "description": "وصف لأيقونة تمثل تنبيهًا عاديًا."
+  },
+  "informationAlertIconDescription": "أيقونة تنبيه معلوماتي",
+  "@informationAlertIconDescription": {
+    "description": "وصف لأيقونة تمثل تنبيهًا معلوماتيًا."
+  },
+  "successAlertIconDescription": "أيقونة تنبيه نجاح",
+  "@successAlertIconDescription": {
+    "description": "وصف لأيقونة تمثل تنبيه نجاح."
+  },
+  "warningAlertIconDescription": "أيقونة تنبيه تحذير",
+  "@warningAlertIconDescription": {
+    "description": "وصف لأيقونة تمثل تنبيه تحذير."
+  },
+  "dangerAlertIconDescription": "أيقونة تنبيه خطر",
+  "@dangerAlertIconDescription": {
+    "description": "وصف لأيقونة تمثل تنبيه خطر."
+  },
+  "loadingSemanticHint": "جارٍ التحميل",
+  "@loadingSemanticHint": {
+    "description": "تلميح دلالي يشير إلى أن المحتوى قيد التحميل حاليًا."
+  },
+  "pressAndHoldToPauseCountdownSemanticHint": "اضغط مع الاستمرار لإيقاف العد التنازلي مؤقتًا.",
+  "@pressAndHoldToPauseCountdownSemanticHint": {
+    "description": "تلميح دلالي يوجه المستخدم بالضغط مع الاستمرار على عنصر لإيقاف العد التنازلي مؤقتًا."
+  },
+  "clickToCloseSemanticHint": "انقر للإغلاق",
+  "@clickToCloseSemanticHint": {
+    "description": "تلميح دلالي يوجه المستخدم بالنقر على عنصر لإغلاقه."
+  },
+  "closeButtonTooltip": "إغلاق",
+  "@closeButtonTooltip": {
+    "description": "نص تلميح لزر يقوم بإغلاق مربع حوار أو عنصر واجهة."
+  }
+}

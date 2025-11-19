@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'simple_alert_inner_content.dart'; // For SimpleAlertInnerContent
+
+import '../../i18n/translations.g.dart';
+import 'simple_alert_inner_content.dart';
 
 /// A widget that provides the interactive container for the alert, including gestures and semantic labels.
 class SimpleAlertInteractiveContainer extends StatelessWidget {
@@ -78,7 +80,7 @@ class SimpleAlertInteractiveContainer extends StatelessWidget {
     return Semantics(
       container: true,
       liveRegion: true, // Announce changes to screen readers.
-      label: 'Alert: $title', // Semantic label for the alert. // TODO
+      label: t.alertSemanticLabel(title: title), // Semantic label for the alert.
       hint: (description ?? ''), // Semantic hint.
       child: GestureDetector(
         onTap: onTap,

@@ -1,0 +1,38 @@
+base_locale: en
+fallback_strategy: base_locale
+input_directory: lib/i18n
+input_file_pattern: .arb
+output_directory: lib/i18n
+output_file_name: translations.g.dart
+lazy: true
+locale_handling: true
+flutter_integration: false
+namespaces: false
+translate_var: t
+enum_name: AppLocale
+class_name: Translations
+translation_class_visibility: private
+key_case: camel
+key_map_case: camel
+param_case: camel
+sanitization:
+  enabled: true
+  prefix: k
+  case: camel
+# string_interpolation: double_braces
+flat_map: false
+translation_overrides: false
+timestamp: true
+statistics: true
+format:
+  enabled: true
+  width: 180
+autodoc:
+  enabled: true
+  locales:
+    - en
+    - ar
+    - ur
+    - id
+    - tr
+    - pt

@@ -1,0 +1,84 @@
+{
+  "alertSemanticLabel": "Uyarı: {title}",
+  "@alertSemanticLabel": {
+    "description": "Başlığı dahil olmak üzere bir uyarı için anlamsal etiket.",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "description": "Uyarının başlığı."
+      }
+    }
+  },
+  "loadingIndicatorSemanticLabel": "Yükleniyor",
+  "@loadingIndicatorSemanticLabel": {
+    "description": "Bir yükleme göstergesi için anlamsal etiket."
+  },
+  "alertTimerSemanticLabel": "Uyarı zamanlayıcısı",
+  "@alertTimerSemanticLabel": {
+    "description": "Bir uyarı için kalan süreyi gösteren ilerleme çubuğu için anlamsal etiket."
+  },
+  "newAlertDisplayedAnnouncement": "Yeni bir uyarı görüntülendi.",
+  "@newAlertDisplayedAnnouncement": {
+    "description": "Yeni bir uyarı görüntülendiğinde erişilebilirlik araçları için duyuru."
+  },
+  "alertClosedAnnouncement": "Uyarı kapatıldı.",
+  "@alertClosedAnnouncement": {
+    "description": "Bir uyarı kapatıldığında erişilebilirlik araçları için duyuru."
+  },
+  "generalAlertType": "Normal uyarı",
+  "@generalAlertType": {
+    "description": "Çeşitli bilgilendirme mesajları için uygun, standart tasarıma sahip genel bir uyarı türü."
+  },
+  "informationAlertType": "Bilgi uyarısı",
+  "@informationAlertType": {
+    "description": "Belirli bir tasarım ve anlamsal anlamla ayırt edilen, bilgi ileten bir uyarı türü."
+  },
+  "successAlertType": "Başarı uyarısı",
+  "@successAlertType": {
+    "description": "Başarılı bir işlemi gösteren, belirli bir tasarım ve anlamsal anlamla ayırt edilen bir uyarı türü."
+  },
+  "warningAlertType": "Uyarı uyarısı",
+  "@warningAlertType": {
+    "description": "Bir uyarıyı gösteren, belirli bir tasarım ve anlamsal anlamla ayırt edilen bir uyarı türü."
+  },
+  "dangerAlertType": "Tehlike uyarısı",
+  "@dangerAlertType": {
+    "description": "Kritik bir tehlikeyi veya hatayı gösteren, belirli bir tasarım ve anlamsal anlamla ayırt edilen bir uyarı türü."
+  },
+  "normalAlertIconDescription": "Normal uyarı simgesi",
+  "@normalAlertIconDescription": {
+    "description": "Normal bir uyarıyı temsil eden simgenin açıklaması."
+  },
+  "informationAlertIconDescription": "Bilgi uyarısı simgesi",
+  "@informationAlertIconDescription": {
+    "description": "Bilgi uyarısını temsil eden simgenin açıklaması."
+  },
+  "successAlertIconDescription": "Başarı uyarısı simgesi",
+  "@successAlertIconDescription": {
+    "description": "Başarı uyarısını temsil eden simgenin açıklaması."
+  },
+  "warningAlertIconDescription": "Uyarı uyarısı simgesi",
+  "@warningAlertIconDescription": {
+    "description": "Uyarı uyarısını temsil eden simgenin açıklaması."
+  },
+  "dangerAlertIconDescription": "Tehlike uyarısı simgesi",
+  "@dangerAlertIconDescription": {
+    "description": "Tehlike uyarısını temsil eden simgenin açıklaması."
+  },
+  "loadingSemanticHint": "Yükleniyor",
+  "@loadingSemanticHint": {
+    "description": "İçeriğin şu anda yüklendiğini gösteren anlamsal ipucu."
+  },
+  "pressAndHoldToPauseCountdownSemanticHint": "Geri sayımı duraklatmak için basılı tutun.",
+  "@pressAndHoldToPauseCountdownSemanticHint": {
+    "description": "Kullanıcıya geri sayımı duraklatmak için bir öğeye basılı tutmasını söyleyen anlamsal ipucu."
+  },
+  "clickToCloseSemanticHint": "Kapatmak için tıklayın",
+  "@clickToCloseSemanticHint": {
+    "description": "Kullanıcıya bir öğeyi kapatmak için tıklamasını söyleyen anlamsal ipucu."
+  },
+  "closeButtonTooltip": "Kapat",
+  "@closeButtonTooltip": {
+    "description": "Bir iletişim kutusunu veya arayüz öğesini kapatan bir düğme için araç ipucu metni."
+  }
+}

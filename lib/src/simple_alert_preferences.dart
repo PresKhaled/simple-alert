@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart' show AlignmentDirectional, BorderRadius, BuildContext, Color, FontWeight, TextStyle, Theme, ThemeData, TooltipThemeData, Colors;
 
+import '../i18n/translations.g.dart';
 import 'enums/simple_alert_duration.dart';
 import 'enums/simple_alert_shape.dart';
 import 'enums/simple_alert_type.dart';
@@ -105,7 +106,7 @@ class SimpleAlertPreferences {
     TextStyle? titleStyle,
     TextStyle? descriptionStyle,
     TooltipThemeData? tooltipThemeData,
-    String closeTooltip = 'Close',
+    String? closeTooltip,
     SimpleAlertDuration duration = SimpleAlertDuration.medium,
   }) {
     final ThemeData? themeData = ((context != null && context.mounted) ? Theme.of(context) : null);
@@ -135,12 +136,16 @@ class SimpleAlertPreferences {
           color: Colors.white70, // Default color if no theme is available.
         ));
     _instance._tooltipThemeData ??= tooltipThemeData;
-    _instance._closeTooltip ??= closeTooltip;
+    _instance._closeTooltip ??= (closeTooltip ?? t.closeButtonTooltip);
     _instance._duration ??= duration;
 
     return _instance;
   }
 
+  /// Private constructor for the singleton instance.
+  ///
+  /// Initializes all internal fields to `null`.
+  /// They are populated lazily by the factory constructor.
   SimpleAlertPreferences._internal() {
     _alignmentDirectional = null;
     _getWidth = null;
@@ -155,5 +160,15 @@ class SimpleAlertPreferences {
     _tooltipThemeData = null;
     _closeTooltip = null;
     _duration = null;
+  }
+
+  /// Sets the locale for the package's translations.
+  ///
+  /// This method allows for changing the language of the provided tooltips
+  /// (e.g., 'Close') dynamically. It uses the `slang` generated `LocaleSettings`
+  /// to update the locale.
+  /// [locale] A string representing the language code (e.g., 'en', 'ar').
+  void setLocale(String locale) {
+    LocaleSettings.setLocaleRaw(locale);
   }
 }

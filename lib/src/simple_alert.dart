@@ -9,6 +9,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import '../i18n/translations.g.dart';
 import '../simple_alert.dart';
 import 'backend/alert_manager.dart';
 import 'backend/alert_timer_controller.dart';
@@ -527,11 +528,11 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     final size = SimpleAlertPreferences().iconsSize;
 
     final (iconData, semanticLabel) = switch (_resolvedType) {
-      SimpleAlertType.normal => (icons.normal, 'Normal alert icon'), // TODO
-      SimpleAlertType.success => (icons.success, 'Success alert icon'), // TODO
-      SimpleAlertType.warning => (icons.warning, 'Warning alert icon'), // TODO
-      SimpleAlertType.danger => (icons.danger, 'Danger alert icon'), // TODO
-      SimpleAlertType.info => (icons.info, 'Information alert icon'), // TODO
+      SimpleAlertType.normal => (icons.normal, t.normalAlertIconDescription),
+      SimpleAlertType.success => (icons.success, t.successAlertIconDescription),
+      SimpleAlertType.warning => (icons.warning, t.warningAlertIconDescription),
+      SimpleAlertType.danger => (icons.danger, t.dangerAlertIconDescription),
+      SimpleAlertType.info => (icons.info, t.informationAlertIconDescription),
     };
 
     return Icon(

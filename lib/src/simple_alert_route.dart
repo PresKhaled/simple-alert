@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import '../i18n/translations.g.dart';
+
 /// A custom [PopupRoute] implementation for displaying [SimpleAlert] widgets.
 ///
 /// This route is designed to present alerts without a visible modal barrier
@@ -92,7 +94,7 @@ class SimpleAlertRoute<T> extends PopupRoute<T> {
       Future.microtask(() {
         if (context.mounted) {
           SemanticsService.announce(
-            'A new alert has been displayed.', // TODO
+            t.newAlertDisplayedAnnouncement,
             TextDirection.rtl,
           );
         }
@@ -110,7 +112,7 @@ class SimpleAlertRoute<T> extends PopupRoute<T> {
       Future.microtask(() {
         if (context.mounted) {
           SemanticsService.announce(
-            'The alert has been closed.', // TODO
+            t.alertClosedAnnouncement,
             TextDirection.rtl,
           );
         }

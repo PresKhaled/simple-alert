@@ -1,0 +1,84 @@
+{
+  "alertSemanticLabel": "Alert: {title}",
+  "@alertSemanticLabel": {
+    "description": "Semantic label for an alert, including its title.",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "description": "The title of the alert."
+      }
+    }
+  },
+  "loadingIndicatorSemanticLabel": "Loading",
+  "@loadingIndicatorSemanticLabel": {
+    "description": "Semantic label for a loading indicator."
+  },
+  "alertTimerSemanticLabel": "Alert timer",
+  "@alertTimerSemanticLabel": {
+    "description": "Semantic label for the progress bar indicating the remaining time for an alert."
+  },
+  "newAlertDisplayedAnnouncement": "A new alert has been displayed.",
+  "@newAlertDisplayedAnnouncement": {
+    "description": "Announcement for accessibility tools when a new alert is displayed."
+  },
+  "alertClosedAnnouncement": "The alert has been closed.",
+  "@alertClosedAnnouncement": {
+    "description": "Announcement for accessibility tools when an alert is closed."
+  },
+  "generalAlertType": "Normal alert",
+  "@generalAlertType": {
+    "description": "A general alert type with a standard design, suitable for various informational messages."
+  },
+  "informationAlertType": "Information alert",
+  "@informationAlertType": {
+    "description": "An alert type conveying information, distinguished by a specific design and semantic meaning."
+  },
+  "successAlertType": "Success alert",
+  "@successAlertType": {
+    "description": "An alert type indicating a successful operation, distinguished by a specific design and semantic meaning."
+  },
+  "warningAlertType": "Warning alert",
+  "@warningAlertType": {
+    "description": "An alert type indicating a warning, distinguished by a specific design and semantic meaning."
+  },
+  "dangerAlertType": "Danger alert",
+  "@dangerAlertType": {
+    "description": "An alert type indicating a critical danger or error, distinguished by a specific design and semantic meaning."
+  },
+  "normalAlertIconDescription": "Normal alert icon",
+  "@normalAlertIconDescription": {
+    "description": "Description of an icon representing a normal alert."
+  },
+  "informationAlertIconDescription": "Information alert icon",
+  "@informationAlertIconDescription": {
+    "description": "Description of an icon representing an information alert."
+  },
+  "successAlertIconDescription": "Success alert icon",
+  "@successAlertIconDescription": {
+    "description": "Description of an icon representing a success alert."
+  },
+  "warningAlertIconDescription": "Warning alert icon",
+  "@warningAlertIconDescription": {
+    "description": "Description of an icon representing a warning alert."
+  },
+  "dangerAlertIconDescription": "Danger alert icon",
+  "@dangerAlertIconDescription": {
+    "description": "Description of an icon representing a danger alert."
+  },
+  "loadingSemanticHint": "Loading",
+  "@loadingSemanticHint": {
+    "description": "Semantic hint indicating that content is currently loading."
+  },
+  "pressAndHoldToPauseCountdownSemanticHint": "Press and hold to pause the countdown.",
+  "@pressAndHoldToPauseCountdownSemanticHint": {
+    "description": "Semantic hint instructing the user to press and hold an element to pause a countdown."
+  },
+  "clickToCloseSemanticHint": "Click to close",
+  "@clickToCloseSemanticHint": {
+    "description": "Semantic hint instructing the user to click an element to close it."
+  },
+  "closeButtonTooltip": "Close",
+  "@closeButtonTooltip": {
+    "description": "Tooltip text for a button that closes a dialog or interface element."
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "alertSemanticLabel": "Alerta: {title}",
+  "@alertSemanticLabel": {
+    "description": "Rótulo semântico para um alerta, incluindo seu título.",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "description": "O título do alerta."
+      }
+    }
+  },
+  "loadingIndicatorSemanticLabel": "Carregando",
+  "@loadingIndicatorSemanticLabel": {
+    "description": "Rótulo semântico para um indicador de carregamento."
+  },
+  "alertTimerSemanticLabel": "Temporizador de alerta",
+  "@alertTimerSemanticLabel": {
+    "description": "Rótulo semântico para a barra de progresso que indica o tempo restante para um alerta."
+  },
+  "newAlertDisplayedAnnouncement": "Um novo alerta foi exibido.",
+  "@newAlertDisplayedAnnouncement": {
+    "description": "Anúncio para ferramentas de acessibilidade quando um novo alerta é exibido."
+  },
+  "alertClosedAnnouncement": "O alerta foi fechado.",
+  "@alertClosedAnnouncement": {
+    "description": "Anúncio para ferramentas de acessibilidade quando um alerta é fechado."
+  },
+  "generalAlertType": "Alerta normal",
+  "@generalAlertType": {
+    "description": "Um tipo de alerta geral com design padrão, adequado para várias mensagens informativas."
+  },
+  "informationAlertType": "Alerta de informação",
+  "@informationAlertType": {
+    "description": "Um tipo de alerta que transmite informações, distinguido por um design e significado semântico específicos."
+  },
+  "successAlertType": "Alerta de sucesso",
+  "@successAlertType": {
+    "description": "Um tipo de alerta que indica uma operação bem-sucedida, distinguido por um design e significado semântico específicos."
+  },
+  "warningAlertType": "Alerta de aviso",
+  "@warningAlertType": {
+    "description": "Um tipo de alerta que indica um aviso, distinguido por um design e significado semântico específicos."
+  },
+  "dangerAlertType": "Alerta de perigo",
+  "@dangerAlertType": {
+    "description": "Um tipo de alerta que indica um perigo ou erro crítico, distinguido por um design e significado semântico específicos."
+  },
+  "normalAlertIconDescription": "Ícone de alerta normal",
+  "@normalAlertIconDescription": {
+    "description": "Descrição de um ícone que representa um alerta normal."
+  },
+  "informationAlertIconDescription": "Ícone de alerta de informação",
+  "@informationAlertIconDescription": {
+    "description": "Descrição de um ícone que representa um alerta de informação."
+  },
+  "successAlertIconDescription": "Ícone de alerta de sucesso",
+  "@successAlertIconDescription": {
+    "description": "Descrição de um ícone que representa um alerta de sucesso."
+  },
+  "warningAlertIconDescription": "Ícone de alerta de aviso",
+  "@warningAlertIconDescription": {
+    "description": "Descrição de um ícone que representa um alerta de aviso."
+  },
+  "dangerAlertIconDescription": "Ícone de alerta de perigo",
+  "@dangerAlertIconDescription": {
+    "description": "Descrição de um ícone que representa um alerta de perigo."
+  },
+  "loadingSemanticHint": "Carregando",
+  "@loadingSemanticHint": {
+    "description": "Dica semântica que indica que o conteúdo está sendo carregado no momento."
+  },
+  "pressAndHoldToPauseCountdownSemanticHint": "Pressione e segure para pausar a contagem regressiva.",
+  "@pressAndHoldToPauseCountdownSemanticHint": {
+    "description": "Dica semântica que instrui o usuário a pressionar e segurar um elemento para pausar uma contagem regressiva."
+  },
+  "clickToCloseSemanticHint": "Clique para fechar",
+  "@clickToCloseSemanticHint": {
+    "description": "Dica semântica que instrui o usuário a clicar em um elemento para fechá-lo."
+  },
+  "closeButtonTooltip": "Fechar",
+  "@closeButtonTooltip": {
+    "description": "Texto da dica de ferramenta para um botão que fecha um diálogo ou elemento da interface."
+  }
+}

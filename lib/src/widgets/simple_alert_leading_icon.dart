@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../i18n/translations.g.dart';
 import '../simple_alert.dart';
 
 /// A widget that displays the leading icon or a loading indicator for a [SimpleAlert].
@@ -30,7 +31,7 @@ class SimpleAlertLeadingIcon extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 9.0),
       child: loading
           ? Semantics(
-              label: 'Loading indicator', // Semantic label for loading indicator. // TODO
+              label: t.loadingIndicatorSemanticLabel, // Semantic label for loading indicator.
               child: CircleAvatar(
                 backgroundColor: Colors.white70,
                 radius: 15.0,

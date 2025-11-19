@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../i18n/translations.g.dart';
 import '../misc/constants.dart';
 
 /// A widget that displays a progress bar which animates its width from full to zero.
@@ -80,7 +81,7 @@ class _SimpleAlertProgressBarState extends State<SimpleAlertProgressBar> with Si
     // Render the progress bar as a Container with animated width.
     // A Semantics widget is used to provide accessibility information for screen readers.
     return Semantics(
-      label: 'Alert timer', // TODO
+      label: t.alertTimerSemanticLabel,
       value: '${((_width / widget.alertWidth) * 100).round()}% remaining',
       child: Container(
         width: _width,
