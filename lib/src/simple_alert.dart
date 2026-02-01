@@ -560,7 +560,12 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
 
     if (_routeContext != null && _routeContext!.mounted) {
       // Reverse the opacity animation for a smooth dismissal.
-      await opacityAnimationController.value?.reverse();
+      try {
+        await opacityAnimationController.value?.reverse().timeout(animatedOpacityDuration + const Duration(milliseconds: 100));
+      } catch (e) {
+        // Ignore animation errors to ensure the alert still closes.
+        debugPrint('SimpleAlert closing animation failed: $e');
+      }
 
       // Check if the route is still active before removing.
       if (_route.isActive) {
@@ -582,6 +587,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     }
 
     _timerController.dispose();
+    opacityAnimationController.dispose();
     _routeContext = null; // Clear the context when resources are freed.
   }
 
