@@ -97,29 +97,45 @@ void main() {
       expect(width, lessThanOrEqualTo(MAX_ALERT_WIDTH));
     });
 
-    test('getAverageHeight returns correct portrait value', () {
-      final testContext = _MockBuildContext(
-        size: const Size(400, 800),
-        orientation: Orientation.portrait,
-      );
-
-      final height = AlertPerformanceUtils.getAverageHeight(
-        Orientation.portrait,
-        testContext,
+    testWidgets('getAverageHeight returns correct portrait value', (tester) async {
+      double? height;
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(
+            size: Size(400, 800),
+          ),
+          child: Builder(
+            builder: (context) {
+              height = AlertPerformanceUtils.getAverageHeight(
+                Orientation.portrait,
+                context,
+              );
+              return const SizedBox();
+            },
+          ),
+        ),
       );
 
       expect(height, AVERAGE_PORTRAIT_HEIGHT);
     });
 
-    test('getAverageHeight returns correct landscape value', () {
-      final testContext = _MockBuildContext(
-        size: const Size(800, 400),
-        orientation: Orientation.landscape,
-      );
-
-      final height = AlertPerformanceUtils.getAverageHeight(
-        Orientation.landscape,
-        testContext,
+    testWidgets('getAverageHeight returns correct landscape value', (tester) async {
+      double? height;
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(
+            size: Size(800, 400),
+          ),
+          child: Builder(
+            builder: (context) {
+              height = AlertPerformanceUtils.getAverageHeight(
+                Orientation.landscape,
+                context,
+              );
+              return const SizedBox();
+            },
+          ),
+        ),
       );
 
       expect(height, AVERAGE_LANDSCAPE_HEIGHT);
@@ -275,6 +291,7 @@ void main() {
 
     setUp(() {
       manager = AlertManager();
+      manager.displayedAlerts.value = {};
     });
 
     test('registerAlert adds alert to displayed alerts', () {
@@ -433,23 +450,6 @@ void main() {
   });
 }
 
-// ============================================================================
-// Mock Classes for Testing
-// ============================================================================
-
-class _MockBuildContext extends BuildContext {
-  @override
-  final Size size;
-  final Orientation orientation;
-
-  _MockBuildContext({
-    required this.size,
-    required this.orientation,
-  });
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) => null;
-}
 
 // Additional helper functions for widget testing
 class AlertTestHelpers {
