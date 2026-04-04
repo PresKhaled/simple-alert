@@ -40,7 +40,8 @@ class SimpleAlertContentSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Space out text and actions.
+      mainAxisAlignment:
+          MainAxisAlignment.spaceBetween, // Space out text and actions.
       children: [
         // Title and description.
         Expanded(

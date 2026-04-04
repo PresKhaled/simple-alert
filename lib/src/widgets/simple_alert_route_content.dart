@@ -67,7 +67,8 @@ class SimpleAlertRouteContent extends StatefulWidget {
   final GlobalKey alertKey;
   final AlignmentDirectional resolvedAlignment;
   final double alertWidth;
-  final double Function(Map<String, AlertData>, Orientation, double) calculateVerticalOffset;
+  final double Function(Map<String, AlertData>, Orientation, double)
+      calculateVerticalOffset;
   final AlertManager alertManager;
   final String routeName;
   final void Function(String, Size) updateAlertSize;
@@ -94,7 +95,8 @@ class SimpleAlertRouteContent extends StatefulWidget {
   final VoidCallback onClosePressed;
 
   @override
-  State<SimpleAlertRouteContent> createState() => _SimpleAlertRouteContentState();
+  State<SimpleAlertRouteContent> createState() =>
+      _SimpleAlertRouteContentState();
 }
 
 class _SimpleAlertRouteContentState extends State<SimpleAlertRouteContent> {
@@ -102,19 +104,22 @@ class _SimpleAlertRouteContentState extends State<SimpleAlertRouteContent> {
   void initState() {
     super.initState();
     // Schedule a callback to run after the first frame is rendered to calculate alert size.
-    WidgetsBinding.instance.addPostFrameCallback((_) => widget.onFirstFrameBuilt());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => widget.onFirstFrameBuilt());
   }
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false, // Prevent the system back button from directly dismissing the alert.
+      canPop:
+          false, // Prevent the system back button from directly dismissing the alert.
       onPopInvokedWithResult: (bool didPop, dynamic result) {
         // If a pop is invoked and not prevented by canPop, close the alert gracefully.
         if (!didPop) widget.closeAlert();
       },
       child: Alert(
-        onAnimationControllerCreated: widget.onOpacityAnimationControllerCreated, // Controller for opacity animations.
+        onAnimationControllerCreated: widget
+            .onOpacityAnimationControllerCreated, // Controller for opacity animations.
         animatedOpacityDuration: widget.animatedOpacityDuration,
         child: SimpleAlertSafeAreaWrapper(
           alertKey: widget.alertKey,
@@ -139,7 +144,8 @@ class _SimpleAlertRouteContentState extends State<SimpleAlertRouteContent> {
           centerContent: widget.centerContent,
           actions: widget.actions,
           withClose: widget.withClose,
-          onWidthAnimationControllerCreated: widget.onWidthAnimationControllerCreated,
+          onWidthAnimationControllerCreated:
+              widget.onWidthAnimationControllerCreated,
           resolvedDuration: widget.resolvedDuration,
           getForegroundColor: widget.getForegroundColor,
           getIcon: widget.getIcon,

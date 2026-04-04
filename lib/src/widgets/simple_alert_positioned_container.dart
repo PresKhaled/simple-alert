@@ -47,7 +47,8 @@ class SimpleAlertPositionedContainer extends StatelessWidget {
   final double alertWidth;
 
   /// Callback function to calculate the vertical offset for the alert.
-  final double Function(Map<String, AlertData>, Orientation, double) calculateVerticalOffset;
+  final double Function(Map<String, AlertData>, Orientation, double)
+      calculateVerticalOffset;
 
   /// The alert manager responsible for tracking active alerts.
   final AlertManager alertManager;
@@ -89,7 +90,8 @@ class SimpleAlertPositionedContainer extends StatelessWidget {
       fit: StackFit.expand, // Make stack fill available space.
       children: [
         ValueListenableBuilder<Map<String, AlertData>>(
-          valueListenable: alertManager.displayedAlerts, // Listens to changes in displayed alerts.
+          valueListenable: alertManager
+              .displayedAlerts, // Listens to changes in displayed alerts.
           builder: (context, displayedAlerts, child) {
             // Calculate the vertical offset to stack alerts correctly.
             final offsetY = calculateVerticalOffset(
@@ -102,9 +104,14 @@ class SimpleAlertPositionedContainer extends StatelessWidget {
               key: alertKey, // Key to identify the alert's render box.
               width: alertWidth,
               // Position from top if aligned to top or center, otherwise null.
-              top: (AlertManager.isTopAligned(resolvedAlignment) || AlertManager.isCenterAligned(resolvedAlignment)) ? offsetY : null,
+              top: (AlertManager.isTopAligned(resolvedAlignment) ||
+                      AlertManager.isCenterAligned(resolvedAlignment))
+                  ? offsetY
+                  : null,
               // Position from bottom if aligned to bottom, otherwise null.
-              bottom: AlertManager.isBottomAligned(resolvedAlignment) ? offsetY : null,
+              bottom: AlertManager.isBottomAligned(resolvedAlignment)
+                  ? offsetY
+                  : null,
               child: SimpleAlertInteractiveContainer(
                 alertWidth: alertWidth,
                 title: title,
@@ -121,7 +128,8 @@ class SimpleAlertPositionedContainer extends StatelessWidget {
                 centerContent: centerContent,
                 actions: actions,
                 withClose: withClose,
-                onWidthAnimationControllerCreated: onWidthAnimationControllerCreated,
+                onWidthAnimationControllerCreated:
+                    onWidthAnimationControllerCreated,
                 resolvedDuration: resolvedDuration,
                 getForegroundColor: getForegroundColor,
                 getIcon: getIcon,

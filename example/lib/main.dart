@@ -14,7 +14,8 @@ class SimpleAlertExample extends StatefulWidget {
   State<SimpleAlertExample> createState() => _SimpleAlertExampleState();
 }
 
-class _SimpleAlertExampleState extends State<SimpleAlertExample> with ScreenBreakpoints {
+class _SimpleAlertExampleState extends State<SimpleAlertExample>
+    with ScreenBreakpoints {
   @override
   Widget build(BuildContext context) {
     // First initialization contains [context].
@@ -139,7 +140,10 @@ class _MainPageState extends State<MainPage> {
                           withClose: true,
                         ),
                         child: Text(
-                          alertTypes[index].toString().split('.').last, // .toUpperCase(),
+                          alertTypes[index]
+                              .toString()
+                              .split('.')
+                              .last, // .toUpperCase(),
                         ),
                       ),
                     ),
@@ -215,7 +219,8 @@ class _MainPageState extends State<MainPage> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        final ValueNotifier<bool> dataReceived = ValueNotifier(false);
+                        final ValueNotifier<bool> dataReceived =
+                            ValueNotifier(false);
 
                         Future.delayed(
                           const Duration(seconds: 5),
@@ -227,7 +232,8 @@ class _MainPageState extends State<MainPage> {
                         SimpleAlert(
                           context: context,
                           title: 'Simple alert title',
-                          alignmentDirectional: AlignmentDirectional.bottomStart,
+                          alignmentDirectional:
+                              AlignmentDirectional.bottomStart,
                           duration: SimpleAlertDuration.day,
                           removalSignal: dataReceived,
                         );
@@ -236,7 +242,8 @@ class _MainPageState extends State<MainPage> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        final ValueNotifier<bool> dataReceived = ValueNotifier(false);
+                        final ValueNotifier<bool> dataReceived =
+                            ValueNotifier(false);
 
                         Future.delayed(
                           const Duration(seconds: 5),
@@ -248,7 +255,8 @@ class _MainPageState extends State<MainPage> {
                         SimpleAlert(
                           context: context,
                           title: 'Simple alert title',
-                          alignmentDirectional: AlignmentDirectional.bottomCenter,
+                          alignmentDirectional:
+                              AlignmentDirectional.bottomCenter,
                           duration: SimpleAlertDuration.day,
                           removalSignal: dataReceived,
                         );
@@ -257,7 +265,8 @@ class _MainPageState extends State<MainPage> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        final ValueNotifier<bool> dataReceived = ValueNotifier(false);
+                        final ValueNotifier<bool> dataReceived =
+                            ValueNotifier(false);
 
                         Future.delayed(
                           const Duration(seconds: 5),

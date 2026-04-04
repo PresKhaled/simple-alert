@@ -12,8 +12,13 @@ typedef TranslationsEn = Translations; // ignore: unused_element
 class Translations implements BaseTranslations<AppLocale, Translations> {
   /// You can call this constructor and build your own translation instance of this locale.
   /// Constructing via the enum [AppLocale.build] is preferred.
-  Translations({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
-      : assert(overrides == null, 'Set "translation_overrides: true" in order to enable this feature.'),
+  Translations(
+      {Map<String, Node>? overrides,
+      PluralResolver? cardinalResolver,
+      PluralResolver? ordinalResolver,
+      TranslationMetadata<AppLocale, Translations>? meta})
+      : assert(overrides == null,
+            'Set "translation_overrides: true" in order to enable this feature.'),
         $meta = meta ??
             TranslationMetadata(
               locale: AppLocale.en,
@@ -28,7 +33,9 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 
   late final Translations _root = this; // ignore: unused_field
 
-  Translations $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => Translations(meta: meta ?? this.$meta);
+  Translations $copyWith(
+          {TranslationMetadata<AppLocale, Translations>? meta}) =>
+      Translations(meta: meta ?? this.$meta);
 
   // Translations
 
@@ -285,7 +292,8 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
   /// tr: 'Geri sayımı duraklatmak için basılı tutun.'
   ///
   /// pt: 'Pressione e segure para pausar a contagem regressiva.'
-  String get pressAndHoldToPauseCountdownSemanticHint => 'Press and hold to pause the countdown.';
+  String get pressAndHoldToPauseCountdownSemanticHint =>
+      'Press and hold to pause the countdown.';
 
   /// Semantic hint instructing the user to click an element to close it.
   ///

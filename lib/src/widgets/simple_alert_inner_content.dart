@@ -75,12 +75,14 @@ class SimpleAlertInnerContent extends StatelessWidget {
     return Theme(
       data: themeData.copyWith(
         iconTheme: themeData.iconTheme.copyWith(
-          color: (SimpleAlertPreferences().iconsColor ?? foregroundColor), // Customize icon color.
+          color: (SimpleAlertPreferences().iconsColor ??
+              foregroundColor), // Customize icon color.
         ),
         iconButtonTheme: IconButtonThemeData(
           style: ButtonStyle(
             foregroundColor: WidgetStatePropertyAll<Color>(
-              (SimpleAlertPreferences().iconsColor ?? foregroundColor), // Customize icon button foreground color.
+              (SimpleAlertPreferences().iconsColor ??
+                  foregroundColor), // Customize icon button foreground color.
             ),
           ),
         ),
@@ -120,7 +122,8 @@ class SimpleAlertInnerContent extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: SimpleAlertProgressBar(
-                  onAnimationControllerCreated: onWidthAnimationControllerCreated,
+                  onAnimationControllerCreated:
+                      onWidthAnimationControllerCreated,
                   alertWidth: alertWidth,
                   alertDuration: resolvedDuration,
                 ),

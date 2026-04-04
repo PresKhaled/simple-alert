@@ -12,8 +12,13 @@ import 'translations.g.dart';
 class TranslationsAr extends Translations {
   /// You can call this constructor and build your own translation instance of this locale.
   /// Constructing via the enum [AppLocale.build] is preferred.
-  TranslationsAr({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
-      : assert(overrides == null, 'Set "translation_overrides: true" in order to enable this feature.'),
+  TranslationsAr(
+      {Map<String, Node>? overrides,
+      PluralResolver? cardinalResolver,
+      PluralResolver? ordinalResolver,
+      TranslationMetadata<AppLocale, Translations>? meta})
+      : assert(overrides == null,
+            'Set "translation_overrides: true" in order to enable this feature.'),
         $meta = meta ??
             TranslationMetadata(
               locale: AppLocale.ar,
@@ -21,7 +26,9 @@ class TranslationsAr extends Translations {
               cardinalResolver: cardinalResolver,
               ordinalResolver: ordinalResolver,
             ),
-        super(cardinalResolver: cardinalResolver, ordinalResolver: ordinalResolver);
+        super(
+            cardinalResolver: cardinalResolver,
+            ordinalResolver: ordinalResolver);
 
   /// Metadata for the translations of <ar>.
   @override
@@ -30,7 +37,9 @@ class TranslationsAr extends Translations {
   late final TranslationsAr _root = this; // ignore: unused_field
 
   @override
-  TranslationsAr $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsAr(meta: meta ?? this.$meta);
+  TranslationsAr $copyWith(
+          {TranslationMetadata<AppLocale, Translations>? meta}) =>
+      TranslationsAr(meta: meta ?? this.$meta);
 
   // Translations
 
@@ -100,7 +109,8 @@ class TranslationsAr extends Translations {
 
   /// تلميح دلالي يوجه المستخدم بالضغط مع الاستمرار على عنصر لإيقاف العد التنازلي مؤقتًا.
   @override
-  String get pressAndHoldToPauseCountdownSemanticHint => 'اضغط مع الاستمرار لإيقاف العد التنازلي مؤقتًا.';
+  String get pressAndHoldToPauseCountdownSemanticHint =>
+      'اضغط مع الاستمرار لإيقاف العد التنازلي مؤقتًا.';
 
   /// تلميح دلالي يوجه المستخدم بالنقر على عنصر لإغلاقه.
   @override

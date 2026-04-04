@@ -28,7 +28,9 @@ class SimpleAlertTextContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min, // Take minimum vertical space.
-      crossAxisAlignment: centerContent ? CrossAxisAlignment.center : CrossAxisAlignment.start, // Align text.
+      crossAxisAlignment: centerContent
+          ? CrossAxisAlignment.center
+          : CrossAxisAlignment.start, // Align text.
       children: [
         Text(
           title,
@@ -41,7 +43,8 @@ class SimpleAlertTextContent extends StatelessWidget {
           Text(
             description!,
             style: SimpleAlertPreferences().descriptionStyle.copyWith(
-                  color: foregroundColor, // Apply foreground color to description.
+                  color:
+                      foregroundColor, // Apply foreground color to description.
                 ),
           ),
         ],

@@ -35,7 +35,8 @@ abstract mixin class ScreenBreakpoints {
 
   // Get the appropriate space for the content to be appropriate and readable.
   double getMainContentWidth(BuildContext context) {
-    final double contextWidth = (MediaQuery.of(context).size.width - MediaQuery.of(context).systemGestureInsets.horizontal);
+    final double contextWidth = (MediaQuery.of(context).size.width -
+        MediaQuery.of(context).systemGestureInsets.horizontal);
     final String currentBreakpointName = getCurrentBreakpointName(contextWidth);
 
     switch (currentBreakpointName) {

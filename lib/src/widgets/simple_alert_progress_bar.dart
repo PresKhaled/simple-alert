@@ -36,7 +36,8 @@ class SimpleAlertProgressBar extends StatefulWidget {
   State<SimpleAlertProgressBar> createState() => _SimpleAlertProgressBarState();
 }
 
-class _SimpleAlertProgressBarState extends State<SimpleAlertProgressBar> with SingleTickerProviderStateMixin {
+class _SimpleAlertProgressBarState extends State<SimpleAlertProgressBar>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late Animation<double> _widthAnimation;
   late double _width = widget.alertWidth;

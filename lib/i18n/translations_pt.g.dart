@@ -12,8 +12,13 @@ import 'translations.g.dart';
 class TranslationsPt extends Translations {
   /// You can call this constructor and build your own translation instance of this locale.
   /// Constructing via the enum [AppLocale.build] is preferred.
-  TranslationsPt({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
-      : assert(overrides == null, 'Set "translation_overrides: true" in order to enable this feature.'),
+  TranslationsPt(
+      {Map<String, Node>? overrides,
+      PluralResolver? cardinalResolver,
+      PluralResolver? ordinalResolver,
+      TranslationMetadata<AppLocale, Translations>? meta})
+      : assert(overrides == null,
+            'Set "translation_overrides: true" in order to enable this feature.'),
         $meta = meta ??
             TranslationMetadata(
               locale: AppLocale.pt,
@@ -21,7 +26,9 @@ class TranslationsPt extends Translations {
               cardinalResolver: cardinalResolver,
               ordinalResolver: ordinalResolver,
             ),
-        super(cardinalResolver: cardinalResolver, ordinalResolver: ordinalResolver);
+        super(
+            cardinalResolver: cardinalResolver,
+            ordinalResolver: ordinalResolver);
 
   /// Metadata for the translations of <pt>.
   @override
@@ -30,7 +37,9 @@ class TranslationsPt extends Translations {
   late final TranslationsPt _root = this; // ignore: unused_field
 
   @override
-  TranslationsPt $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsPt(meta: meta ?? this.$meta);
+  TranslationsPt $copyWith(
+          {TranslationMetadata<AppLocale, Translations>? meta}) =>
+      TranslationsPt(meta: meta ?? this.$meta);
 
   // Translations
 
@@ -100,7 +109,8 @@ class TranslationsPt extends Translations {
 
   /// Dica semântica que instrui o usuário a pressionar e segurar um elemento para pausar uma contagem regressiva.
   @override
-  String get pressAndHoldToPauseCountdownSemanticHint => 'Pressione e segure para pausar a contagem regressiva.';
+  String get pressAndHoldToPauseCountdownSemanticHint =>
+      'Pressione e segure para pausar a contagem regressiva.';
 
   /// Dica semântica que instrui o usuário a clicar em um elemento para fechá-lo.
   @override

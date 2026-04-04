@@ -12,8 +12,13 @@ import 'translations.g.dart';
 class TranslationsUr extends Translations {
   /// You can call this constructor and build your own translation instance of this locale.
   /// Constructing via the enum [AppLocale.build] is preferred.
-  TranslationsUr({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
-      : assert(overrides == null, 'Set "translation_overrides: true" in order to enable this feature.'),
+  TranslationsUr(
+      {Map<String, Node>? overrides,
+      PluralResolver? cardinalResolver,
+      PluralResolver? ordinalResolver,
+      TranslationMetadata<AppLocale, Translations>? meta})
+      : assert(overrides == null,
+            'Set "translation_overrides: true" in order to enable this feature.'),
         $meta = meta ??
             TranslationMetadata(
               locale: AppLocale.ur,
@@ -21,7 +26,9 @@ class TranslationsUr extends Translations {
               cardinalResolver: cardinalResolver,
               ordinalResolver: ordinalResolver,
             ),
-        super(cardinalResolver: cardinalResolver, ordinalResolver: ordinalResolver);
+        super(
+            cardinalResolver: cardinalResolver,
+            ordinalResolver: ordinalResolver);
 
   /// Metadata for the translations of <ur>.
   @override
@@ -30,7 +37,9 @@ class TranslationsUr extends Translations {
   late final TranslationsUr _root = this; // ignore: unused_field
 
   @override
-  TranslationsUr $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsUr(meta: meta ?? this.$meta);
+  TranslationsUr $copyWith(
+          {TranslationMetadata<AppLocale, Translations>? meta}) =>
+      TranslationsUr(meta: meta ?? this.$meta);
 
   // Translations
 
@@ -100,7 +109,8 @@ class TranslationsUr extends Translations {
 
   /// معنیاتی اشارہ جو صارف کو الٹی گنتی روکنے کے لیے کسی عنصر کو دبانے اور تھامے رکھنے کی ہدایت کرتا ہے۔
   @override
-  String get pressAndHoldToPauseCountdownSemanticHint => 'الٹی گنتی کو روکنے کے لیے دبائے رکھیں اور تھامے رکھیں۔';
+  String get pressAndHoldToPauseCountdownSemanticHint =>
+      'الٹی گنتی کو روکنے کے لیے دبائے رکھیں اور تھامے رکھیں۔';
 
   /// معنیاتی اشارہ جو صارف کو کسی عنصر کو بند کرنے کے لیے کلک کرنے کی ہدایت کرتا ہے۔
   @override

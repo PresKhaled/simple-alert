@@ -80,18 +80,26 @@ class SimpleAlertInteractiveContainer extends StatelessWidget {
     return Semantics(
       container: true,
       liveRegion: true, // Announce changes to screen readers.
-      label: t.alertSemanticLabel(title: title), // Semantic label for the alert.
+      label:
+          t.alertSemanticLabel(title: title), // Semantic label for the alert.
       hint: (description ?? ''), // Semantic hint.
       child: GestureDetector(
         onTap: onTap,
-        onTapDown: withProgressBar ? onTapDown : null, // Only handle tap down if progress bar is enabled.
-        onTapUp: withProgressBar ? onTapUp : null, // Only handle tap up if progress bar is enabled.
-        onTapCancel: withProgressBar ? onTapCancel : null, // Only handle tap cancel if progress bar is enabled.
+        onTapDown: withProgressBar
+            ? onTapDown
+            : null, // Only handle tap down if progress bar is enabled.
+        onTapUp: withProgressBar
+            ? onTapUp
+            : null, // Only handle tap up if progress bar is enabled.
+        onTapCancel: withProgressBar
+            ? onTapCancel
+            : null, // Only handle tap cancel if progress bar is enabled.
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 5.0),
           padding: const EdgeInsets.symmetric(horizontal: 13.0),
           child: ClipRRect(
-            borderRadius: getBorderRadius(), // Apply border radius based on shape.
+            borderRadius:
+                getBorderRadius(), // Apply border radius based on shape.
             child: Material(
               color: getBackgroundColor(), // Set background color.
               child: Padding(
@@ -105,7 +113,8 @@ class SimpleAlertInteractiveContainer extends StatelessWidget {
                   actions: actions,
                   withClose: withClose,
                   withProgressBar: withProgressBar,
-                  onWidthAnimationControllerCreated: onWidthAnimationControllerCreated,
+                  onWidthAnimationControllerCreated:
+                      onWidthAnimationControllerCreated,
                   resolvedDuration: resolvedDuration,
                   getForegroundColor: getForegroundColor,
                   getBackgroundColor: getBackgroundColor,

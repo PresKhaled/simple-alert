@@ -1,4 +1,15 @@
-import 'package:flutter/material.dart' show AlignmentDirectional, BorderRadius, BuildContext, Color, FontWeight, TextStyle, Theme, ThemeData, TooltipThemeData, Colors;
+import 'package:flutter/material.dart'
+    show
+        AlignmentDirectional,
+        BorderRadius,
+        BuildContext,
+        Color,
+        FontWeight,
+        TextStyle,
+        Theme,
+        ThemeData,
+        TooltipThemeData,
+        Colors;
 
 import '../i18n/translations.g.dart';
 import 'enums/simple_alert_duration.dart';
@@ -84,7 +95,8 @@ class SimpleAlertPreferences {
   /// The default display duration for alerts.
   SimpleAlertDuration get duration => _duration!;
 
-  static final SimpleAlertPreferences _instance = SimpleAlertPreferences._internal();
+  static final SimpleAlertPreferences _instance =
+      SimpleAlertPreferences._internal();
 
   /// Creates or retrieves the singleton instance of [SimpleAlertPreferences].
   ///
@@ -109,7 +121,8 @@ class SimpleAlertPreferences {
     String? closeTooltip,
     SimpleAlertDuration duration = SimpleAlertDuration.medium,
   }) {
-    final ThemeData? themeData = ((context != null && context.mounted) ? Theme.of(context) : null);
+    final ThemeData? themeData =
+        ((context != null && context.mounted) ? Theme.of(context) : null);
 
     _instance._alignmentDirectional ??= alignmentDirectional;
     _instance._getWidth ??= getWidth;

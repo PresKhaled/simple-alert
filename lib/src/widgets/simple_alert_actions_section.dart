@@ -29,17 +29,22 @@ class SimpleAlertActionsSection extends StatelessWidget {
     }
 
     return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 92.0), // Limit width for actions.
+      constraints:
+          const BoxConstraints(maxWidth: 92.0), // Limit width for actions.
       child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal, // Allow horizontal scrolling for multiple actions.
+        scrollDirection:
+            Axis.horizontal, // Allow horizontal scrolling for multiple actions.
         child: Row(
           mainAxisSize: MainAxisSize.min, // Take minimum horizontal space.
           children: [
-            if (actions != null) ...actions!, // Display specified action buttons.
+            if (actions != null)
+              ...actions!, // Display specified action buttons.
             if (withClose) // Conditionally display a close button.
               IconButton(
                 onPressed: onClosePressed, // Callback to close the alert.
-                icon: Icon(SimpleAlertPreferences().icons.close), // Close icon from preferences.
+                icon: Icon(SimpleAlertPreferences()
+                    .icons
+                    .close), // Close icon from preferences.
                 splashRadius: ICON_BUTTON_SPLASH_RADIUS,
                 tooltip: SimpleAlertPreferences().closeTooltip,
               ),

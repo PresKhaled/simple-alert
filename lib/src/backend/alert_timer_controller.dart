@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart'; // For ValueNotifier, VoidCallback
 
 /// Manages the countdown timer for alert auto-dismissal.
@@ -30,7 +31,8 @@ class AlertTimerController {
   /// Starts the countdown timer.
   ///
   /// The timer ticks every 100 milliseconds, updating [remainingMilliseconds]
-  /// and calling [onComplete] when the duration expires.
+  /// and calling [onComplete] when the duration expires. The periodic timer
+  /// is automatically cancelled after [onComplete] fires to prevent zombie ticks.
   void start() {
     if (_isDisposed) return;
 
@@ -44,10 +46,21 @@ class AlertTimerController {
         remainingMilliseconds.value -= 100;
 
         if (remainingMilliseconds.value <= 0) {
+          timer.cancel(); // Prevent further periodic ticks after completion.
           onComplete();
         }
       }
     });
+  }
+
+  /// Cancels the periodic timer without disposing of managed resources.
+  ///
+  /// Unlike [dispose], this method only halts the timer and can be called
+  /// safely before the full disposal sequence. This is primarily used by
+  /// the closing sequence to immediately stop the timer before async work begins.
+  void cancel() {
+    _timer?.cancel();
+    _timer = null;
   }
 
   /// Pauses the countdown timer.

@@ -37,7 +37,8 @@ class AlertManager {
 
   /// A [ValueNotifier] that holds a map of currently displayed alerts,
   /// keyed by their route names.
-  final ValueNotifier<Map<String, AlertData>> _displayedAlerts = ValueNotifier<Map<String, AlertData>>({});
+  final ValueNotifier<Map<String, AlertData>> _displayedAlerts =
+      ValueNotifier<Map<String, AlertData>>({});
 
   /// Provides access to the [ValueNotifier] containing the currently displayed alerts.
   ValueNotifier<Map<String, AlertData>> get displayedAlerts => _displayedAlerts;
@@ -104,7 +105,9 @@ class AlertManager {
         .take(currentIndex)
         .map((key) => alerts[key]!)
         .where(
-          (data) => (data.fromTop == fromTop && data.fromCenter == fromCenter && data.fromBottom == fromBottom),
+          (data) => (data.fromTop == fromTop &&
+              data.fromCenter == fromCenter &&
+              data.fromBottom == fromBottom),
         )
         .toList();
   }

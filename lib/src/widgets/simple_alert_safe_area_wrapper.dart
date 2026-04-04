@@ -46,7 +46,8 @@ class SimpleAlertSafeAreaWrapper extends StatefulWidget {
   final double alertWidth;
 
   /// Callback function to calculate the vertical offset for the alert.
-  final double Function(Map<String, AlertData>, Orientation, double) calculateVerticalOffset;
+  final double Function(Map<String, AlertData>, Orientation, double)
+      calculateVerticalOffset;
 
   /// The alert manager responsible for tracking active alerts.
   final AlertManager alertManager;
@@ -79,10 +80,12 @@ class SimpleAlertSafeAreaWrapper extends StatefulWidget {
   final VoidCallback onClosePressed;
 
   @override
-  State<SimpleAlertSafeAreaWrapper> createState() => _SimpleAlertSafeAreaWrapperState();
+  State<SimpleAlertSafeAreaWrapper> createState() =>
+      _SimpleAlertSafeAreaWrapperState();
 }
 
-class _SimpleAlertSafeAreaWrapperState extends State<SimpleAlertSafeAreaWrapper> {
+class _SimpleAlertSafeAreaWrapperState
+    extends State<SimpleAlertSafeAreaWrapper> {
   Orientation? _currentOrientation;
 
   /// Handles changes in device orientation, ensuring all displayed alerts update their sizes.
@@ -101,10 +104,12 @@ class _SimpleAlertSafeAreaWrapperState extends State<SimpleAlertSafeAreaWrapper>
       // Update sizes for all alerts after orientation change
       // This is crucial for correct positioning of stacked alerts.
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        for (final routeName in widget.alertManager.displayedAlerts.value.keys) {
+        for (final routeName
+            in widget.alertManager.displayedAlerts.value.keys) {
           final key = widget.alertKey;
           if (key.currentContext != null) {
-            final renderBox = key.currentContext!.findRenderObject() as RenderBox?;
+            final renderBox =
+                key.currentContext!.findRenderObject() as RenderBox?;
             if (renderBox != null && renderBox.hasSize) {
               widget.updateAlertSize(routeName, renderBox.size);
             }
@@ -147,7 +152,8 @@ class _SimpleAlertSafeAreaWrapperState extends State<SimpleAlertSafeAreaWrapper>
             centerContent: widget.centerContent,
             actions: widget.actions,
             withClose: widget.withClose,
-            onWidthAnimationControllerCreated: widget.onWidthAnimationControllerCreated,
+            onWidthAnimationControllerCreated:
+                widget.onWidthAnimationControllerCreated,
             resolvedDuration: widget.resolvedDuration,
             getForegroundColor: widget.getForegroundColor,
             getIcon: widget.getIcon,

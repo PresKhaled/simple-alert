@@ -35,7 +35,8 @@ void main() {
 
     test('validateDuration throws on negative duration', () {
       expect(
-        () => AlertValidator.validateDuration(const Duration(milliseconds: -100)),
+        () =>
+            AlertValidator.validateDuration(const Duration(milliseconds: -100)),
         throwsArgumentError,
       );
     });
@@ -97,7 +98,8 @@ void main() {
       expect(width, lessThanOrEqualTo(MAX_ALERT_WIDTH));
     });
 
-    testWidgets('getAverageHeight returns correct portrait value', (tester) async {
+    testWidgets('getAverageHeight returns correct portrait value',
+        (tester) async {
       double? height;
       await tester.pumpWidget(
         MediaQuery(
@@ -119,7 +121,8 @@ void main() {
       expect(height, AVERAGE_PORTRAIT_HEIGHT);
     });
 
-    testWidgets('getAverageHeight returns correct landscape value', (tester) async {
+    testWidgets('getAverageHeight returns correct landscape value',
+        (tester) async {
       double? height;
       await tester.pumpWidget(
         MediaQuery(
@@ -449,7 +452,6 @@ void main() {
     });
   });
 }
-
 
 // Additional helper functions for widget testing
 class AlertTestHelpers {

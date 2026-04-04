@@ -110,7 +110,8 @@ enum AppLocale with BaseAppLocale<AppLocale, Translations> {
   }
 
   /// Gets current instance managed by [LocaleSettings].
-  Translations get translations => LocaleSettings.instance.getTranslations(this);
+  Translations get translations =>
+      LocaleSettings.instance.getTranslations(this);
 }
 
 /// Method A: Simple
@@ -136,9 +137,19 @@ class LocaleSettings extends BaseLocaleSettings<AppLocale, Translations> {
   // static aliases (checkout base methods for documentation)
   static AppLocale get currentLocale => instance.currentLocale;
   static Stream<AppLocale> getLocaleStream() => instance.getLocaleStream();
-  static Future<AppLocale> setLocale(AppLocale locale, {bool? listenToDeviceLocale = false}) => instance.setLocale(locale, listenToDeviceLocale: listenToDeviceLocale);
-  static Future<AppLocale> setLocaleRaw(String rawLocale, {bool? listenToDeviceLocale = false}) => instance.setLocaleRaw(rawLocale, listenToDeviceLocale: listenToDeviceLocale);
-  static Future<void> setPluralResolver({String? language, AppLocale? locale, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver}) => instance.setPluralResolver(
+  static Future<AppLocale> setLocale(AppLocale locale,
+          {bool? listenToDeviceLocale = false}) =>
+      instance.setLocale(locale, listenToDeviceLocale: listenToDeviceLocale);
+  static Future<AppLocale> setLocaleRaw(String rawLocale,
+          {bool? listenToDeviceLocale = false}) =>
+      instance.setLocaleRaw(rawLocale,
+          listenToDeviceLocale: listenToDeviceLocale);
+  static Future<void> setPluralResolver(
+          {String? language,
+          AppLocale? locale,
+          PluralResolver? cardinalResolver,
+          PluralResolver? ordinalResolver}) =>
+      instance.setPluralResolver(
         language: language,
         locale: locale,
         cardinalResolver: cardinalResolver,
@@ -146,9 +157,20 @@ class LocaleSettings extends BaseLocaleSettings<AppLocale, Translations> {
       );
 
   // synchronous versions
-  static AppLocale setLocaleSync(AppLocale locale, {bool? listenToDeviceLocale = false}) => instance.setLocaleSync(locale, listenToDeviceLocale: listenToDeviceLocale);
-  static AppLocale setLocaleRawSync(String rawLocale, {bool? listenToDeviceLocale = false}) => instance.setLocaleRawSync(rawLocale, listenToDeviceLocale: listenToDeviceLocale);
-  static void setPluralResolverSync({String? language, AppLocale? locale, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver}) => instance.setPluralResolverSync(
+  static AppLocale setLocaleSync(AppLocale locale,
+          {bool? listenToDeviceLocale = false}) =>
+      instance.setLocaleSync(locale,
+          listenToDeviceLocale: listenToDeviceLocale);
+  static AppLocale setLocaleRawSync(String rawLocale,
+          {bool? listenToDeviceLocale = false}) =>
+      instance.setLocaleRawSync(rawLocale,
+          listenToDeviceLocale: listenToDeviceLocale);
+  static void setPluralResolverSync(
+          {String? language,
+          AppLocale? locale,
+          PluralResolver? cardinalResolver,
+          PluralResolver? ordinalResolver}) =>
+      instance.setPluralResolverSync(
         language: language,
         locale: locale,
         cardinalResolver: cardinalResolver,
@@ -168,7 +190,13 @@ class AppLocaleUtils extends BaseAppLocaleUtils<AppLocale, Translations> {
 
   // static aliases (checkout base methods for documentation)
   static AppLocale parse(String rawLocale) => instance.parse(rawLocale);
-  static AppLocale parseLocaleParts({required String languageCode, String? scriptCode, String? countryCode}) =>
-      instance.parseLocaleParts(languageCode: languageCode, scriptCode: scriptCode, countryCode: countryCode);
+  static AppLocale parseLocaleParts(
+          {required String languageCode,
+          String? scriptCode,
+          String? countryCode}) =>
+      instance.parseLocaleParts(
+          languageCode: languageCode,
+          scriptCode: scriptCode,
+          countryCode: countryCode);
   static List<String> get supportedLocalesRaw => instance.supportedLocalesRaw;
 }

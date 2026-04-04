@@ -151,7 +151,8 @@ class AlertPerformanceUtils {
   }
 
   /// Gets appropriate average height based on orientation and device
-  static double getAverageHeight(Orientation orientation, BuildContext context) {
+  static double getAverageHeight(
+      Orientation orientation, BuildContext context) {
     final isTabletDevice = isTablet(context);
 
     if (orientation == Orientation.portrait) {
@@ -233,7 +234,9 @@ class AlertA11yUtils {
     required SimpleAlertType type,
   }) async {
     final typeLabel = getTypeSemanticLabel(type);
-    final message = description != null ? '$typeLabel: $title. $description' : '$typeLabel: $title';
+    final message = description != null
+        ? '$typeLabel: $title. $description'
+        : '$typeLabel: $title';
 
     await SemanticsService.announce(
       message,

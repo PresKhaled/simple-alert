@@ -12,8 +12,13 @@ import 'translations.g.dart';
 class TranslationsId extends Translations {
   /// You can call this constructor and build your own translation instance of this locale.
   /// Constructing via the enum [AppLocale.build] is preferred.
-  TranslationsId({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
-      : assert(overrides == null, 'Set "translation_overrides: true" in order to enable this feature.'),
+  TranslationsId(
+      {Map<String, Node>? overrides,
+      PluralResolver? cardinalResolver,
+      PluralResolver? ordinalResolver,
+      TranslationMetadata<AppLocale, Translations>? meta})
+      : assert(overrides == null,
+            'Set "translation_overrides: true" in order to enable this feature.'),
         $meta = meta ??
             TranslationMetadata(
               locale: AppLocale.id,
@@ -21,7 +26,9 @@ class TranslationsId extends Translations {
               cardinalResolver: cardinalResolver,
               ordinalResolver: ordinalResolver,
             ),
-        super(cardinalResolver: cardinalResolver, ordinalResolver: ordinalResolver);
+        super(
+            cardinalResolver: cardinalResolver,
+            ordinalResolver: ordinalResolver);
 
   /// Metadata for the translations of <id>.
   @override
@@ -30,7 +37,9 @@ class TranslationsId extends Translations {
   late final TranslationsId _root = this; // ignore: unused_field
 
   @override
-  TranslationsId $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsId(meta: meta ?? this.$meta);
+  TranslationsId $copyWith(
+          {TranslationMetadata<AppLocale, Translations>? meta}) =>
+      TranslationsId(meta: meta ?? this.$meta);
 
   // Translations
 
@@ -48,7 +57,8 @@ class TranslationsId extends Translations {
 
   /// Pengumuman untuk alat bantu aksesibilitas saat peringatan baru ditampilkan.
   @override
-  String get newAlertDisplayedAnnouncement => 'Peringatan baru telah ditampilkan.';
+  String get newAlertDisplayedAnnouncement =>
+      'Peringatan baru telah ditampilkan.';
 
   /// Pengumuman untuk alat bantu aksesibilitas saat peringatan ditutup.
   @override
@@ -100,7 +110,8 @@ class TranslationsId extends Translations {
 
   /// Petunjuk semantik yang menginstruksikan pengguna untuk menekan dan menahan elemen untuk menjeda hitung mundur.
   @override
-  String get pressAndHoldToPauseCountdownSemanticHint => 'Tekan dan tahan untuk menjeda hitung mundur.';
+  String get pressAndHoldToPauseCountdownSemanticHint =>
+      'Tekan dan tahan untuk menjeda hitung mundur.';
 
   /// Petunjuk semantik yang menginstruksikan pengguna untuk mengklik elemen untuk menutupnya.
   @override

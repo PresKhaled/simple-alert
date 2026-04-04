@@ -12,8 +12,13 @@ import 'translations.g.dart';
 class TranslationsTr extends Translations {
   /// You can call this constructor and build your own translation instance of this locale.
   /// Constructing via the enum [AppLocale.build] is preferred.
-  TranslationsTr({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
-      : assert(overrides == null, 'Set "translation_overrides: true" in order to enable this feature.'),
+  TranslationsTr(
+      {Map<String, Node>? overrides,
+      PluralResolver? cardinalResolver,
+      PluralResolver? ordinalResolver,
+      TranslationMetadata<AppLocale, Translations>? meta})
+      : assert(overrides == null,
+            'Set "translation_overrides: true" in order to enable this feature.'),
         $meta = meta ??
             TranslationMetadata(
               locale: AppLocale.tr,
@@ -21,7 +26,9 @@ class TranslationsTr extends Translations {
               cardinalResolver: cardinalResolver,
               ordinalResolver: ordinalResolver,
             ),
-        super(cardinalResolver: cardinalResolver, ordinalResolver: ordinalResolver);
+        super(
+            cardinalResolver: cardinalResolver,
+            ordinalResolver: ordinalResolver);
 
   /// Metadata for the translations of <tr>.
   @override
@@ -30,7 +37,9 @@ class TranslationsTr extends Translations {
   late final TranslationsTr _root = this; // ignore: unused_field
 
   @override
-  TranslationsTr $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsTr(meta: meta ?? this.$meta);
+  TranslationsTr $copyWith(
+          {TranslationMetadata<AppLocale, Translations>? meta}) =>
+      TranslationsTr(meta: meta ?? this.$meta);
 
   // Translations
 
@@ -100,7 +109,8 @@ class TranslationsTr extends Translations {
 
   /// Kullanıcıya geri sayımı duraklatmak için bir öğeye basılı tutmasını söyleyen anlamsal ipucu.
   @override
-  String get pressAndHoldToPauseCountdownSemanticHint => 'Geri sayımı duraklatmak için basılı tutun.';
+  String get pressAndHoldToPauseCountdownSemanticHint =>
+      'Geri sayımı duraklatmak için basılı tutun.';
 
   /// Kullanıcıya bir öğeyi kapatmak için tıklamasını söyleyen anlamsal ipucu.
   @override

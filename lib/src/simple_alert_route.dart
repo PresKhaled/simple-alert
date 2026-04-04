@@ -73,11 +73,14 @@ class SimpleAlertRoute<T> extends PopupRoute<T> {
   Duration get reverseTransitionDuration => Duration.zero;
 
   @override
-  Color? get barrierColor => null; // No barrier color, making the barrier invisible.
+  Color? get barrierColor =>
+      null; // No barrier color, making the barrier invisible.
   @override
-  bool get barrierDismissible => false; // The barrier is not dismissible by tapping outside.
+  bool get barrierDismissible =>
+      false; // The barrier is not dismissible by tapping outside.
   @override
-  String? get barrierLabel => null; // No semantic label for the barrier as it's not interactive.
+  String? get barrierLabel =>
+      null; // No semantic label for the barrier as it's not interactive.
   @override
   bool get opaque => false;
   @override

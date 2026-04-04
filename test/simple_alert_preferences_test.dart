@@ -6,7 +6,8 @@ void main() {
   test('Ensure that the class properties are present after setting them.', () {
     // final BuildContext context = ; // -
     double getWidth() => 250.0;
-    const AlignmentDirectional alignmentDirectional = AlignmentDirectional.bottomCenter;
+    const AlignmentDirectional alignmentDirectional =
+        AlignmentDirectional.bottomCenter;
     const SimpleAlertShape shape = SimpleAlertShape.rounded;
     final BorderRadius borderRadius = BorderRadius.circular(99.0);
     const SimpleAlertType type = SimpleAlertType.success;
