@@ -236,8 +236,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   void _initializeProperties() {
     _resolvedType = (type ?? SimpleAlertPreferences().type);
     _resolvedBrightness = brightness ?? Theme.of(context).brightness;
-    _resolvedAlignment =
-        alignmentDirectional ?? SimpleAlertPreferences().alignmentDirectional;
+    _resolvedAlignment = alignmentDirectional ?? SimpleAlertPreferences().alignmentDirectional;
     _resolvedDuration = _calculateDuration();
     _routeName = routeName ?? 'SimpleAlert#${Random().nextInt(999999999)}';
   }
@@ -277,14 +276,12 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
           routeContext: routeContext,
           onFirstFrameBuilt: _onFirstFrameBuilt,
           closeAlert: _close,
-          onOpacityAnimationControllerCreated: (controller) =>
-              opacityAnimationController = controller,
+          onOpacityAnimationControllerCreated: (controller) => opacityAnimationController = controller,
           animatedOpacityDuration: animatedOpacityDuration,
           // Properties for SimpleAlertSafeAreaWrapper
           alertKey: _alertKey,
           resolvedAlignment: _resolvedAlignment,
-          alertWidth: _calculateAlertWidth(MediaQuery.sizeOf(routeContext)
-              .width), // Initial width calculation.
+          alertWidth: _calculateAlertWidth(MediaQuery.sizeOf(routeContext).width), // Initial width calculation.
           calculateVerticalOffset: _calculateVerticalOffset,
           alertManager: _alertManager,
           routeName: _routeName,
@@ -304,8 +301,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
           centerContent: centerContent,
           actions: actions,
           withClose: withClose,
-          onWidthAnimationControllerCreated: (controller) =>
-              widthAnimationController = controller,
+          onWidthAnimationControllerCreated: (controller) => widthAnimationController = controller,
           resolvedDuration: _resolvedDuration,
           getForegroundColor: _getForegroundColor,
           getIcon: _getIcon,
@@ -330,8 +326,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     // Ensure the alert widget is rendered before attempting to get its size.
     if (_alertKey.currentContext == null) return;
 
-    final renderBox =
-        _alertKey.currentContext!.findRenderObject() as RenderBox?;
+    final renderBox = _alertKey.currentContext!.findRenderObject() as RenderBox?;
     // Ensure the render box exists and has a size.
     if (renderBox == null || !renderBox.hasSize) return;
 
@@ -343,8 +338,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
       fromBottom: AlertManager.isBottomAligned(_resolvedAlignment),
     );
 
-    _alertManager.registerAlert(
-        _routeName, alertData); // Register the alert with its data.
+    _alertManager.registerAlert(_routeName, alertData); // Register the alert with its data.
     _timerController.start(); // Start the auto-dismissal timer.
   }
 
@@ -389,9 +383,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     // Define an average height for calculating initial base offset, considering orientation.
     final averageHeight = orientation == Orientation.portrait ? 70.0 : 50.0;
     // Calculate a base offset, particularly for center-aligned alerts.
-    final baseOffset = AlertManager.isCenterAligned(_resolvedAlignment)
-        ? (screenHeight / 2) - averageHeight
-        : 0.0;
+    final baseOffset = AlertManager.isCenterAligned(_resolvedAlignment) ? (screenHeight / 2) - averageHeight : 0.0;
 
     // Fold over previous alerts to accumulate their heights and determine the final offset.
     return previousAlerts.fold<double>(
@@ -421,8 +413,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   /// [details] Details about the tap down event.
   void _handleTapDown(TapDownDetails details) {
     if (widthAnimationController != null) {
-      widthAnimationController!
-          .stop(canceled: false); // Stop progress bar animation.
+      widthAnimationController!.stop(canceled: false); // Stop progress bar animation.
       _timerController.pause(); // Pause auto-dismissal timer.
     }
   }
@@ -486,21 +477,11 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     final isLight = (_resolvedBrightness == Brightness.light);
 
     return switch (_resolvedType) {
-      SimpleAlertType.normal => isLight
-          ? const Color.fromRGBO(105, 105, 105, 1.0)
-          : const Color.fromRGBO(229, 228, 226, 1.0),
-      SimpleAlertType.success => isLight
-          ? const Color.fromRGBO(46, 139, 87, 1.0)
-          : const Color.fromRGBO(80, 200, 120, 1.0),
-      SimpleAlertType.warning => isLight
-          ? const Color.fromRGBO(239, 155, 15, 1.0)
-          : const Color.fromRGBO(255, 191, 0, 1.0),
-      SimpleAlertType.danger => isLight
-          ? const Color.fromRGBO(197, 30, 58, 1.0)
-          : const Color.fromRGBO(251, 96, 127, 1.0),
-      SimpleAlertType.info => isLight
-          ? const Color.fromRGBO(34, 76, 152, 1.0)
-          : const Color.fromRGBO(135, 206, 250, 1.0),
+      SimpleAlertType.normal => isLight ? const Color.fromRGBO(105, 105, 105, 1.0) : const Color.fromRGBO(229, 228, 226, 1.0),
+      SimpleAlertType.success => isLight ? const Color.fromRGBO(46, 139, 87, 1.0) : const Color.fromRGBO(80, 200, 120, 1.0),
+      SimpleAlertType.warning => isLight ? const Color.fromRGBO(239, 155, 15, 1.0) : const Color.fromRGBO(255, 191, 0, 1.0),
+      SimpleAlertType.danger => isLight ? const Color.fromRGBO(197, 30, 58, 1.0) : const Color.fromRGBO(251, 96, 127, 1.0),
+      SimpleAlertType.info => isLight ? const Color.fromRGBO(34, 76, 152, 1.0) : const Color.fromRGBO(135, 206, 250, 1.0),
     };
   }
 
@@ -584,8 +565,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     // Attempt to reverse the opacity animation for a smooth dismissal.
     if (_routeContext != null && _routeContext!.mounted) {
       try {
-        await opacityAnimationController?.reverse().timeout(
-            animatedOpacityDuration + const Duration(milliseconds: 100));
+        await opacityAnimationController?.reverse().timeout(animatedOpacityDuration + const Duration(milliseconds: 100));
       } catch (e) {
         // Ignore animation errors to ensure the alert still closes.
         debugPrint('SimpleAlert closing animation failed: $e');
@@ -596,10 +576,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     // primary navigator source, falling back to the original `context` to
     // guarantee removal even when the route widget tree has been unmounted.
     if (_route.isActive) {
-      final NavigatorState? navigator =
-          (_routeContext != null && _routeContext!.mounted)
-              ? Navigator.maybeOf(_routeContext!)
-              : (context.mounted ? Navigator.maybeOf(context) : null);
+      final NavigatorState? navigator = (_routeContext != null && _routeContext!.mounted) ? Navigator.maybeOf(_routeContext!) : (context.mounted ? Navigator.maybeOf(context) : null);
       navigator?.removeRoute(_route);
     }
 
