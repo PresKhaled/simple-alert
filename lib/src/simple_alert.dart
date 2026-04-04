@@ -276,7 +276,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
           routeContext: routeContext,
           onFirstFrameBuilt: _onFirstFrameBuilt,
           closeAlert: _close,
-          opacityAnimationController: opacityAnimationController,
+          onOpacityAnimationControllerCreated: (controller) => opacityAnimationController = controller,
           animatedOpacityDuration: animatedOpacityDuration,
           // Properties for SimpleAlertSafeAreaWrapper
           alertKey: _alertKey,
@@ -301,7 +301,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
           centerContent: centerContent,
           actions: actions,
           withClose: withClose,
-          widthAnimationController: widthAnimationController,
+          onWidthAnimationControllerCreated: (controller) => widthAnimationController = controller,
           resolvedDuration: _resolvedDuration,
           getForegroundColor: _getForegroundColor,
           getIcon: _getIcon,
@@ -412,8 +412,8 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   ///
   /// [details] Details about the tap down event.
   void _handleTapDown(TapDownDetails details) {
-    if (widthAnimationController.value != null) {
-      widthAnimationController.value!.stop(canceled: false); // Stop progress bar animation.
+    if (widthAnimationController != null) {
+      widthAnimationController!.stop(canceled: false); // Stop progress bar animation.
       _timerController.pause(); // Pause auto-dismissal timer.
     }
   }
@@ -437,8 +437,8 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   /// Resumes the auto-dismissal timer and the progress bar animation if present.
   void _resumeTimer() {
     _timerController.resume(); // Resume the timer.
-    if (widthAnimationController.value != null) {
-      widthAnimationController.value!.forward(); // Continue progress bar animation.
+    if (widthAnimationController != null) {
+      widthAnimationController!.forward(); // Continue progress bar animation.
     }
   }
 
@@ -561,7 +561,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     if (_routeContext != null && _routeContext!.mounted) {
       // Reverse the opacity animation for a smooth dismissal.
       try {
-        await opacityAnimationController.value?.reverse().timeout(animatedOpacityDuration + const Duration(milliseconds: 100));
+        await opacityAnimationController?.reverse().timeout(animatedOpacityDuration + const Duration(milliseconds: 100));
       } catch (e) {
         // Ignore animation errors to ensure the alert still closes.
         debugPrint('SimpleAlert closing animation failed: $e');
@@ -587,7 +587,8 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     }
 
     _timerController.dispose();
-    opacityAnimationController.dispose();
+    opacityAnimationController = null;
+    widthAnimationController = null;
     _routeContext = null; // Clear the context when resources are freed.
   }
 

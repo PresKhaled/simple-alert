@@ -30,7 +30,7 @@ class SimpleAlertPositionedContainer extends StatelessWidget {
     required this.centerContent,
     this.actions,
     required this.withClose,
-    required this.widthAnimationController,
+    required this.onWidthAnimationControllerCreated,
     required this.resolvedDuration,
     required this.getForegroundColor,
     required this.getIcon,
@@ -76,7 +76,7 @@ class SimpleAlertPositionedContainer extends StatelessWidget {
   final bool centerContent;
   final List<IconButton>? actions;
   final bool withClose;
-  final ValueNotifier<AnimationController?> widthAnimationController;
+  final ValueChanged<AnimationController> onWidthAnimationControllerCreated;
   final Duration resolvedDuration;
   final Color Function() getForegroundColor;
   final Icon Function() getIcon;
@@ -121,7 +121,7 @@ class SimpleAlertPositionedContainer extends StatelessWidget {
                 centerContent: centerContent,
                 actions: actions,
                 withClose: withClose,
-                widthAnimationController: widthAnimationController,
+                onWidthAnimationControllerCreated: onWidthAnimationControllerCreated,
                 resolvedDuration: resolvedDuration,
                 getForegroundColor: getForegroundColor,
                 getIcon: getIcon,

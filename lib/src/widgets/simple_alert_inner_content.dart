@@ -17,7 +17,7 @@ class SimpleAlertInnerContent extends StatelessWidget {
     this.actions,
     required this.withClose,
     required this.withProgressBar,
-    required this.widthAnimationController,
+    required this.onWidthAnimationControllerCreated,
     required this.resolvedDuration,
     required this.getForegroundColor,
     required this.getBackgroundColor,
@@ -49,8 +49,8 @@ class SimpleAlertInnerContent extends StatelessWidget {
   /// If true, a progress bar indicating the remaining duration will be displayed.
   final bool withProgressBar;
 
-  /// The animation controller for the width animation (used by the progress bar).
-  final ValueNotifier<AnimationController?> widthAnimationController;
+  /// The callback to expose the width animation controller (used by the progress bar).
+  final ValueChanged<AnimationController> onWidthAnimationControllerCreated;
 
   /// The resolved duration for the alert's display time.
   final Duration resolvedDuration;
@@ -120,7 +120,7 @@ class SimpleAlertInnerContent extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: SimpleAlertProgressBar(
-                  animationController: widthAnimationController,
+                  onAnimationControllerCreated: onWidthAnimationControllerCreated,
                   alertWidth: alertWidth,
                   alertDuration: resolvedDuration,
                 ),

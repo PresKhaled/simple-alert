@@ -8,9 +8,8 @@ import 'package:flutter/material.dart';
 ///
 /// Example usage:
 /// ```dart
-/// ValueNotifier<AnimationController?> controller = ValueNotifier(null);
 /// Alert(
-///   animationController: controller,
+///   onAnimationControllerCreated: (controller) => _myController = controller,
 ///   animatedOpacityDuration: Duration(milliseconds: 300),
 ///   child: Text('This is an alert'),
 /// )
@@ -21,13 +20,8 @@ class Alert extends StatefulWidget {
   /// This child widget will be displayed with the opacity animation.
   final Widget child;
 
-  /// A [ValueNotifier] that holds the [AnimationController] for the opacity animation.
-  ///
-  /// This controller is created and managed by the [Alert] widget internally.
-  /// It is exposed through this [ValueNotifier] to allow external observation
-  /// and control of the animation's lifecycle. The notifier is initially `null`
-  /// and is set within the [initState] of the [AlertState].
-  final ValueNotifier<AnimationController?> animationController;
+  /// A callback executed when the internal [AnimationController] is created.
+  final ValueChanged<AnimationController> onAnimationControllerCreated;
 
   /// The duration of the opacity animation.
   ///
@@ -36,12 +30,12 @@ class Alert extends StatefulWidget {
 
   /// Creates an [Alert] widget.
   ///
-  /// The [child], [animationController], and [animatedOpacityDuration] parameters
+  /// The [child], [onAnimationControllerCreated], and [animatedOpacityDuration] parameters
   /// must not be null.
   const Alert({
     super.key,
     required this.child,
-    required this.animationController,
+    required this.onAnimationControllerCreated,
     required this.animatedOpacityDuration,
   });
 
@@ -50,6 +44,7 @@ class Alert extends StatefulWidget {
 }
 
 class _AlertState extends State<Alert> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
   late Animation<double> _opacityAnimation;
   double _opacity = 0.0;
 
@@ -57,20 +52,22 @@ class _AlertState extends State<Alert> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    // Initialize the [AnimationController] and assign it to the [ValueNotifier].
+    // Initialize the [AnimationController].
     // This controller manages the fade-in animation for the alert.
-    widget.animationController.value = AnimationController(
+    _controller = AnimationController(
       vsync: this,
       duration: widget.animatedOpacityDuration,
     )..forward(); // Start the animation immediately.
 
+    widget.onAnimationControllerCreated(_controller);
+
     // Create a [Tween] animation for opacity from 0.0 to 1.0, driven by the controller.
-    _opacityAnimation = widget.animationController.value!.drive(
+    _opacityAnimation = _controller.drive(
       Tween(begin: 0.0, end: 1.0),
     );
 
     // Add a listener to the animation to update the opacity and trigger a rebuild.
-    widget.animationController.value!.addListener(() {
+    _controller.addListener(() {
       setState(() => (_opacity = _opacityAnimation.value));
     });
   }
@@ -78,8 +75,8 @@ class _AlertState extends State<Alert> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     // Stop and dispose of the [AnimationController] to free up resources.
-    widget.animationController.value!.stop();
-    widget.animationController.value!.dispose();
+    _controller.stop();
+    _controller.dispose();
 
     super.dispose();
   }

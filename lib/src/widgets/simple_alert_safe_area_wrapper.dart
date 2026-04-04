@@ -29,7 +29,7 @@ class SimpleAlertSafeAreaWrapper extends StatefulWidget {
     required this.centerContent,
     this.actions,
     required this.withClose,
-    required this.widthAnimationController,
+    required this.onWidthAnimationControllerCreated,
     required this.resolvedDuration,
     required this.getForegroundColor,
     required this.getIcon,
@@ -72,7 +72,7 @@ class SimpleAlertSafeAreaWrapper extends StatefulWidget {
   final bool centerContent;
   final List<IconButton>? actions;
   final bool withClose;
-  final ValueNotifier<AnimationController?> widthAnimationController;
+  final ValueChanged<AnimationController> onWidthAnimationControllerCreated;
   final Duration resolvedDuration;
   final Color Function() getForegroundColor;
   final Icon Function() getIcon;
@@ -147,7 +147,7 @@ class _SimpleAlertSafeAreaWrapperState extends State<SimpleAlertSafeAreaWrapper>
             centerContent: widget.centerContent,
             actions: widget.actions,
             withClose: widget.withClose,
-            widthAnimationController: widget.widthAnimationController,
+            onWidthAnimationControllerCreated: widget.onWidthAnimationControllerCreated,
             resolvedDuration: widget.resolvedDuration,
             getForegroundColor: widget.getForegroundColor,
             getIcon: widget.getIcon,
