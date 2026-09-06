@@ -36,21 +36,33 @@ class AlertTimerController {
   void start() {
     if (_isDisposed) return;
 
-    _timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
-      if (_isDisposed) {
-        timer.cancel();
-        return;
-      }
-
-      if (!_isPaused && remainingMilliseconds.value > 0) {
-        remainingMilliseconds.value -= 100;
-
-        if (remainingMilliseconds.value <= 0) {
-          timer.cancel(); // Prevent further periodic ticks after completion.
-          onComplete();
+    try {
+      _timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+        if (_isDisposed) {
+          timer.cancel();
+          return;
         }
-      }
-    });
+
+        try {
+          if (!_isPaused && remainingMilliseconds.value > 0) {
+            remainingMilliseconds.value -= 100;
+
+            if (remainingMilliseconds.value <= 0) {
+              timer.cancel(); // Prevent further periodic ticks after completion.
+              try {
+                onComplete();
+              } catch (e) {
+                debugPrint('AlertTimerController onComplete safe error: $e');
+              }
+            }
+          }
+        } catch (_) {
+          timer.cancel();
+        }
+      });
+    } catch (e) {
+      debugPrint('AlertTimerController start safe error: $e');
+    }
   }
 
   /// Cancels the periodic timer without disposing of managed resources.
@@ -59,7 +71,9 @@ class AlertTimerController {
   /// safely before the full disposal sequence. This is primarily used by
   /// the closing sequence to immediately stop the timer before async work begins.
   void cancel() {
-    _timer?.cancel();
+    try {
+      _timer?.cancel();
+    } catch (_) {}
     _timer = null;
   }
 

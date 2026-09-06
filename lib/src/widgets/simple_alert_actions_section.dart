@@ -23,34 +23,45 @@ class SimpleAlertActionsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // If no actions and no close button, return an empty box to save space.
-    if (actions == null && !withClose) {
+    try {
+      // If no actions and no close button, return an empty box to save space.
+      if (actions == null && !withClose) {
+        return const SizedBox.shrink();
+      }
+
+      return ConstrainedBox(
+        constraints:
+            const BoxConstraints(maxWidth: 92.0), // Limit width for actions.
+        child: SingleChildScrollView(
+          scrollDirection:
+              Axis.horizontal, // Allow horizontal scrolling for multiple actions.
+          child: Row(
+            mainAxisSize: MainAxisSize.min, // Take minimum horizontal space.
+            children: [
+              if (actions != null)
+                ...actions!, // Display specified action buttons.
+              if (withClose) // Conditionally display a close button.
+                IconButton(
+                  onPressed: () {
+                    try {
+                      onClosePressed();
+                    } catch (e) {
+                      debugPrint('SimpleAlert close button safe error: $e');
+                    }
+                  },
+                  icon: Icon(SimpleAlertPreferences()
+                      .icons
+                      .close), // Close icon from preferences.
+                  splashRadius: ICON_BUTTON_SPLASH_RADIUS,
+                  tooltip: SimpleAlertPreferences().closeTooltip,
+                ),
+            ],
+          ),
+        ),
+      );
+    } catch (e) {
+      debugPrint('SimpleAlertActionsSection safe error: $e');
       return const SizedBox.shrink();
     }
-
-    return ConstrainedBox(
-      constraints:
-          const BoxConstraints(maxWidth: 92.0), // Limit width for actions.
-      child: SingleChildScrollView(
-        scrollDirection:
-            Axis.horizontal, // Allow horizontal scrolling for multiple actions.
-        child: Row(
-          mainAxisSize: MainAxisSize.min, // Take minimum horizontal space.
-          children: [
-            if (actions != null)
-              ...actions!, // Display specified action buttons.
-            if (withClose) // Conditionally display a close button.
-              IconButton(
-                onPressed: onClosePressed, // Callback to close the alert.
-                icon: Icon(SimpleAlertPreferences()
-                    .icons
-                    .close), // Close icon from preferences.
-                splashRadius: ICON_BUTTON_SPLASH_RADIUS,
-                tooltip: SimpleAlertPreferences().closeTooltip,
-              ),
-          ],
-        ),
-      ),
-    );
   }
 }

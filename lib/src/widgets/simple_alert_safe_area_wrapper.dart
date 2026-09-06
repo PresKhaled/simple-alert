@@ -35,6 +35,7 @@ class SimpleAlertSafeAreaWrapper extends StatefulWidget {
     required this.getForegroundColor,
     required this.getIcon,
     required this.onClosePressed,
+    this.onDismissedImmediate,
   });
 
   /// A global key used to obtain the render box of the alert for size calculations.
@@ -81,6 +82,9 @@ class SimpleAlertSafeAreaWrapper extends StatefulWidget {
   final Icon Function() getIcon;
   final VoidCallback onClosePressed;
 
+  /// Optional callback invoked when the alert is swiped off-screen for immediate dismissal.
+  final VoidCallback? onDismissedImmediate;
+
   @override
   State<SimpleAlertSafeAreaWrapper> createState() =>
       _SimpleAlertSafeAreaWrapperState();
@@ -102,13 +106,18 @@ class _SimpleAlertSafeAreaWrapperState
 
       // Update size for this alert after orientation change.
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        final key = widget.alertKey;
-        if (key.currentContext != null) {
-          final renderBox =
-              key.currentContext!.findRenderObject() as RenderBox?;
-          if (renderBox != null && renderBox.hasSize) {
-            widget.updateAlertSize(widget.routeName, renderBox.size);
+        try {
+          if (!mounted) return;
+          final key = widget.alertKey;
+          if (key.currentContext != null) {
+            final renderBox =
+                key.currentContext!.findRenderObject() as RenderBox?;
+            if (renderBox != null && renderBox.hasSize) {
+              widget.updateAlertSize(widget.routeName, renderBox.size);
+            }
           }
+        } catch (e) {
+          debugPrint('SimpleAlert orientation change size safe error: $e');
         }
       });
     }
@@ -116,47 +125,54 @@ class _SimpleAlertSafeAreaWrapperState
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: OrientationBuilder(
-        builder: (context, orientation) {
-          // Handle orientation changes and update alert sizes.
-          _handleOrientationChange(orientation);
-          // Build the alert positioned on the screen.
-          final mediaSize = MediaQuery.sizeOf(context);
-          return SimpleAlertPositionedContainer(
-            alertKey: widget.alertKey,
-            resolvedAlignment: widget.resolvedAlignment,
-            alertWidth: widget.alertWidth,
-            calculateVerticalOffset: widget.calculateVerticalOffset,
-            alertManager: widget.alertManager,
-            routeName: widget.routeName,
-            currentOrientation: orientation,
-            screenHeight: mediaSize.height,
-            // Pass-through properties for SimpleAlertInteractiveContainer
-            title: widget.title,
-            description: widget.description,
-            textDirection: widget.textDirection,
-            withProgressBar: widget.withProgressBar,
-            closeOnPress: widget.closeOnPress,
-            onTap: widget.onTap,
-            onTapDown: widget.onTapDown,
-            onTapUp: widget.onTapUp,
-            onTapCancel: widget.onTapCancel,
-            getBorderRadius: widget.getBorderRadius,
-            getBackgroundColor: widget.getBackgroundColor,
-            loading: widget.loading,
-            centerContent: widget.centerContent,
-            actions: widget.actions,
-            withClose: widget.withClose,
-            onWidthAnimationControllerCreated:
-                widget.onWidthAnimationControllerCreated,
-            resolvedDuration: widget.resolvedDuration,
-            getForegroundColor: widget.getForegroundColor,
-            getIcon: widget.getIcon,
-            onClosePressed: widget.onClosePressed,
-          );
-        },
-      ),
-    );
+    try {
+      return SafeArea(
+        child: OrientationBuilder(
+          builder: (context, orientation) {
+            // Handle orientation changes and update alert sizes.
+            _handleOrientationChange(orientation);
+            // Build the alert positioned on the screen.
+            final mediaSize = MediaQuery.maybeSizeOf(context) ??
+                const Size(400.0, 800.0);
+            return SimpleAlertPositionedContainer(
+              alertKey: widget.alertKey,
+              resolvedAlignment: widget.resolvedAlignment,
+              alertWidth: widget.alertWidth,
+              calculateVerticalOffset: widget.calculateVerticalOffset,
+              alertManager: widget.alertManager,
+              routeName: widget.routeName,
+              currentOrientation: orientation,
+              screenHeight: mediaSize.height,
+              // Pass-through properties for SimpleAlertInteractiveContainer
+              title: widget.title,
+              description: widget.description,
+              textDirection: widget.textDirection,
+              withProgressBar: widget.withProgressBar,
+              closeOnPress: widget.closeOnPress,
+              onTap: widget.onTap,
+              onTapDown: widget.onTapDown,
+              onTapUp: widget.onTapUp,
+              onTapCancel: widget.onTapCancel,
+              getBorderRadius: widget.getBorderRadius,
+              getBackgroundColor: widget.getBackgroundColor,
+              loading: widget.loading,
+              centerContent: widget.centerContent,
+              actions: widget.actions,
+              withClose: widget.withClose,
+              onWidthAnimationControllerCreated:
+                  widget.onWidthAnimationControllerCreated,
+              resolvedDuration: widget.resolvedDuration,
+              getForegroundColor: widget.getForegroundColor,
+              getIcon: widget.getIcon,
+              onClosePressed: widget.onClosePressed,
+              onDismissedImmediate: widget.onDismissedImmediate,
+            );
+          },
+        ),
+      );
+    } catch (e) {
+      debugPrint('SimpleAlertSafeAreaWrapper safe error: $e');
+      return const SizedBox.shrink();
+    }
   }
 }

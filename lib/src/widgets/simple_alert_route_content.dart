@@ -56,7 +56,7 @@ class SimpleAlertRouteContent extends StatefulWidget {
   final VoidCallback onFirstFrameBuilt;
 
   /// Callback to close the alert.
-  final Future<void> Function() closeAlert;
+  final Future<void> Function({bool immediate}) closeAlert;
 
   /// The callback for the opacity animation controller.
   final ValueChanged<AnimationController> onOpacityAnimationControllerCreated;
@@ -106,56 +106,80 @@ class _SimpleAlertRouteContentState extends State<SimpleAlertRouteContent> {
   void initState() {
     super.initState();
     // Schedule a callback to run after the first frame is rendered to calculate alert size.
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => widget.onFirstFrameBuilt());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        try {
+          widget.onFirstFrameBuilt();
+        } catch (e) {
+          debugPrint('SimpleAlertRouteContent onFirstFrameBuilt safe error: $e');
+        }
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop:
-          false, // Prevent the system back button from directly dismissing the alert.
-      onPopInvokedWithResult: (bool didPop, dynamic result) {
-        // If a pop is invoked and not prevented by canPop, close the alert gracefully.
-        if (!didPop) widget.closeAlert();
-      },
-      child: Alert(
-        alignment: widget.resolvedAlignment,
-        onAnimationControllerCreated: widget
-            .onOpacityAnimationControllerCreated, // Controller for opacity animations.
-        animatedOpacityDuration: widget.animatedOpacityDuration,
-        child: SimpleAlertSafeAreaWrapper(
-          alertKey: widget.alertKey,
-          resolvedAlignment: widget.resolvedAlignment,
-          alertWidth: widget.alertWidth,
-          calculateVerticalOffset: widget.calculateVerticalOffset,
-          alertManager: widget.alertManager,
-          routeName: widget.routeName,
-          updateAlertSize: widget.updateAlertSize,
-          // Pass-through properties for [SimpleAlertInteractiveContainer].
-          title: widget.title,
-          description: widget.description,
-          textDirection: widget.textDirection,
-          withProgressBar: widget.withProgressBar,
-          closeOnPress: widget.closeOnPress,
-          onTap: widget.onTap,
-          onTapDown: widget.onTapDown,
-          onTapUp: widget.onTapUp,
-          onTapCancel: widget.onTapCancel,
-          getBorderRadius: widget.getBorderRadius,
-          getBackgroundColor: widget.getBackgroundColor,
-          loading: widget.loading,
-          centerContent: widget.centerContent,
-          actions: widget.actions,
-          withClose: widget.withClose,
-          onWidthAnimationControllerCreated:
-              widget.onWidthAnimationControllerCreated,
-          resolvedDuration: widget.resolvedDuration,
-          getForegroundColor: widget.getForegroundColor,
-          getIcon: widget.getIcon,
-          onClosePressed: widget.onClosePressed,
+    try {
+      return PopScope(
+        canPop:
+            false, // Prevent the system back button from directly dismissing the alert.
+        onPopInvokedWithResult: (bool didPop, dynamic result) {
+          // If a pop is invoked and not prevented by canPop, close the alert gracefully.
+          if (!didPop) {
+            try {
+              widget.closeAlert();
+            } catch (_) {}
+          }
+        },
+        child: Alert(
+          alignment: widget.resolvedAlignment,
+          onAnimationControllerCreated: widget
+              .onOpacityAnimationControllerCreated, // Controller for opacity animations.
+          animatedOpacityDuration: widget.animatedOpacityDuration,
+          child: SimpleAlertSafeAreaWrapper(
+            alertKey: widget.alertKey,
+            resolvedAlignment: widget.resolvedAlignment,
+            alertWidth: widget.alertWidth,
+            calculateVerticalOffset: widget.calculateVerticalOffset,
+            alertManager: widget.alertManager,
+            routeName: widget.routeName,
+            updateAlertSize: widget.updateAlertSize,
+            // Pass-through properties for [SimpleAlertInteractiveContainer].
+            title: widget.title,
+            description: widget.description,
+            textDirection: widget.textDirection,
+            withProgressBar: widget.withProgressBar,
+            closeOnPress: widget.closeOnPress,
+            onTap: widget.onTap,
+            onTapDown: widget.onTapDown,
+            onTapUp: widget.onTapUp,
+            onTapCancel: widget.onTapCancel,
+            getBorderRadius: widget.getBorderRadius,
+            getBackgroundColor: widget.getBackgroundColor,
+            loading: widget.loading,
+            centerContent: widget.centerContent,
+            actions: widget.actions,
+            withClose: widget.withClose,
+            onWidthAnimationControllerCreated:
+                widget.onWidthAnimationControllerCreated,
+            resolvedDuration: widget.resolvedDuration,
+            getForegroundColor: widget.getForegroundColor,
+            getIcon: widget.getIcon,
+            onClosePressed: widget.onClosePressed,
+            onDismissedImmediate: () {
+              try {
+                widget.closeAlert(immediate: true);
+              } catch (_) {}
+            },
+          ),
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      debugPrint('SimpleAlertRouteContent build safe error: $e');
+      try {
+        widget.closeAlert(immediate: true);
+      } catch (_) {}
+      return const SizedBox.shrink();
+    }
   }
 }

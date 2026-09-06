@@ -31,69 +31,74 @@ class SimpleAlertTextContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final contextDirection = Directionality.maybeOf(context);
-    final primaryDirection = SimpleAlertBidiUtil.resolveDirection(
-      text: title,
-      explicitDirection:
-          textDirection ?? SimpleAlertPreferences().textDirection,
-      fallbackDirection: contextDirection,
-    );
+    try {
+      final contextDirection = Directionality.maybeOf(context);
+      final primaryDirection = SimpleAlertBidiUtil.resolveDirection(
+        text: title,
+        explicitDirection:
+            textDirection ?? SimpleAlertPreferences().textDirection,
+        fallbackDirection: contextDirection,
+      );
 
-    final formattedTitle = SimpleAlertBidiUtil.isolateBiDi(
-      title,
-      baseDirection: primaryDirection,
-    );
+      final formattedTitle = SimpleAlertBidiUtil.isolateBiDi(
+        title,
+        baseDirection: primaryDirection,
+      );
 
-    final descriptionDirection = description != null
-        ? SimpleAlertBidiUtil.resolveDirection(
-            text: description,
-            explicitDirection:
-                textDirection ?? SimpleAlertPreferences().textDirection,
-            fallbackDirection: primaryDirection,
-          )
-        : primaryDirection;
+      final descriptionDirection = description != null
+          ? SimpleAlertBidiUtil.resolveDirection(
+              text: description,
+              explicitDirection:
+                  textDirection ?? SimpleAlertPreferences().textDirection,
+              fallbackDirection: primaryDirection,
+            )
+          : primaryDirection;
 
-    final formattedDescription = description != null
-        ? SimpleAlertBidiUtil.isolateBiDi(
-            description!,
-            baseDirection: descriptionDirection,
-          )
-        : null;
+      final formattedDescription = description != null
+          ? SimpleAlertBidiUtil.isolateBiDi(
+              description!,
+              baseDirection: descriptionDirection,
+            )
+          : null;
 
-    final titleAlign =
-        centerContent ? TextAlign.center : TextAlign.start;
-    final descriptionAlign =
-        centerContent ? TextAlign.center : TextAlign.start;
+      final titleAlign =
+          centerContent ? TextAlign.center : TextAlign.start;
+      final descriptionAlign =
+          centerContent ? TextAlign.center : TextAlign.start;
 
-    return Directionality(
-      textDirection: primaryDirection,
-      child: Column(
-        mainAxisSize: MainAxisSize.min, // Take minimum vertical space.
-        crossAxisAlignment: centerContent
-            ? CrossAxisAlignment.center
-            : CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            formattedTitle,
-            textAlign: titleAlign,
-            textDirection: primaryDirection,
-            style: SimpleAlertPreferences().titleStyle.copyWith(
-                  color: foregroundColor,
-                ),
-          ),
-          if (formattedDescription != null) ...[
-            const SizedBox(height: 5.0),
+      return Directionality(
+        textDirection: primaryDirection,
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // Take minimum vertical space.
+          crossAxisAlignment: centerContent
+              ? CrossAxisAlignment.center
+              : CrossAxisAlignment.stretch,
+          children: [
             Text(
-              formattedDescription,
-              textAlign: descriptionAlign,
-              textDirection: descriptionDirection,
-              style: SimpleAlertPreferences().descriptionStyle.copyWith(
-                    color: foregroundColor.withValues(alpha: 0.90),
+              formattedTitle,
+              textAlign: titleAlign,
+              textDirection: primaryDirection,
+              style: SimpleAlertPreferences().titleStyle.copyWith(
+                    color: foregroundColor,
                   ),
             ),
+            if (formattedDescription != null) ...[
+              const SizedBox(height: 5.0),
+              Text(
+                formattedDescription,
+                textAlign: descriptionAlign,
+                textDirection: descriptionDirection,
+                style: SimpleAlertPreferences().descriptionStyle.copyWith(
+                      color: foregroundColor.withValues(alpha: 0.90),
+                    ),
+              ),
+            ],
           ],
-        ],
-      ),
-    );
+        ),
+      );
+    } catch (e) {
+      debugPrint('SimpleAlertTextContent safe error: $e');
+      return const SizedBox.shrink();
+    }
   }
 }

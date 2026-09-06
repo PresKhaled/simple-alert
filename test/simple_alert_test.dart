@@ -410,6 +410,7 @@ void main() {
         (controller.remainingMilliseconds.value - remainingBeforePause).abs(),
         lessThan(50),
       );
+      expect(completed, isFalse);
 
       controller.dispose();
     });
@@ -449,6 +450,84 @@ void main() {
       await Future.delayed(const Duration(milliseconds: 300));
 
       expect(completed, isFalse);
+    });
+  });
+
+  group('SimpleAlert Fail-Safe and Gesture Widget Tests', () {
+    testWidgets('Swipe to dismiss closes alert cleanly without exceptions',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () {
+                    SimpleAlert(
+                      context: context,
+                      title: 'Swipe me away',
+                      duration: SimpleAlertDuration.long,
+                    );
+                  },
+                  child: const Text('Show Alert'),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Show Alert'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Swipe me away'), findsOneWidget);
+
+      // Fling horizontally to dismiss
+      await tester.fling(
+        find.text('Swipe me away'),
+        const Offset(500, 0),
+        1000,
+      );
+      await tester.pumpAndSettle();
+
+      // Ensure alert is removed cleanly without any Dismissible assertion error
+      expect(find.text('Swipe me away'), findsNothing);
+    });
+
+    testWidgets(
+        'SimpleAlert handles bad parameters gracefully without crashing host app',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () {
+                    SimpleAlert(
+                      context: context,
+                      title: 'Safe Alert',
+                      width: -50,
+                      customDuration: const Duration(milliseconds: -10),
+                    );
+                  },
+                  child: const Text('Show Bad Alert'),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Show Bad Alert'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Safe Alert'), findsOneWidget);
+
+      // Dismiss the alert to ensure timers are cleanly cancelled
+      await tester.tap(find.text('Safe Alert'));
+      await tester.pumpAndSettle();
+      expect(find.text('Safe Alert'), findsNothing);
     });
   });
 }

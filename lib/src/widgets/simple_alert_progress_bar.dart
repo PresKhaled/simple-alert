@@ -56,48 +56,57 @@ class _SimpleAlertProgressBarState extends State<SimpleAlertProgressBar>
     widget.onAnimationControllerCreated(_controller);
 
     _controller.addListener(() {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
   }
 
   @override
   void dispose() {
-    _controller.stop();
-    _controller.dispose();
+    try {
+      _controller.stop();
+      _controller.dispose();
+    } catch (_) {}
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final barColor = widget.foregroundColor.withValues(alpha: 0.90);
-    final trackColor = widget.foregroundColor.withValues(alpha: 0.18);
-    final progressFraction = (1.0 - _controller.value).clamp(0.0, 1.0);
+    try {
+      final barColor = widget.foregroundColor.withValues(alpha: 0.90);
+      final trackColor = widget.foregroundColor.withValues(alpha: 0.18);
+      final progressFraction = (1.0 - _controller.value).clamp(0.0, 1.0);
 
-    return Semantics(
-      label: t.alertTimerSemanticLabel,
-      value: '${(progressFraction * 100).round()}% remaining',
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final totalWidth = constraints.maxWidth;
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(4.0),
-            child: Container(
-              width: totalWidth,
-              height: 3.5,
-              color: trackColor,
-              alignment: AlignmentDirectional.centerStart,
+      return Semantics(
+        label: t.alertTimerSemanticLabel,
+        value: '${(progressFraction * 100).round()}% remaining',
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final totalWidth = constraints.maxWidth;
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(4.0),
               child: Container(
-                width: totalWidth * progressFraction,
+                width: totalWidth,
                 height: 3.5,
-                decoration: BoxDecoration(
-                  color: barColor,
-                  borderRadius: BorderRadius.circular(4.0),
+                color: trackColor,
+                alignment: AlignmentDirectional.centerStart,
+                child: Container(
+                  width: totalWidth * progressFraction,
+                  height: 3.5,
+                  decoration: BoxDecoration(
+                    color: barColor,
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
                 ),
               ),
-            ),
-          );
-        },
-      ),
-    );
+            );
+          },
+        ),
+      );
+    } catch (e) {
+      debugPrint('SimpleAlertProgressBar safe error: $e');
+      return const SizedBox.shrink();
+    }
   }
 }

@@ -187,18 +187,25 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     this.actions,
     this.removalSignal,
   }) {
-    // Validate input properties to ensure they are valid.
-    _validateInputs();
-    // Initialize properties that depend on other configurations or preferences.
-    _initializeProperties();
-    // Set up the timer controller for auto-dismissal.
-    _setupTimerController();
-    // Configure the listener for the external removal signal.
-    _setupRemovalSignal();
-    // Build the Flutter route for displaying the alert.
-    _buildRoute();
-    // Display the alert automatically upon creation.
-    show();
+    try {
+      // Validate and sanitize input properties.
+      _validateInputs();
+      // Initialize properties that depend on other configurations or preferences.
+      _initializeProperties();
+      // Set up the timer controller for auto-dismissal.
+      _setupTimerController();
+      // Configure the listener for the external removal signal.
+      _setupRemovalSignal();
+      // Build the Flutter route for displaying the alert.
+      _buildRoute();
+      // Display the alert automatically upon creation.
+      show();
+    } catch (e) {
+      debugPrint('SimpleAlert constructor safe error: $e');
+      try {
+        _close(immediate: true);
+      } catch (_) {}
+    }
   }
 
   /// Creates a loading [SimpleAlert] instance with predefined properties for a loading state.
@@ -228,17 +235,15 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   // Initialization Methods
   // ============================================================================
 
-  /// Validates the constructor inputs to ensure properties like title,
-  /// customDuration, and width have valid values.
+  /// Validates and sanitizes constructor inputs without throwing exceptions,
+  /// ensuring that invalid inputs never crash the host application.
   void _validateInputs() {
-    assert(title.isNotEmpty, 'Title cannot be empty');
-
     if (customDuration != null && customDuration!.inMilliseconds <= 0) {
-      throw ArgumentError('Custom duration must be positive');
+      debugPrint('SimpleAlert: customDuration must be positive. Default duration will be used.');
     }
 
     if (width != null && width! <= 0) {
-      throw ArgumentError('Width must be positive');
+      debugPrint('SimpleAlert: width must be positive. Default width will be used.');
     }
   }
 
@@ -247,11 +252,27 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   /// This includes resolving the alert type, brightness, alignment, duration,
   /// and generating a route name if not specified.
   void _initializeProperties() {
-    _resolvedType = (type ?? SimpleAlertPreferences().type);
-    _resolvedBrightness = brightness ?? Theme.of(context).brightness;
-    _resolvedAlignment = alignmentDirectional ?? SimpleAlertPreferences().alignmentDirectional;
-    _resolvedDuration = _calculateDuration();
-    _routeName = routeName ?? 'SimpleAlert#${Random().nextInt(999999999)}';
+    try {
+      _resolvedType = (type ?? SimpleAlertPreferences().type);
+      Brightness currentBrightness = Brightness.light;
+      try {
+        if (context.mounted) {
+          currentBrightness = Theme.of(context).brightness;
+        }
+      } catch (_) {}
+      _resolvedBrightness = brightness ?? currentBrightness;
+      _resolvedAlignment =
+          alignmentDirectional ?? SimpleAlertPreferences().alignmentDirectional;
+      _resolvedDuration = _calculateDuration();
+      _routeName = routeName ?? 'SimpleAlert#${Random().nextInt(999999999)}';
+    } catch (e) {
+      debugPrint('SimpleAlert _initializeProperties safe error: $e');
+      _resolvedType = SimpleAlertType.normal;
+      _resolvedBrightness = Brightness.light;
+      _resolvedAlignment = AlignmentDirectional.topCenter;
+      _resolvedDuration = const Duration(seconds: 4);
+      _routeName = 'SimpleAlert#${Random().nextInt(999999999)}';
+    }
   }
 
   /// Sets up the [AlertTimerController] with the resolved duration
@@ -285,6 +306,12 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
       builder: (BuildContext routeContext) {
         _routeContext = routeContext; // Assign the routeContext to the field.
 
+        final screenWidth = (routeContext.mounted
+                ? MediaQuery.maybeSizeOf(routeContext)?.width
+                : null) ??
+            (context.mounted ? MediaQuery.maybeSizeOf(context)?.width : null) ??
+            400.0;
+
         return SimpleAlertRouteContent(
           routeContext: routeContext,
           onFirstFrameBuilt: _onFirstFrameBuilt,
@@ -294,7 +321,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
           // Properties for SimpleAlertSafeAreaWrapper
           alertKey: _alertKey,
           resolvedAlignment: _resolvedAlignment,
-          alertWidth: _calculateAlertWidth(MediaQuery.sizeOf(routeContext).width), // Initial width calculation.
+          alertWidth: _calculateAlertWidth(screenWidth),
           calculateVerticalOffset: _calculateVerticalOffset,
           alertManager: _alertManager,
           routeName: _routeName,
@@ -319,7 +346,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
           resolvedDuration: _resolvedDuration,
           getForegroundColor: _getForegroundColor,
           getIcon: _getIcon,
-          onClosePressed: _close,
+          onClosePressed: () => _close(immediate: false),
         );
       },
     );
@@ -337,24 +364,29 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   /// - Registers this `AlertData` with the `AlertManager`.
   /// - Starts the auto-dismissal timer.
   void _onFirstFrameBuilt() {
-    // Ensure the alert widget is rendered before attempting to get its size.
-    if (_alertKey.currentContext == null) return;
+    try {
+      // Ensure the alert widget is rendered before attempting to get its size.
+      if (_alertKey.currentContext == null) return;
 
-    final renderBox = _alertKey.currentContext!.findRenderObject() as RenderBox?;
-    // Ensure the render box exists and has a size.
-    if (renderBox == null || !renderBox.hasSize) return;
+      final renderBox =
+          _alertKey.currentContext!.findRenderObject() as RenderBox?;
+      // Ensure the render box exists and has a size.
+      if (renderBox == null || !renderBox.hasSize) return;
 
-    // Create alert data with its size and alignment properties.
-    final alertData = AlertData(
-      size: renderBox.size,
-      alignment: _resolvedAlignment,
-      fromTop: AlertManager.isTopAligned(_resolvedAlignment),
-      fromCenter: AlertManager.isCenterAligned(_resolvedAlignment),
-      fromBottom: AlertManager.isBottomAligned(_resolvedAlignment),
-    );
+      // Create alert data with its size and alignment properties.
+      final alertData = AlertData(
+        size: renderBox.size,
+        alignment: _resolvedAlignment,
+        fromTop: AlertManager.isTopAligned(_resolvedAlignment),
+        fromCenter: AlertManager.isCenterAligned(_resolvedAlignment),
+        fromBottom: AlertManager.isBottomAligned(_resolvedAlignment),
+      );
 
-    _alertManager.registerAlert(_routeName, alertData); // Register the alert with its data.
-    _timerController.start(); // Start the auto-dismissal timer.
+      _alertManager.registerAlert(_routeName, alertData); // Register the alert with its data.
+      _timerController.start(); // Start the auto-dismissal timer.
+    } catch (e) {
+      debugPrint('SimpleAlert _onFirstFrameBuilt safe error: $e');
+    }
   }
 
   // ============================================================================
@@ -369,10 +401,16 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   /// [screenWidth] The current width of the screen.
   /// Returns the calculated width for the alert.
   double _calculateAlertWidth(double screenWidth) {
-    if (width != null) return width!;
+    if (width != null && width! > 0) return width!;
 
-    final widthFromPreferences = SimpleAlertPreferences().getWidth?.call();
-    return widthFromPreferences ?? screenWidth;
+    try {
+      final widthFromPreferences = SimpleAlertPreferences().getWidth?.call();
+      return (widthFromPreferences != null && widthFromPreferences > 0)
+          ? widthFromPreferences
+          : screenWidth;
+    } catch (_) {
+      return screenWidth;
+    }
   }
 
   /// Calculates the vertical offset required to position the current alert,
@@ -468,16 +506,22 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   ///
   /// Returns the calculated [Duration].
   Duration _calculateDuration() {
-    if (customDuration != null) return customDuration!;
+    if (customDuration != null && customDuration!.inMilliseconds > 0) {
+      return customDuration!;
+    }
 
-    final alertDuration = (duration ?? SimpleAlertPreferences().duration);
+    try {
+      final alertDuration = (duration ?? SimpleAlertPreferences().duration);
 
-    return switch (alertDuration) {
-      SimpleAlertDuration.quick => const Duration(seconds: 3),
-      SimpleAlertDuration.medium => const Duration(seconds: 5),
-      SimpleAlertDuration.long => const Duration(seconds: 8),
-      SimpleAlertDuration.day => const Duration(days: 1),
-    };
+      return switch (alertDuration) {
+        SimpleAlertDuration.quick => const Duration(seconds: 3),
+        SimpleAlertDuration.medium => const Duration(seconds: 5),
+        SimpleAlertDuration.long => const Duration(seconds: 8),
+        SimpleAlertDuration.day => const Duration(days: 1),
+      };
+    } catch (_) {
+      return const Duration(seconds: 4);
+    }
   }
 
   /// Determines the background color of the alert based on its resolved type and brightness.
@@ -563,80 +607,107 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
 
   /// Initiates the closing sequence for the alert.
   ///
-  /// This asynchronous method:
-  /// - Prevents multiple closing attempts.
-  /// - Calls `_cleanup` to dispose of listeners and timers.
-  /// - Reverses the opacity animation.
-  /// - Deletes the alert's route from the Navigator if it's active.
-  /// - Unregisters the alert from the `AlertManager`.
-  Future<void> _close() async {
+  /// If [immediate] is true (e.g. when swiped off-screen by the user or on error),
+  /// the reverse opacity animation is skipped and the route is removed instantly.
+  Future<void> _close({bool immediate = false}) async {
     if (_isClosing) return;
     _isClosing = true;
 
-    // Cancel the timer immediately to prevent any further completion callbacks
-    // while the async closing sequence is in progress.
-    _timerController.cancel();
+    try {
+      // Cancel the timer immediately to prevent further completion callbacks.
+      _timerController.cancel();
 
-    // Attempt to reverse the opacity animation for a smooth dismissal.
-    if (_routeContext != null && _routeContext!.mounted) {
-      try {
-        await opacityAnimationController?.reverse().timeout(animatedOpacityDuration + const Duration(milliseconds: 100));
-      } catch (e) {
-        // Ignore animation errors to ensure the alert still closes.
-        debugPrint('SimpleAlert closing animation failed: $e');
+      // Attempt reverse animation only if not immediate and routeContext is mounted.
+      if (!immediate && _routeContext != null && _routeContext!.mounted) {
+        try {
+          await opacityAnimationController
+              ?.reverse()
+              .timeout(animatedOpacityDuration + const Duration(milliseconds: 100));
+        } catch (_) {
+          // Ignore animation errors to ensure the alert still closes.
+        }
       }
-    }
 
-    // Remove the route if it is still active. Use `_routeContext` as the
-    // primary navigator source, falling back to the original `context` to
-    // guarantee removal even when the route widget tree has been unmounted.
-    if (_route.isActive) {
-      final NavigatorState? navigator = (_routeContext != null && _routeContext!.mounted) ? Navigator.maybeOf(_routeContext!) : (context.mounted ? Navigator.maybeOf(context) : null);
-      navigator?.removeRoute(_route);
+      // Remove the route if it is still active.
+      try {
+        if (_route.isActive) {
+          final NavigatorState? navigator = (_routeContext != null &&
+                  _routeContext!.mounted)
+              ? Navigator.maybeOf(_routeContext!)
+              : (context.mounted ? Navigator.maybeOf(context) : null);
+          if (navigator != null && _route.isActive) {
+            navigator.removeRoute(_route);
+          }
+        }
+      } catch (_) {}
+    } catch (e) {
+      debugPrint('SimpleAlert safe close error: $e');
+    } finally {
+      try {
+        _alertManager.unregisterAlert(_routeName);
+      } catch (_) {}
+      try {
+        _freeingUpResources();
+      } catch (_) {}
     }
-
-    _alertManager.unregisterAlert(_routeName); // Delete alert from the manager.
-    _freeingUpResources(); // Dispose of timers and listeners.
   }
 
   /// Freeing up resources associated with the alert, such as listeners and timers.
   ///
   /// This method is called during the closing process to prevent memory leaks.
   void _freeingUpResources() {
-    if (_removalSignalListener != null) {
-      removalSignal?.removeListener(_removalSignalListener!);
-      _removalSignalListener = null;
-    }
+    try {
+      if (_removalSignalListener != null) {
+        removalSignal?.removeListener(_removalSignalListener!);
+        _removalSignalListener = null;
+      }
 
-    _timerController.dispose();
-    opacityAnimationController = null;
-    widthAnimationController = null;
-    _routeContext = null; // Clear the context when resources are freed.
+      _timerController.dispose();
+      opacityAnimationController = null;
+      widthAnimationController = null;
+      _routeContext = null; // Clear the context when resources are freed.
+    } catch (_) {}
   }
 
   /// Displays the [SimpleAlert] by pushing its route onto the Navigator.
   ///
-  /// Throws a [StateError] if the context is not mounted.
-  /// When the route completes (e.g., alert is dismissed), the `_close` method is called.
+  /// Safely fails in silence if the context is not mounted or an unexpected
+  /// error occurs, guaranteeing that the host application is never disrupted.
   void show() {
-    if (!context.mounted) {
-      throw StateError('Cannot show alert: context is not mounted');
-    }
+    try {
+      if (!context.mounted) return;
 
-    final haptic =
-        enableHapticFeedback ?? SimpleAlertPreferences().enableHapticFeedback;
-    if (haptic) {
-      switch (_resolvedType) {
-        case SimpleAlertType.danger:
-          HapticFeedback.heavyImpact();
-        case SimpleAlertType.warning:
-          HapticFeedback.mediumImpact();
-        default:
-          HapticFeedback.lightImpact();
+      final navigator = Navigator.maybeOf(context);
+      if (navigator == null) {
+        debugPrint('SimpleAlert: No Navigator found in context. Alert dismissed silently.');
+        _close(immediate: true);
+        return;
       }
-    }
 
-    // Push the alert's route onto the navigator and call _close when it completes.
-    Navigator.of(context).push(_route).whenComplete(_close);
+      final haptic =
+          enableHapticFeedback ?? SimpleAlertPreferences().enableHapticFeedback;
+      if (haptic) {
+        try {
+          switch (_resolvedType) {
+            case SimpleAlertType.danger:
+              HapticFeedback.heavyImpact();
+            case SimpleAlertType.warning:
+              HapticFeedback.mediumImpact();
+            default:
+              HapticFeedback.lightImpact();
+          }
+        } catch (_) {}
+      }
+
+      // Push the alert's route onto the navigator and call _close when it completes.
+      navigator.push(_route).whenComplete(() {
+        _close();
+      });
+    } catch (e) {
+      debugPrint('SimpleAlert show safe error: $e');
+      try {
+        _close(immediate: true);
+      } catch (_) {}
+    }
   }
 }

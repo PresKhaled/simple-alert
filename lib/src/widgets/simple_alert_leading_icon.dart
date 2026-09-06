@@ -30,32 +30,37 @@ class SimpleAlertLeadingIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsetsDirectional.only(start: 2.0, end: 12.0),
-      child: Container(
-        padding: const EdgeInsets.all(7.0),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: foregroundColor.withValues(alpha: 0.14),
-          border: Border.all(
-            color: foregroundColor.withValues(alpha: 0.18),
-            width: 1.0,
+    try {
+      return Padding(
+        padding: const EdgeInsetsDirectional.only(start: 2.0, end: 12.0),
+        child: Container(
+          padding: const EdgeInsets.all(7.0),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: foregroundColor.withValues(alpha: 0.14),
+            border: Border.all(
+              color: foregroundColor.withValues(alpha: 0.18),
+              width: 1.0,
+            ),
           ),
-        ),
-        child: loading
-            ? Semantics(
-                label: t
-                    .loadingIndicatorSemanticLabel, // Semantic label for loading indicator.
-                child: SizedBox.square(
-                  dimension: iconsSize - 4,
-                  child: CircularProgressIndicator(
-                    color: foregroundColor,
-                    strokeWidth: 2.5,
+          child: loading
+              ? Semantics(
+                  label: t
+                      .loadingIndicatorSemanticLabel, // Semantic label for loading indicator.
+                  child: SizedBox.square(
+                    dimension: iconsSize - 4,
+                    child: CircularProgressIndicator(
+                      color: foregroundColor,
+                      strokeWidth: 2.5,
+                    ),
                   ),
-                ),
-              )
-            : getIcon(), // Display type-specific icon.
-      ),
-    );
+                )
+              : getIcon(), // Display type-specific icon.
+        ),
+      );
+    } catch (e) {
+      debugPrint('SimpleAlertLeadingIcon safe error: $e');
+      return const SizedBox.shrink();
+    }
   }
 }

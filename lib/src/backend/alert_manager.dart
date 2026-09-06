@@ -52,20 +52,28 @@ class AlertManager {
   /// [routeName] The unique name of the route associated with the alert.
   /// [data] The [AlertData] containing information about the alert.
   void registerAlert(String routeName, AlertData data) {
-    _displayedAlerts.value = {
-      ..._displayedAlerts.value,
-      routeName: data,
-    };
+    try {
+      _displayedAlerts.value = {
+        ..._displayedAlerts.value,
+        routeName: data,
+      };
+    } catch (e) {
+      debugPrint('AlertManager registerAlert safe error: $e');
+    }
   }
 
   /// Unregisters (deletes) an alert using its route name.
   ///
   /// [routeName] The unique name of the route associated with the alert to unregister.
   void unregisterAlert(String routeName) {
-    if (_displayedAlerts.value.containsKey(routeName)) {
-      final newMap = Map<String, AlertData>.from(_displayedAlerts.value);
-      newMap.remove(routeName);
-      _displayedAlerts.value = newMap;
+    try {
+      if (_displayedAlerts.value.containsKey(routeName)) {
+        final newMap = Map<String, AlertData>.from(_displayedAlerts.value);
+        newMap.remove(routeName);
+        _displayedAlerts.value = newMap;
+      }
+    } catch (e) {
+      debugPrint('AlertManager unregisterAlert safe error: $e');
     }
   }
 
@@ -74,10 +82,17 @@ class AlertManager {
   /// [routeName] The unique name of the route associated with the alert.
   /// [size] The new [Size] of the alert.
   void updateAlertSize(String routeName, Size size) {
-    if (_displayedAlerts.value.containsKey(routeName)) {
-      final data = _displayedAlerts.value[routeName]!;
-      data.size = size;
-      _displayedAlerts.value = Map<String, AlertData>.from(_displayedAlerts.value);
+    try {
+      if (_displayedAlerts.value.containsKey(routeName)) {
+        final data = _displayedAlerts.value[routeName];
+        if (data != null) {
+          data.size = size;
+          _displayedAlerts.value =
+              Map<String, AlertData>.from(_displayedAlerts.value);
+        }
+      }
+    } catch (e) {
+      debugPrint('AlertManager updateAlertSize safe error: $e');
     }
   }
 
@@ -93,30 +108,36 @@ class AlertManager {
     String currentRouteName,
     AlignmentDirectional alignment,
   ) {
-    final alerts = _displayedAlerts.value;
-    final keys = alerts.keys.toList();
-    final currentIndex = keys.indexOf(currentRouteName);
+    try {
+      final alerts = _displayedAlerts.value;
+      final keys = alerts.keys.toList();
+      final currentIndex = keys.indexOf(currentRouteName);
 
-    if (currentIndex == -1) return [];
+      if (currentIndex == -1) return [];
 
-    // Determine the vertical alignment direction of the current alert.
-    final bool fromTop = isTopAligned(alignment);
-    final bool fromCenter = isCenterAligned(alignment);
-    final bool fromBottom = isBottomAligned(alignment);
+      // Determine the vertical alignment direction of the current alert.
+      final bool fromTop = isTopAligned(alignment);
+      final bool fromCenter = isCenterAligned(alignment);
+      final bool fromBottom = isBottomAligned(alignment);
 
-    // Filter alerts that are displayed before the current one, share the same
-    // vertical direction and horizontal alignment slot.
-    return keys
-        .take(currentIndex)
-        .map((key) => alerts[key]!)
-        .where(
-          (data) =>
-              (data.fromTop == fromTop &&
-                  data.fromCenter == fromCenter &&
-                  data.fromBottom == fromBottom) &&
-              (data.alignment.start == alignment.start),
-        )
-        .toList();
+      // Filter alerts that are displayed before the current one, share the same
+      // vertical direction and horizontal alignment slot.
+      return keys
+          .take(currentIndex)
+          .map((key) => alerts[key])
+          .whereType<AlertData>()
+          .where(
+            (data) =>
+                (data.fromTop == fromTop &&
+                    data.fromCenter == fromCenter &&
+                    data.fromBottom == fromBottom) &&
+                (data.alignment.start == alignment.start),
+          )
+          .toList();
+    } catch (e) {
+      debugPrint('AlertManager getAlertsInSameDirection safe error: $e');
+      return [];
+    }
   }
 
   /// Checks if the specified alignment is top-aligned.

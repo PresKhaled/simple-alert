@@ -73,75 +73,80 @@ class SimpleAlertInnerContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Theme.of(context);
-    final foregroundColor = getForegroundColor();
-    final hasDescription = description != null && description!.trim().isNotEmpty;
+    try {
+      final themeData = Theme.of(context);
+      final foregroundColor = getForegroundColor();
+      final hasDescription = description != null && description!.trim().isNotEmpty;
 
-    return Theme(
-      data: themeData.copyWith(
-        iconTheme: themeData.iconTheme.copyWith(
-          color: (SimpleAlertPreferences().iconsColor ??
-              foregroundColor), // Customize icon color.
-        ),
-        iconButtonTheme: IconButtonThemeData(
-          style: ButtonStyle(
-            foregroundColor: WidgetStatePropertyAll<Color>(
-              (SimpleAlertPreferences().iconsColor ??
-                  foregroundColor), // Customize icon button foreground color.
-            ),
+      return Theme(
+        data: themeData.copyWith(
+          iconTheme: themeData.iconTheme.copyWith(
+            color: (SimpleAlertPreferences().iconsColor ??
+                foregroundColor), // Customize icon color.
           ),
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min, // Take minimum vertical space.
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Flexible(
-            child: Row(
-              crossAxisAlignment: hasDescription
-                  ? CrossAxisAlignment.start
-                  : CrossAxisAlignment.center,
-              children: [
-                // Leading icon or loading indicator.
-                SimpleAlertLeadingIcon(
-                  loading: loading,
-                  foregroundColor: foregroundColor,
-                  getBackgroundColor: getBackgroundColor,
-                  getIcon: getIcon,
-                  iconsSize: SimpleAlertPreferences().iconsSize,
-                ),
-
-                // Main content and actions.
-                Expanded(
-                  child: SimpleAlertContentSection(
-                    title: title,
-                    description: description,
-                    textDirection: textDirection,
-                    foregroundColor: foregroundColor,
-                    centerContent: centerContent,
-                    actions: actions,
-                    withClose: withClose,
-                    onClosePressed: onClosePressed,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          if (withProgressBar) // Conditionally display progress bar.
-            Flexible(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: SimpleAlertProgressBar(
-                  onAnimationControllerCreated:
-                      onWidthAnimationControllerCreated,
-                  alertWidth: alertWidth,
-                  alertDuration: resolvedDuration,
-                  foregroundColor: foregroundColor,
-                ),
+          iconButtonTheme: IconButtonThemeData(
+            style: ButtonStyle(
+              foregroundColor: WidgetStatePropertyAll<Color>(
+                (SimpleAlertPreferences().iconsColor ??
+                    foregroundColor), // Customize icon button foreground color.
               ),
             ),
-        ],
-      ),
-    );
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // Take minimum vertical space.
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Flexible(
+              child: Row(
+                crossAxisAlignment: hasDescription
+                    ? CrossAxisAlignment.start
+                    : CrossAxisAlignment.center,
+                children: [
+                  // Leading icon or loading indicator.
+                  SimpleAlertLeadingIcon(
+                    loading: loading,
+                    foregroundColor: foregroundColor,
+                    getBackgroundColor: getBackgroundColor,
+                    getIcon: getIcon,
+                    iconsSize: SimpleAlertPreferences().iconsSize,
+                  ),
+
+                  // Main content and actions.
+                  Expanded(
+                    child: SimpleAlertContentSection(
+                      title: title,
+                      description: description,
+                      textDirection: textDirection,
+                      foregroundColor: foregroundColor,
+                      centerContent: centerContent,
+                      actions: actions,
+                      withClose: withClose,
+                      onClosePressed: onClosePressed,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (withProgressBar) // Conditionally display progress bar.
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: SimpleAlertProgressBar(
+                    onAnimationControllerCreated:
+                        onWidthAnimationControllerCreated,
+                    alertWidth: alertWidth,
+                    alertDuration: resolvedDuration,
+                    foregroundColor: foregroundColor,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      );
+    } catch (e) {
+      debugPrint('SimpleAlertInnerContent safe error: $e');
+      return const SizedBox.shrink();
+    }
   }
 }

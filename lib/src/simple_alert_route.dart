@@ -39,16 +39,26 @@ class SimpleAlertRoute<T> extends PopupRoute<T> {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
   ) {
-    // Wrap the builder content to ensure proper semantic boundaries.
-    return Semantics(
-      scopesRoute: true,
-      explicitChildNodes: true,
-      child: Builder(
-        builder: (BuildContext context) {
-          return builder(context);
-        },
-      ),
-    );
+    try {
+      // Wrap the builder content to ensure proper semantic boundaries.
+      return Semantics(
+        scopesRoute: true,
+        explicitChildNodes: true,
+        child: Builder(
+          builder: (BuildContext context) {
+            try {
+              return builder(context);
+            } catch (e) {
+              debugPrint('SimpleAlertRoute builder safe error: $e');
+              return const SizedBox.shrink();
+            }
+          },
+        ),
+      );
+    } catch (e) {
+      debugPrint('SimpleAlertRoute buildPage safe error: $e');
+      return const SizedBox.shrink();
+    }
   }
 
   @override
@@ -90,37 +100,47 @@ class SimpleAlertRoute<T> extends PopupRoute<T> {
 
   @override
   TickerFuture didPush() {
-    // Announce to screen readers when alert is shown.
-    final BuildContext? context = navigator?.context;
-    if (context != null && context.mounted) {
-      // Use a small delay to ensure the widget tree is built.
-      Future.microtask(() {
-        if (context.mounted) {
-          SemanticsService.announce(
-            t.newAlertDisplayedAnnouncement,
-            TextDirection.rtl,
-          );
-        }
-      });
-    }
+    try {
+      // Announce to screen readers when alert is shown.
+      final BuildContext? context = navigator?.context;
+      if (context != null && context.mounted) {
+        // Use a small delay to ensure the widget tree is built.
+        Future.microtask(() {
+          try {
+            if (context.mounted) {
+              // ignore: deprecated_member_use
+              SemanticsService.announce(
+                t.newAlertDisplayedAnnouncement,
+                TextDirection.rtl,
+              );
+            }
+          } catch (_) {}
+        });
+      }
+    } catch (_) {}
 
     return super.didPush();
   }
 
   @override
   bool didPop(T? result) {
-    // Announce to screen readers when alert is dismissed.
-    final BuildContext? context = navigator?.context;
-    if (context != null && context.mounted) {
-      Future.microtask(() {
-        if (context.mounted) {
-          SemanticsService.announce(
-            t.alertClosedAnnouncement,
-            TextDirection.rtl,
-          );
-        }
-      });
-    }
+    try {
+      // Announce to screen readers when alert is dismissed.
+      final BuildContext? context = navigator?.context;
+      if (context != null && context.mounted) {
+        Future.microtask(() {
+          try {
+            if (context.mounted) {
+              // ignore: deprecated_member_use
+              SemanticsService.announce(
+                t.alertClosedAnnouncement,
+                TextDirection.rtl,
+              );
+            }
+          } catch (_) {}
+        });
+      }
+    } catch (_) {}
 
     return super.didPop(result);
   }

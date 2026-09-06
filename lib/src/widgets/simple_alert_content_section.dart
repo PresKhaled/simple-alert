@@ -43,28 +43,33 @@ class SimpleAlertContentSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment:
-          MainAxisAlignment.spaceBetween, // Space out text and actions.
-      children: [
-        // Title and description.
-        Expanded(
-          child: SimpleAlertTextContent(
-            title: title,
-            description: description,
-            textDirection: textDirection,
-            foregroundColor: foregroundColor,
-            centerContent: centerContent,
+    try {
+      return Row(
+        mainAxisAlignment:
+            MainAxisAlignment.spaceBetween, // Space out text and actions.
+        children: [
+          // Title and description.
+          Expanded(
+            child: SimpleAlertTextContent(
+              title: title,
+              description: description,
+              textDirection: textDirection,
+              foregroundColor: foregroundColor,
+              centerContent: centerContent,
+            ),
           ),
-        ),
 
-        // Optional actions and close button.
-        SimpleAlertActionsSection(
-          actions: actions,
-          withClose: withClose,
-          onClosePressed: onClosePressed,
-        ),
-      ],
-    );
+          // Optional actions and close button.
+          SimpleAlertActionsSection(
+            actions: actions,
+            withClose: withClose,
+            onClosePressed: onClosePressed,
+          ),
+        ],
+      );
+    } catch (e) {
+      debugPrint('SimpleAlertContentSection safe error: $e');
+      return const SizedBox.shrink();
+    }
   }
 }

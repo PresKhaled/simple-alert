@@ -37,6 +37,7 @@ class SimpleAlertPositionedContainer extends StatelessWidget {
     required this.getForegroundColor,
     required this.getIcon,
     required this.onClosePressed,
+    this.onDismissedImmediate,
   });
 
   /// A global key used to obtain the render box of the alert for size calculations.
@@ -86,66 +87,80 @@ class SimpleAlertPositionedContainer extends StatelessWidget {
   final Icon Function() getIcon;
   final VoidCallback onClosePressed;
 
+  /// Optional callback invoked when the alert is swiped off-screen for immediate dismissal.
+  final VoidCallback? onDismissedImmediate;
+
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: resolvedAlignment, // Align children of the stack.
-      fit: StackFit.expand, // Make stack fill available space.
-      children: [
-        ValueListenableBuilder<Map<String, AlertData>>(
-          valueListenable: alertManager
-              .displayedAlerts, // Listens to changes in displayed alerts.
-          builder: (context, displayedAlerts, child) {
-            // Calculate the vertical offset to stack alerts correctly.
-            final offsetY = calculateVerticalOffset(
-              displayedAlerts,
-              currentOrientation,
-              screenHeight,
-            );
+    try {
+      return Stack(
+        alignment: resolvedAlignment, // Align children of the stack.
+        fit: StackFit.expand, // Make stack fill available space.
+        children: [
+          ValueListenableBuilder<Map<String, AlertData>>(
+            valueListenable: alertManager
+                .displayedAlerts, // Listens to changes in displayed alerts.
+            builder: (context, displayedAlerts, child) {
+              try {
+                // Calculate the vertical offset to stack alerts correctly.
+                final offsetY = calculateVerticalOffset(
+                  displayedAlerts,
+                  currentOrientation,
+                  screenHeight,
+                );
 
-            return AnimatedPositioned(
-              key: alertKey, // Key to identify the alert's render box.
-              duration: DEFAULT_REPOSITION_DURATION,
-              curve: DEFAULT_ALERT_CURVE,
-              width: alertWidth,
-              // Position from top if aligned to top or center, otherwise null.
-              top: (AlertManager.isTopAligned(resolvedAlignment) ||
-                      AlertManager.isCenterAligned(resolvedAlignment))
-                  ? offsetY
-                  : null,
-              // Position from bottom if aligned to bottom, otherwise null.
-              bottom: AlertManager.isBottomAligned(resolvedAlignment)
-                  ? offsetY
-                  : null,
-              child: SimpleAlertInteractiveContainer(
-                routeName: routeName,
-                alertWidth: alertWidth,
-                title: title,
-                description: description,
-                textDirection: textDirection,
-                withProgressBar: withProgressBar,
-                closeOnPress: closeOnPress,
-                onTap: onTap,
-                onTapDown: onTapDown,
-                onTapUp: onTapUp,
-                onTapCancel: onTapCancel,
-                getBorderRadius: getBorderRadius,
-                getBackgroundColor: getBackgroundColor,
-                loading: loading,
-                centerContent: centerContent,
-                actions: actions,
-                withClose: withClose,
-                onWidthAnimationControllerCreated:
-                    onWidthAnimationControllerCreated,
-                resolvedDuration: resolvedDuration,
-                getForegroundColor: getForegroundColor,
-                getIcon: getIcon,
-                onClosePressed: onClosePressed,
-              ),
-            );
-          },
-        ),
-      ],
-    );
+                return AnimatedPositioned(
+                  key: alertKey, // Key to identify the alert's render box.
+                  duration: DEFAULT_REPOSITION_DURATION,
+                  curve: DEFAULT_ALERT_CURVE,
+                  width: alertWidth,
+                  // Position from top if aligned to top or center, otherwise null.
+                  top: (AlertManager.isTopAligned(resolvedAlignment) ||
+                          AlertManager.isCenterAligned(resolvedAlignment))
+                      ? offsetY
+                      : null,
+                  // Position from bottom if aligned to bottom, otherwise null.
+                  bottom: AlertManager.isBottomAligned(resolvedAlignment)
+                      ? offsetY
+                      : null,
+                  child: SimpleAlertInteractiveContainer(
+                    routeName: routeName,
+                    alertWidth: alertWidth,
+                    title: title,
+                    description: description,
+                    textDirection: textDirection,
+                    withProgressBar: withProgressBar,
+                    closeOnPress: closeOnPress,
+                    onTap: onTap,
+                    onTapDown: onTapDown,
+                    onTapUp: onTapUp,
+                    onTapCancel: onTapCancel,
+                    getBorderRadius: getBorderRadius,
+                    getBackgroundColor: getBackgroundColor,
+                    loading: loading,
+                    centerContent: centerContent,
+                    actions: actions,
+                    withClose: withClose,
+                    onWidthAnimationControllerCreated:
+                        onWidthAnimationControllerCreated,
+                    resolvedDuration: resolvedDuration,
+                    getForegroundColor: getForegroundColor,
+                    getIcon: getIcon,
+                    onClosePressed: onClosePressed,
+                    onDismissedImmediate: onDismissedImmediate,
+                  ),
+                );
+              } catch (e) {
+                debugPrint('SimpleAlertPositionedContainer builder safe error: $e');
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        ],
+      );
+    } catch (e) {
+      debugPrint('SimpleAlertPositionedContainer safe error: $e');
+      return const SizedBox.shrink();
+    }
   }
 }

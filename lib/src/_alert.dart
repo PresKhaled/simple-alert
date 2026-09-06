@@ -85,23 +85,30 @@ class _AlertState extends State<Alert> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
-    _curvedAnimation.dispose();
-    _controller.stop();
-    _controller.dispose();
+    try {
+      _curvedAnimation.dispose();
+      _controller.stop();
+      _controller.dispose();
+    } catch (_) {}
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _opacityAnimation,
-      child: SlideTransition(
-        position: _slideAnimation,
-        child: ScaleTransition(
-          scale: _scaleAnimation,
-          child: widget.child,
+    try {
+      return FadeTransition(
+        opacity: _opacityAnimation,
+        child: SlideTransition(
+          position: _slideAnimation,
+          child: ScaleTransition(
+            scale: _scaleAnimation,
+            child: widget.child,
+          ),
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      debugPrint('SimpleAlert Alert safe error: $e');
+      return const SizedBox.shrink();
+    }
   }
 }

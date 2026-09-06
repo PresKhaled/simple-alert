@@ -244,6 +244,7 @@ class AlertA11yUtils {
         ? '$typeLabel: $title. $description'
         : '$typeLabel: $title';
 
+    // ignore: deprecated_member_use
     await SemanticsService.announce(
       message,
       ui.TextDirection.rtl,
