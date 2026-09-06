@@ -13,7 +13,7 @@ import '../../simple_alert.dart';
 // ============================================================================
 
 /// Default border radius value for alerts
-const double BORDER_RADIUS = 12.0;
+const double BORDER_RADIUS = 14.0;
 
 /// Default splash radius for icon buttons within alerts
 const double ICON_BUTTON_SPLASH_RADIUS = 20.0;
@@ -24,8 +24,14 @@ const double MIN_ALERT_WIDTH = 200.0;
 /// Maximum alert width in pixels
 const double MAX_ALERT_WIDTH = 600.0;
 
-/// Default animation duration for opacity transitions
-const Duration DEFAULT_OPACITY_DURATION = Duration(milliseconds: 250);
+/// Default animation duration for entrance/exit transitions
+const Duration DEFAULT_OPACITY_DURATION = Duration(milliseconds: 280);
+
+/// Default animation duration for alert stacking/repositioning
+const Duration DEFAULT_REPOSITION_DURATION = Duration(milliseconds: 280);
+
+/// Default animation curve for modern smooth alert transitions
+const Curve DEFAULT_ALERT_CURVE = Curves.easeOutCubic;
 
 /// Default animation duration for width transitions
 const Duration DEFAULT_WIDTH_DURATION = Duration(milliseconds: 200);
@@ -34,16 +40,16 @@ const Duration DEFAULT_WIDTH_DURATION = Duration(milliseconds: 200);
 const Duration TIMER_TICK_INTERVAL = Duration(milliseconds: 100);
 
 /// Default vertical spacing between stacked alerts
-const double ALERT_VERTICAL_SPACING = 5.0;
+const double ALERT_VERTICAL_SPACING = 6.0;
 
 /// Default horizontal padding for alerts
 const double ALERT_HORIZONTAL_PADDING = 13.0;
 
 /// Default content padding inside alerts
-const double ALERT_CONTENT_PADDING = 11.0;
+const double ALERT_CONTENT_PADDING = 14.0;
 
 /// Default icon padding
-const double ICON_PADDING = 9.0;
+const double ICON_PADDING = 12.0;
 
 /// Average portrait alert height (for initial calculations)
 const double AVERAGE_PORTRAIT_HEIGHT = 70.0;

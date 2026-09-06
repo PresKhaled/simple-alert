@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../backend/alert_manager.dart';
+import '../misc/constants.dart';
 import 'simple_alert_interactive_container.dart';
 
-/// A widget that builds the [Positioned] widget for the alert within a [Stack].
+/// A widget that builds the [AnimatedPositioned] widget for the alert within a [Stack].
 class SimpleAlertPositionedContainer extends StatelessWidget {
   /// Creates a [SimpleAlertPositionedContainer] instance.
   const SimpleAlertPositionedContainer({
@@ -18,6 +19,7 @@ class SimpleAlertPositionedContainer extends StatelessWidget {
     // Properties for SimpleAlertInteractiveContainer
     required this.title,
     this.description,
+    this.textDirection,
     required this.withProgressBar,
     required this.closeOnPress,
     required this.onTap,
@@ -65,6 +67,7 @@ class SimpleAlertPositionedContainer extends StatelessWidget {
   // Properties to pass down to SimpleAlertInteractiveContainer
   final String title;
   final String? description;
+  final TextDirection? textDirection;
   final bool withProgressBar;
   final bool closeOnPress;
   final VoidCallback onTap;
@@ -100,8 +103,10 @@ class SimpleAlertPositionedContainer extends StatelessWidget {
               screenHeight,
             );
 
-            return Positioned(
+            return AnimatedPositioned(
               key: alertKey, // Key to identify the alert's render box.
+              duration: DEFAULT_REPOSITION_DURATION,
+              curve: DEFAULT_ALERT_CURVE,
               width: alertWidth,
               // Position from top if aligned to top or center, otherwise null.
               top: (AlertManager.isTopAligned(resolvedAlignment) ||
@@ -113,9 +118,11 @@ class SimpleAlertPositionedContainer extends StatelessWidget {
                   ? offsetY
                   : null,
               child: SimpleAlertInteractiveContainer(
+                routeName: routeName,
                 alertWidth: alertWidth,
                 title: title,
                 description: description,
+                textDirection: textDirection,
                 withProgressBar: withProgressBar,
                 closeOnPress: closeOnPress,
                 onTap: onTap,
@@ -134,7 +141,7 @@ class SimpleAlertPositionedContainer extends StatelessWidget {
                 getForegroundColor: getForegroundColor,
                 getIcon: getIcon,
                 onClosePressed: onClosePressed,
-              ), // The actual alert container.
+              ),
             );
           },
         ),

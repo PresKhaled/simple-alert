@@ -9,7 +9,8 @@ import 'package:flutter/material.dart'
         Theme,
         ThemeData,
         TooltipThemeData,
-        Colors;
+        Colors,
+        TextDirection;
 
 import '../i18n/translations.g.dart';
 import 'enums/simple_alert_duration.dart';
@@ -54,6 +55,8 @@ class SimpleAlertPreferences {
   late TooltipThemeData? _tooltipThemeData;
   late String? _closeTooltip;
   late SimpleAlertDuration? _duration;
+  late TextDirection? _textDirection;
+  late bool? _enableHapticFeedback;
 
   /// The default alignment direction for alerts.
   AlignmentDirectional get alignmentDirectional => _alignmentDirectional!;
@@ -95,6 +98,12 @@ class SimpleAlertPreferences {
   /// The default display duration for alerts.
   SimpleAlertDuration get duration => _duration!;
 
+  /// The default text direction for alerts. If null, automatically resolved.
+  TextDirection? get textDirection => _textDirection;
+
+  /// Whether tactile haptic feedback is triggered when alerts are shown.
+  bool get enableHapticFeedback => _enableHapticFeedback ?? true;
+
   static final SimpleAlertPreferences _instance =
       SimpleAlertPreferences._internal();
 
@@ -120,6 +129,8 @@ class SimpleAlertPreferences {
     TooltipThemeData? tooltipThemeData,
     String? closeTooltip,
     SimpleAlertDuration duration = SimpleAlertDuration.medium,
+    TextDirection? textDirection,
+    bool enableHapticFeedback = true,
   }) {
     final ThemeData? themeData =
         ((context != null && context.mounted) ? Theme.of(context) : null);
@@ -134,23 +145,31 @@ class SimpleAlertPreferences {
     _instance._iconsColor = iconsColor;
     _instance._titleStyle = (titleStyle ??
         themeData?.textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w600,
+          letterSpacing: -0.2,
         ) ??
         const TextStyle(
-          fontSize: 18.0,
-          fontWeight: FontWeight.bold,
+          fontSize: 17.0,
+          fontWeight: FontWeight.w600,
+          letterSpacing: -0.2,
           color: Colors.white, // Default color if no theme is available.
         ));
     _instance._descriptionStyle = (descriptionStyle ??
-        themeData?.textTheme.bodyLarge ??
+        themeData?.textTheme.bodyMedium?.copyWith(
+          fontWeight: FontWeight.w400,
+          height: 1.35,
+        ) ??
         const TextStyle(
-          fontSize: 16.0,
-          fontWeight: FontWeight.bold,
+          fontSize: 15.0,
+          fontWeight: FontWeight.w400,
+          height: 1.35,
           color: Colors.white70, // Default color if no theme is available.
         ));
     _instance._tooltipThemeData = tooltipThemeData;
     _instance._closeTooltip = (closeTooltip ?? t.closeButtonTooltip);
     _instance._duration ??= duration;
+    _instance._textDirection = textDirection;
+    _instance._enableHapticFeedback = enableHapticFeedback;
 
     return _instance;
   }
@@ -173,6 +192,8 @@ class SimpleAlertPreferences {
     _tooltipThemeData = null;
     _closeTooltip = null;
     _duration = null;
+    _textDirection = null;
+    _enableHapticFeedback = null;
   }
 
   /// Sets the locale for the package's translations.

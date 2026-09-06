@@ -9,6 +9,7 @@ class SimpleAlertContentSection extends StatelessWidget {
     super.key,
     required this.title,
     this.description,
+    this.textDirection,
     required this.foregroundColor,
     required this.centerContent,
     this.actions,
@@ -21,6 +22,9 @@ class SimpleAlertContentSection extends StatelessWidget {
 
   /// An optional detailed description text for the alert.
   final String? description;
+
+  /// An optional explicit text direction override.
+  final TextDirection? textDirection;
 
   /// The color to apply to the text content.
   final Color foregroundColor;
@@ -48,6 +52,7 @@ class SimpleAlertContentSection extends StatelessWidget {
           child: SimpleAlertTextContent(
             title: title,
             description: description,
+            textDirection: textDirection,
             foregroundColor: foregroundColor,
             centerContent: centerContent,
           ),

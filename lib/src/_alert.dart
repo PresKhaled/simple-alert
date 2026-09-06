@@ -1,40 +1,29 @@
 import 'package:flutter/material.dart';
 
-/// A widget that displays an animated alert with fade-in opacity transition.
+import 'misc/constants.dart';
+
+/// A widget that displays an animated alert with directional slide, scale, and fade transitions.
 ///
-/// The [Alert] widget wraps a child widget and applies an opacity animation
-/// when it's displayed. It uses an [AnimationController] to manage the
-/// animation lifecycle.
-///
-/// Example usage:
-/// ```dart
-/// Alert(
-///   onAnimationControllerCreated: (controller) => _myController = controller,
-///   animatedOpacityDuration: Duration(milliseconds: 300),
-///   child: Text('This is an alert'),
-/// )
-/// ```
+/// The [Alert] widget wraps a child widget and applies physics-based entrance
+/// and exit animations driven by an [AnimationController].
 class Alert extends StatefulWidget {
   /// The widget below this widget in the tree.
-  ///
-  /// This child widget will be displayed with the opacity animation.
   final Widget child;
+
+  /// The alignment of the alert, used to determine the slide direction.
+  final AlignmentDirectional alignment;
 
   /// A callback executed when the internal [AnimationController] is created.
   final ValueChanged<AnimationController> onAnimationControllerCreated;
 
-  /// The duration of the opacity animation.
-  ///
-  /// This determines how long the fade-in effect will take to complete.
+  /// The duration of the transition animation.
   final Duration animatedOpacityDuration;
 
   /// Creates an [Alert] widget.
-  ///
-  /// The [child], [onAnimationControllerCreated], and [animatedOpacityDuration] parameters
-  /// must not be null.
   const Alert({
     super.key,
     required this.child,
+    this.alignment = AlignmentDirectional.topCenter,
     required this.onAnimationControllerCreated,
     required this.animatedOpacityDuration,
   });
@@ -45,48 +34,74 @@ class Alert extends StatefulWidget {
 
 class _AlertState extends State<Alert> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-  late Animation<double> _opacityAnimation;
-  double _opacity = 0.0;
+  late final CurvedAnimation _curvedAnimation;
+  late final Animation<double> _opacityAnimation;
+  late final Animation<Offset> _slideAnimation;
+  late final Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
 
-    // Initialize the [AnimationController].
-    // This controller manages the fade-in animation for the alert.
     _controller = AnimationController(
       vsync: this,
       duration: widget.animatedOpacityDuration,
-    )..forward(); // Start the animation immediately.
+      reverseDuration: widget.animatedOpacityDuration,
+    )..forward();
 
     widget.onAnimationControllerCreated(_controller);
 
-    // Create a [Tween] animation for opacity from 0.0 to 1.0, driven by the controller.
-    _opacityAnimation = _controller.drive(
-      Tween(begin: 0.0, end: 1.0),
+    _curvedAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: DEFAULT_ALERT_CURVE,
+      reverseCurve: Curves.easeInCubic,
     );
 
-    // Add a listener to the animation to update the opacity and trigger a rebuild.
-    _controller.addListener(() {
-      setState(() => (_opacity = _opacityAnimation.value));
-    });
+    _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_curvedAnimation);
+
+    // Compute initial slide offset based on vertical alignment
+    final Offset beginSlide;
+    if (widget.alignment.y < 0) {
+      // Top-aligned: slide smoothly down from top
+      beginSlide = const Offset(0.0, -0.35);
+    } else if (widget.alignment.y > 0) {
+      // Bottom-aligned: slide smoothly up from bottom
+      beginSlide = const Offset(0.0, 0.35);
+    } else {
+      // Center: subtle drop
+      beginSlide = const Offset(0.0, -0.12);
+    }
+
+    _slideAnimation = Tween<Offset>(
+      begin: beginSlide,
+      end: Offset.zero,
+    ).animate(_curvedAnimation);
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.94,
+      end: 1.0,
+    ).animate(_curvedAnimation);
   }
 
   @override
   void dispose() {
-    // Stop and dispose of the [AnimationController] to free up resources.
+    _curvedAnimation.dispose();
     _controller.stop();
     _controller.dispose();
-
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Render the child widget with the current opacity value.
-    return Opacity(
-      opacity: _opacity,
-      child: widget.child,
+    return FadeTransition(
+      opacity: _opacityAnimation,
+      child: SlideTransition(
+        position: _slideAnimation,
+        child: ScaleTransition(
+          scale: _scaleAnimation,
+          child: widget.child,
+        ),
+      ),
     );
   }
 }

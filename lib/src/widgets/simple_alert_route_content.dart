@@ -29,6 +29,7 @@ class SimpleAlertRouteContent extends StatefulWidget {
     // Pass-through properties for SimpleAlertInteractiveContainer
     required this.title,
     this.description,
+    this.textDirection,
     required this.withProgressBar,
     required this.closeOnPress,
     required this.onTap,
@@ -76,6 +77,7 @@ class SimpleAlertRouteContent extends StatefulWidget {
   // Pass-through properties for SimpleAlertInteractiveContainer
   final String title;
   final String? description;
+  final TextDirection? textDirection;
   final bool withProgressBar;
   final bool closeOnPress;
   final VoidCallback onTap;
@@ -118,6 +120,7 @@ class _SimpleAlertRouteContentState extends State<SimpleAlertRouteContent> {
         if (!didPop) widget.closeAlert();
       },
       child: Alert(
+        alignment: widget.resolvedAlignment,
         onAnimationControllerCreated: widget
             .onOpacityAnimationControllerCreated, // Controller for opacity animations.
         animatedOpacityDuration: widget.animatedOpacityDuration,
@@ -132,6 +135,7 @@ class _SimpleAlertRouteContentState extends State<SimpleAlertRouteContent> {
           // Pass-through properties for [SimpleAlertInteractiveContainer].
           title: widget.title,
           description: widget.description,
+          textDirection: widget.textDirection,
           withProgressBar: widget.withProgressBar,
           closeOnPress: widget.closeOnPress,
           onTap: widget.onTap,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../i18n/translations.g.dart';
+import '../misc/constants.dart';
 import 'simple_alert_inner_content.dart';
 
 /// A widget that provides the interactive container for the alert, including gestures and semantic labels.
@@ -8,9 +9,11 @@ class SimpleAlertInteractiveContainer extends StatelessWidget {
   /// Creates a [SimpleAlertInteractiveContainer] instance.
   const SimpleAlertInteractiveContainer({
     super.key,
+    required this.routeName,
     required this.alertWidth,
     required this.title,
     this.description,
+    this.textDirection,
     required this.withProgressBar,
     required this.closeOnPress,
     required this.onTap,
@@ -31,6 +34,9 @@ class SimpleAlertInteractiveContainer extends StatelessWidget {
     required this.onClosePressed,
   });
 
+  /// The unique route name for this specific alert instance.
+  final String routeName;
+
   /// The calculated width of the alert.
   final double alertWidth;
 
@@ -39,6 +45,9 @@ class SimpleAlertInteractiveContainer extends StatelessWidget {
 
   /// An optional detailed description text for the alert.
   final String? description;
+
+  /// The explicit or resolved text direction for the alert.
+  final TextDirection? textDirection;
 
   /// If true, a progress bar indicating the remaining duration will be displayed.
   final bool withProgressBar;
@@ -77,50 +86,88 @@ class SimpleAlertInteractiveContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final backgroundColor = getBackgroundColor();
+    final foregroundColor = getForegroundColor();
+    final borderRadius = getBorderRadius();
+
     return Semantics(
       container: true,
       liveRegion: true, // Announce changes to screen readers.
       label:
           t.alertSemanticLabel(title: title), // Semantic label for the alert.
       hint: (description ?? ''), // Semantic hint.
-      child: GestureDetector(
-        onTap: onTap,
-        onTapDown: withProgressBar
-            ? onTapDown
-            : null, // Only handle tap down if progress bar is enabled.
-        onTapUp: withProgressBar
-            ? onTapUp
-            : null, // Only handle tap up if progress bar is enabled.
-        onTapCancel: withProgressBar
-            ? onTapCancel
-            : null, // Only handle tap cancel if progress bar is enabled.
-        child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 5.0),
-          padding: const EdgeInsets.symmetric(horizontal: 13.0),
-          child: ClipRRect(
-            borderRadius:
-                getBorderRadius(), // Apply border radius based on shape.
-            child: Material(
-              color: getBackgroundColor(), // Set background color.
-              child: Padding(
-                padding: const EdgeInsets.all(11.0),
-                child: SimpleAlertInnerContent(
-                  alertWidth: alertWidth,
-                  loading: loading,
-                  title: title,
-                  description: description,
-                  centerContent: centerContent,
-                  actions: actions,
-                  withClose: withClose,
-                  withProgressBar: withProgressBar,
-                  onWidthAnimationControllerCreated:
-                      onWidthAnimationControllerCreated,
-                  resolvedDuration: resolvedDuration,
-                  getForegroundColor: getForegroundColor,
-                  getBackgroundColor: getBackgroundColor,
-                  getIcon: getIcon,
-                  onClosePressed: onClosePressed,
-                ), // Inner content of the alert.
+      child: Dismissible(
+        key: ValueKey('SimpleAlert_Dismissible_$routeName'),
+        direction: DismissDirection.horizontal,
+        onDismissed: (_) => onClosePressed(),
+        child: GestureDetector(
+          onTap: onTap,
+          onTapDown: withProgressBar ? onTapDown : null,
+          onTapUp: withProgressBar ? onTapUp : null,
+          onTapCancel: withProgressBar ? onTapCancel : null,
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: ALERT_VERTICAL_SPACING),
+            padding: const EdgeInsets.symmetric(horizontal: ALERT_HORIZONTAL_PADDING),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: borderRadius,
+                border: Border.all(
+                  color: foregroundColor.withValues(alpha: 0.14),
+                  width: 1.0,
+                ),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color.alphaBlend(
+                      foregroundColor.withValues(alpha: 0.05),
+                      backgroundColor,
+                    ),
+                    backgroundColor,
+                  ],
+                ),
+                boxShadow: [
+                  // Key directional shadow
+                  BoxShadow(
+                    color: backgroundColor.withValues(alpha: 0.28),
+                    blurRadius: 18.0,
+                    offset: const Offset(0, 8),
+                    spreadRadius: -2.0,
+                  ),
+                  // Ambient grounding shadow
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 6.0,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: borderRadius,
+                child: Material(
+                  color: Colors.transparent, // Let gradient shine through
+                  child: Padding(
+                    padding: const EdgeInsets.all(ALERT_CONTENT_PADDING),
+                    child: SimpleAlertInnerContent(
+                      alertWidth: alertWidth,
+                      loading: loading,
+                      title: title,
+                      description: description,
+                      textDirection: textDirection,
+                      centerContent: centerContent,
+                      actions: actions,
+                      withClose: withClose,
+                      withProgressBar: withProgressBar,
+                      onWidthAnimationControllerCreated:
+                          onWidthAnimationControllerCreated,
+                      resolvedDuration: resolvedDuration,
+                      getForegroundColor: getForegroundColor,
+                      getBackgroundColor: getBackgroundColor,
+                      getIcon: getIcon,
+                      onClosePressed: onClosePressed,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),

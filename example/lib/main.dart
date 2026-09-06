@@ -286,6 +286,62 @@ class _MainPageState extends State<MainPage> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 25.0),
+                Text(
+                  'BiDi & Stacking Features',
+                  style: titleStyle,
+                ),
+                Wrap(
+                  spacing: spacing,
+                  children: <Widget>[
+                    ElevatedButton(
+                      onPressed: () => SimpleAlert(
+                        context: context,
+                        type: SimpleAlertType.success,
+                        title: 'تم استيراد الكتاب بنجاح',
+                        description:
+                            'تم الحفظ في المسار: /storage/emulated/0/Books/Clean_Architecture.epub',
+                        duration: SimpleAlertDuration.long,
+                        withClose: true,
+                        withProgressBar: true,
+                      ),
+                      child: const Text('BiDi File Path (مسار ملف)'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => SimpleAlert(
+                        context: context,
+                        type: SimpleAlertType.info,
+                        title: 'جاري فتح الكتاب',
+                        description:
+                            'الكتاب المحدد هو "Refactoring: Improving the Design of Existing Code".',
+                        duration: SimpleAlertDuration.long,
+                        withClose: true,
+                      ),
+                      child: const Text('Mixed Arabic/English Book'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        for (int i = 1; i <= 3; i++) {
+                          Future.delayed(Duration(milliseconds: (i - 1) * 200), () {
+                            SimpleAlert(
+                              context: context,
+                              type: alertTypes[(i - 1) % alertTypes.length],
+                              title: 'تنبيه رقم $i متزامن',
+                              description:
+                                  'اسحب للإغلاق لمشاهدة انزلاق باقي التنبيهات بسلاسة',
+                              alignmentDirectional:
+                                  AlignmentDirectional.topCenter,
+                              duration: SimpleAlertDuration.long,
+                              withClose: true,
+                              withProgressBar: true,
+                            );
+                          });
+                        }
+                      },
+                      child: const Text('Stack 3 Simultaneous Alerts (انزلاق متزامن)'),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),

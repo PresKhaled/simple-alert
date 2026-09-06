@@ -11,3 +11,4 @@ export 'src/enums/simple_alert_type.dart';
 export 'src/enums/simple_alert_duration.dart';
 export 'src/enums/simple_alert_shape.dart';
 export 'src/misc/simple_alert_icons.dart';
+export 'src/misc/bidi_util.dart';

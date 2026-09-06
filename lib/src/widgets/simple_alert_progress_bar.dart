@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../i18n/translations.g.dart';
-import '../misc/constants.dart';
 
 /// A widget that displays a progress bar which animates its width from full to zero.
 ///
@@ -21,15 +20,19 @@ class SimpleAlertProgressBar extends StatefulWidget {
   /// its full width to zero.
   final Duration alertDuration;
 
+  /// The foreground color of the alert, used to derive the progress bar's color.
+  final Color foregroundColor;
+
   /// Creates a [SimpleAlertProgressBar] widget.
   ///
-  /// The [onAnimationControllerCreated], [alertWidth], and [alertDuration] parameters
-  /// must not be null.
+  /// The [onAnimationControllerCreated], [alertWidth], [alertDuration],
+  /// and [foregroundColor] parameters must not be null.
   const SimpleAlertProgressBar({
     super.key,
     required this.onAnimationControllerCreated,
     required this.alertWidth,
     required this.alertDuration,
+    required this.foregroundColor,
   });
 
   @override
@@ -39,57 +42,61 @@ class SimpleAlertProgressBar extends StatefulWidget {
 class _SimpleAlertProgressBarState extends State<SimpleAlertProgressBar>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-  late Animation<double> _widthAnimation;
-  late double _width = widget.alertWidth;
 
   @override
   void initState() {
     super.initState();
 
     // Initialize the AnimationController.
-    // This controller drives the progress bar's width animation.
     _controller = AnimationController(
       vsync: this,
       duration: widget.alertDuration,
-    )..forward(); // Start the animation immediately to begin the countdown.
+    )..forward();
 
     widget.onAnimationControllerCreated(_controller);
 
-    // Create a Tween animation for the width, from the initial alertWidth to 0.0.
-    _widthAnimation = _controller.drive(
-      Tween(begin: widget.alertWidth, end: 0.0),
-    );
-
-    // Add a listener to the animation to update the width and trigger a rebuild.
     _controller.addListener(() {
-      setState(() => _width = _widthAnimation.value);
+      setState(() {});
     });
   }
 
   @override
   void dispose() {
-    // Stop and dispose of the AnimationController to free up resources.
     _controller.stop();
     _controller.dispose();
-
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Render the progress bar as a Container with animated width.
-    // A Semantics widget is used to provide accessibility information for screen readers.
+    final barColor = widget.foregroundColor.withValues(alpha: 0.90);
+    final trackColor = widget.foregroundColor.withValues(alpha: 0.18);
+    final progressFraction = (1.0 - _controller.value).clamp(0.0, 1.0);
+
     return Semantics(
       label: t.alertTimerSemanticLabel,
-      value: '${((_width / widget.alertWidth) * 100).round()}% remaining',
-      child: Container(
-        width: _width,
-        height: 5.0, // Hardcoded height for the progress bar.
-        margin: const EdgeInsets.only(top: 8.0), // Hardcoded top margin.
-        decoration: BoxDecoration(
-          color: Colors.white, // Hardcoded color for the progress bar.
-          borderRadius: BorderRadius.circular(BORDER_RADIUS),
-        ),
+      value: '${(progressFraction * 100).round()}% remaining',
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final totalWidth = constraints.maxWidth;
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(4.0),
+            child: Container(
+              width: totalWidth,
+              height: 3.5,
+              color: trackColor,
+              alignment: AlignmentDirectional.centerStart,
+              child: Container(
+                width: totalWidth * progressFraction,
+                height: 3.5,
+                decoration: BoxDecoration(
+                  color: barColor,
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

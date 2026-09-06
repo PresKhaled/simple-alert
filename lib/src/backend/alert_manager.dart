@@ -5,6 +5,9 @@ class AlertData {
   /// The current size of the alert.
   Size size;
 
+  /// The alignment of the alert on screen.
+  final AlignmentDirectional alignment;
+
   /// Indicates if the alert is aligned from the top.
   final bool fromTop;
 
@@ -17,6 +20,7 @@ class AlertData {
   /// Creates an instance of [AlertData].
   AlertData({
     required this.size,
+    this.alignment = AlignmentDirectional.topCenter,
     required this.fromTop,
     required this.fromCenter,
     required this.fromBottom,
@@ -73,7 +77,7 @@ class AlertManager {
     if (_displayedAlerts.value.containsKey(routeName)) {
       final data = _displayedAlerts.value[routeName]!;
       data.size = size;
-      _displayedAlerts.notifyListeners();
+      _displayedAlerts.value = Map<String, AlertData>.from(_displayedAlerts.value);
     }
   }
 
@@ -95,19 +99,22 @@ class AlertManager {
 
     if (currentIndex == -1) return [];
 
-    // Determine the alignment direction of the current alert.
+    // Determine the vertical alignment direction of the current alert.
     final bool fromTop = isTopAligned(alignment);
     final bool fromCenter = isCenterAligned(alignment);
     final bool fromBottom = isBottomAligned(alignment);
 
-    // Filter alerts that are displayed before the current one and have the same alignment.
+    // Filter alerts that are displayed before the current one, share the same
+    // vertical direction and horizontal alignment slot.
     return keys
         .take(currentIndex)
         .map((key) => alerts[key]!)
         .where(
-          (data) => (data.fromTop == fromTop &&
-              data.fromCenter == fromCenter &&
-              data.fromBottom == fromBottom),
+          (data) =>
+              (data.fromTop == fromTop &&
+                  data.fromCenter == fromCenter &&
+                  data.fromBottom == fromBottom) &&
+              (data.alignment.start == alignment.start),
         )
         .toList();
   }

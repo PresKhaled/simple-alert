@@ -8,6 +8,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../i18n/translations.g.dart';
 import '../simple_alert.dart';
@@ -66,6 +67,12 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
 
   /// The specified width of the alert. If null, it will default to the screen width or a preference.
   final double? width;
+
+  /// An optional explicit text direction override for the alert.
+  final TextDirection? textDirection;
+
+  /// Whether tactile haptic feedback is triggered when the alert is shown.
+  final bool? enableHapticFeedback;
 
   /// The shape of the alert container. Defaults to [SimpleAlertPreferences().shape].
   final SimpleAlertShape? shape;
@@ -169,7 +176,9 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     this.foregroundColor,
     this.duration,
     this.customDuration,
-    this.animatedOpacityDuration = const Duration(milliseconds: 250),
+    this.animatedOpacityDuration = DEFAULT_OPACITY_DURATION,
+    this.textDirection,
+    this.enableHapticFeedback,
     this.loading = false,
     this.centerContent = false,
     this.closeOnPress = true,
@@ -199,6 +208,8 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     SimpleAlertType? type,
     SimpleAlertShape? shape,
     BorderRadius? borderRadius,
+    TextDirection? textDirection,
+    bool? enableHapticFeedback,
     ValueNotifier<bool>? removalSignal,
   }) : this(
           context: context,
@@ -206,6 +217,8 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
           shape: shape,
           borderRadius: borderRadius,
           title: title,
+          textDirection: textDirection,
+          enableHapticFeedback: enableHapticFeedback,
           loading: true,
           closeOnPress: false, // Loading alerts typically don't close on press.
           removalSignal: removalSignal,
@@ -289,6 +302,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
           // Pass-through properties for [SimpleAlertInteractiveContainer].
           title: title,
           description: description,
+          textDirection: textDirection,
           withProgressBar: withProgressBar,
           closeOnPress: closeOnPress,
           onTap: _handleTap,
@@ -333,6 +347,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     // Create alert data with its size and alignment properties.
     final alertData = AlertData(
       size: renderBox.size,
+      alignment: _resolvedAlignment,
       fromTop: AlertManager.isTopAligned(_resolvedAlignment),
       fromCenter: AlertManager.isCenterAligned(_resolvedAlignment),
       fromBottom: AlertManager.isBottomAligned(_resolvedAlignment),
@@ -477,11 +492,11 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     final isLight = (_resolvedBrightness == Brightness.light);
 
     return switch (_resolvedType) {
-      SimpleAlertType.normal => isLight ? const Color.fromRGBO(105, 105, 105, 1.0) : const Color.fromRGBO(229, 228, 226, 1.0),
-      SimpleAlertType.success => isLight ? const Color.fromRGBO(46, 139, 87, 1.0) : const Color.fromRGBO(80, 200, 120, 1.0),
-      SimpleAlertType.warning => isLight ? const Color.fromRGBO(239, 155, 15, 1.0) : const Color.fromRGBO(255, 191, 0, 1.0),
-      SimpleAlertType.danger => isLight ? const Color.fromRGBO(197, 30, 58, 1.0) : const Color.fromRGBO(251, 96, 127, 1.0),
-      SimpleAlertType.info => isLight ? const Color.fromRGBO(34, 76, 152, 1.0) : const Color.fromRGBO(135, 206, 250, 1.0),
+      SimpleAlertType.normal => isLight ? const Color.fromRGBO(82, 82, 91, 1.0) : const Color.fromRGBO(228, 228, 231, 1.0),
+      SimpleAlertType.success => isLight ? const Color.fromRGBO(22, 135, 80, 1.0) : const Color.fromRGBO(74, 210, 130, 1.0),
+      SimpleAlertType.warning => isLight ? const Color.fromRGBO(217, 142, 11, 1.0) : const Color.fromRGBO(252, 196, 25, 1.0),
+      SimpleAlertType.danger => isLight ? const Color.fromRGBO(190, 24, 58, 1.0) : const Color.fromRGBO(248, 105, 125, 1.0),
+      SimpleAlertType.info => isLight ? const Color.fromRGBO(30, 72, 156, 1.0) : const Color.fromRGBO(120, 195, 252, 1.0),
     };
   }
 
@@ -606,6 +621,19 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   void show() {
     if (!context.mounted) {
       throw StateError('Cannot show alert: context is not mounted');
+    }
+
+    final haptic =
+        enableHapticFeedback ?? SimpleAlertPreferences().enableHapticFeedback;
+    if (haptic) {
+      switch (_resolvedType) {
+        case SimpleAlertType.danger:
+          HapticFeedback.heavyImpact();
+        case SimpleAlertType.warning:
+          HapticFeedback.mediumImpact();
+        default:
+          HapticFeedback.lightImpact();
+      }
     }
 
     // Push the alert's route onto the navigator and call _close when it completes.

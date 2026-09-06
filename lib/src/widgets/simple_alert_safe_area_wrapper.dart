@@ -17,6 +17,7 @@ class SimpleAlertSafeAreaWrapper extends StatefulWidget {
     // Properties for SimpleAlertPositionedContainer
     required this.title,
     this.description,
+    this.textDirection,
     required this.withProgressBar,
     required this.closeOnPress,
     required this.onTap,
@@ -61,6 +62,7 @@ class SimpleAlertSafeAreaWrapper extends StatefulWidget {
   // Properties to pass down to SimpleAlertPositionedContainer
   final String title;
   final String? description;
+  final TextDirection? textDirection;
   final bool withProgressBar;
   final bool closeOnPress;
   final VoidCallback onTap;
@@ -88,31 +90,24 @@ class _SimpleAlertSafeAreaWrapperState
     extends State<SimpleAlertSafeAreaWrapper> {
   Orientation? _currentOrientation;
 
-  /// Handles changes in device orientation, ensuring all displayed alerts update their sizes.
+  /// Handles changes in device orientation, ensuring this specific alert updates its size.
   ///
   /// This method is called whenever the device orientation changes. It compares
   /// the new orientation with the `_currentOrientation` and, if different,
-  /// triggers a post-frame callback to iterate through all registered alerts
-  /// and update their sizes in the `_AlertManager`.
-  /// This ensures correct positioning and rendering after an orientation shift.
-  ///
-  /// [orientation] The new [Orientation] of the device.
+  /// triggers a post-frame callback to update this alert's measured size
+  /// in the `AlertManager`.
   void _handleOrientationChange(Orientation orientation) {
     if (_currentOrientation != orientation) {
       _currentOrientation = orientation;
 
-      // Update sizes for all alerts after orientation change
-      // This is crucial for correct positioning of stacked alerts.
+      // Update size for this alert after orientation change.
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        for (final routeName
-            in widget.alertManager.displayedAlerts.value.keys) {
-          final key = widget.alertKey;
-          if (key.currentContext != null) {
-            final renderBox =
-                key.currentContext!.findRenderObject() as RenderBox?;
-            if (renderBox != null && renderBox.hasSize) {
-              widget.updateAlertSize(routeName, renderBox.size);
-            }
+        final key = widget.alertKey;
+        if (key.currentContext != null) {
+          final renderBox =
+              key.currentContext!.findRenderObject() as RenderBox?;
+          if (renderBox != null && renderBox.hasSize) {
+            widget.updateAlertSize(widget.routeName, renderBox.size);
           }
         }
       });
@@ -140,6 +135,7 @@ class _SimpleAlertSafeAreaWrapperState
             // Pass-through properties for SimpleAlertInteractiveContainer
             title: widget.title,
             description: widget.description,
+            textDirection: widget.textDirection,
             withProgressBar: widget.withProgressBar,
             closeOnPress: widget.closeOnPress,
             onTap: widget.onTap,

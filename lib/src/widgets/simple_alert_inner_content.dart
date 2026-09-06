@@ -13,6 +13,7 @@ class SimpleAlertInnerContent extends StatelessWidget {
     required this.loading,
     required this.title,
     this.description,
+    this.textDirection,
     required this.centerContent,
     this.actions,
     required this.withClose,
@@ -36,6 +37,9 @@ class SimpleAlertInnerContent extends StatelessWidget {
 
   /// An optional detailed description text for the alert.
   final String? description;
+
+  /// An optional explicit text direction override.
+  final TextDirection? textDirection;
 
   /// If true, the alert's content (title and description) will be horizontally centered.
   final bool centerContent;
@@ -71,6 +75,7 @@ class SimpleAlertInnerContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
     final foregroundColor = getForegroundColor();
+    final hasDescription = description != null && description!.trim().isNotEmpty;
 
     return Theme(
       data: themeData.copyWith(
@@ -93,6 +98,9 @@ class SimpleAlertInnerContent extends StatelessWidget {
         children: [
           Flexible(
             child: Row(
+              crossAxisAlignment: hasDescription
+                  ? CrossAxisAlignment.start
+                  : CrossAxisAlignment.center,
               children: [
                 // Leading icon or loading indicator.
                 SimpleAlertLeadingIcon(
@@ -100,6 +108,7 @@ class SimpleAlertInnerContent extends StatelessWidget {
                   foregroundColor: foregroundColor,
                   getBackgroundColor: getBackgroundColor,
                   getIcon: getIcon,
+                  iconsSize: SimpleAlertPreferences().iconsSize,
                 ),
 
                 // Main content and actions.
@@ -107,6 +116,7 @@ class SimpleAlertInnerContent extends StatelessWidget {
                   child: SimpleAlertContentSection(
                     title: title,
                     description: description,
+                    textDirection: textDirection,
                     foregroundColor: foregroundColor,
                     centerContent: centerContent,
                     actions: actions,
@@ -126,6 +136,7 @@ class SimpleAlertInnerContent extends StatelessWidget {
                       onWidthAnimationControllerCreated,
                   alertWidth: alertWidth,
                   alertDuration: resolvedDuration,
+                  foregroundColor: foregroundColor,
                 ),
               ),
             ),
