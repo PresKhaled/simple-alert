@@ -299,10 +299,16 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   }
 
   /// Builds the [SimpleAlertRoute] instance using the resolved route name
-  /// and specifies [_buildRouteContent] as its builder.
   void _buildRoute() {
+    final String alertAnnouncement =
+        (description != null && description!.trim().isNotEmpty)
+            ? '$title. $description'
+            : title;
+
     _route = SimpleAlertRoute(
       settings: RouteSettings(name: _routeName),
+      announcement: alertAnnouncement,
+      textDirection: textDirection ?? SimpleAlertPreferences().textDirection,
       builder: (BuildContext routeContext) {
         _routeContext = routeContext; // Assign the routeContext to the field.
 

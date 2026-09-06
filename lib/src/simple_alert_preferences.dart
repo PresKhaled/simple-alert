@@ -93,7 +93,7 @@ class SimpleAlertPreferences {
   TooltipThemeData? get tooltipThemeData => _tooltipThemeData;
 
   /// The default tooltip message for the close button.
-  String get closeTooltip => _closeTooltip!;
+  String get closeTooltip => _closeTooltip ?? t.closeButtonTooltip;
 
   /// The default display duration for alerts.
   SimpleAlertDuration get duration => _duration!;

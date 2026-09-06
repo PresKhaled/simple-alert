@@ -96,6 +96,12 @@ class _AlertState extends State<Alert> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     try {
+      final reduceMotion =
+          MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+      if (reduceMotion) {
+        return widget.child;
+      }
+
       return FadeTransition(
         opacity: _opacityAnimation,
         child: SlideTransition(

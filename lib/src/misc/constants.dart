@@ -186,6 +186,9 @@ class AlertPerformanceUtils {
 // ============================================================================
 
 /// Utilities for improving accessibility
+typedef AlertAccessibilityUtils = AlertA11yUtils;
+
+/// Utilities for improving accessibility
 class AlertA11yUtils {
   /// Gets semantic label for alert type
   static String getTypeSemanticLabel(SimpleAlertType type) {
@@ -238,17 +241,20 @@ class AlertA11yUtils {
     required String title,
     String? description,
     required SimpleAlertType type,
+    ui.TextDirection? textDirection,
   }) async {
-    final typeLabel = getTypeSemanticLabel(type);
-    final message = description != null
-        ? '$typeLabel: $title. $description'
-        : '$typeLabel: $title';
+    try {
+      final typeLabel = getTypeSemanticLabel(type);
+      final message = description != null && description.trim().isNotEmpty
+          ? '$typeLabel: $title. $description'
+          : '$typeLabel: $title';
 
-    // ignore: deprecated_member_use
-    await SemanticsService.announce(
-      message,
-      ui.TextDirection.rtl,
-    );
+      // ignore: deprecated_member_use
+      await SemanticsService.announce(
+        message,
+        textDirection ?? ui.TextDirection.rtl,
+      );
+    } catch (_) {}
   }
 }
 

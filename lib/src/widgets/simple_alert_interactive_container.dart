@@ -154,6 +154,17 @@ class _SimpleAlertInteractiveContainerState
     _isDismissed = true;
 
     try {
+      final reduceMotion =
+          MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+      if (reduceMotion) {
+        if (widget.onDismissedImmediate != null) {
+          widget.onDismissedImmediate!();
+        } else {
+          widget.onClosePressed();
+        }
+        return;
+      }
+
       final direction = _dragOffset >= 0 ? 1.0 : -1.0;
       final target = direction * (widget.alertWidth + 60.0);
 
@@ -245,10 +256,27 @@ class _SimpleAlertInteractiveContainerState
         },
         child: Semantics(
           container: true,
-          liveRegion: true, // Announce changes to screen readers.
-          label: t.alertSemanticLabel(
-              title: widget.title), // Semantic label for the alert.
-          hint: (widget.description ?? ''), // Semantic hint.
+          liveRegion: true, // Announce changes to screen readers immediately.
+          label: widget.description != null && widget.description!.trim().isNotEmpty
+              ? '${t.alertSemanticLabel(title: widget.title)}. ${widget.description}'
+              : t.alertSemanticLabel(title: widget.title),
+          hint: AlertAccessibilityUtils.getSemanticHint(
+            closeOnPress: widget.closeOnPress,
+            withProgressBar: widget.withProgressBar,
+            loading: widget.loading,
+          ),
+          onDismiss: () {
+            try {
+              widget.onClosePressed();
+            } catch (_) {}
+          },
+          onTap: (widget.closeOnPress && !widget.withProgressBar)
+              ? () {
+                  try {
+                    widget.onTap();
+                  } catch (_) {}
+                }
+              : null,
           child: GestureDetector(
             onTap: widget.onTap,
             onTapDown: widget.withProgressBar ? widget.onTapDown : null,

@@ -23,11 +23,19 @@ class SimpleAlertRoute<T> extends PopupRoute<T> {
   /// This widget will be displayed as the main content of the alert.
   final WidgetBuilder builder;
 
+  /// Optional announcement text to be read by screen readers upon alert display.
+  final String? announcement;
+
+  /// Optional text direction override for screen reader announcements.
+  final TextDirection? textDirection;
+
   /// Creates a [SimpleAlertRoute].
   ///
   /// The [builder] parameter is mandatory and provides the content for the route.
   SimpleAlertRoute({
     required this.builder,
+    this.announcement,
+    this.textDirection,
     super.filter,
     super.settings,
     super.traversalEdgeBehavior,
@@ -40,19 +48,30 @@ class SimpleAlertRoute<T> extends PopupRoute<T> {
     Animation<double> secondaryAnimation,
   ) {
     try {
-      // Wrap the builder content to ensure proper semantic boundaries.
+      final direction = textDirection ??
+          Directionality.maybeOf(context) ??
+          TextDirection.ltr;
+
+      // Wrap the builder content to ensure proper semantic boundaries and focus scope management.
       return Semantics(
         scopesRoute: true,
         explicitChildNodes: true,
-        child: Builder(
-          builder: (BuildContext context) {
-            try {
-              return builder(context);
-            } catch (e) {
-              debugPrint('SimpleAlertRoute builder safe error: $e');
-              return const SizedBox.shrink();
-            }
-          },
+        namesRoute: true,
+        label: announcement ?? t.generalAlertType,
+        child: Directionality(
+          textDirection: direction,
+          child: FocusScope(
+            child: Builder(
+              builder: (BuildContext context) {
+                try {
+                  return builder(context);
+                } catch (e) {
+                  debugPrint('SimpleAlertRoute builder safe error: $e');
+                  return const SizedBox.shrink();
+                }
+              },
+            ),
+          ),
         ),
       );
     } catch (e) {
@@ -108,10 +127,17 @@ class SimpleAlertRoute<T> extends PopupRoute<T> {
         Future.microtask(() {
           try {
             if (context.mounted) {
+              final resolvedDirection = textDirection ??
+                  Directionality.maybeOf(context) ??
+                  TextDirection.ltr;
+              final message = announcement != null && announcement!.trim().isNotEmpty
+                  ? announcement!
+                  : t.newAlertDisplayedAnnouncement;
+
               // ignore: deprecated_member_use
               SemanticsService.announce(
-                t.newAlertDisplayedAnnouncement,
-                TextDirection.rtl,
+                message,
+                resolvedDirection,
               );
             }
           } catch (_) {}
@@ -131,10 +157,14 @@ class SimpleAlertRoute<T> extends PopupRoute<T> {
         Future.microtask(() {
           try {
             if (context.mounted) {
+              final resolvedDirection = textDirection ??
+                  Directionality.maybeOf(context) ??
+                  TextDirection.ltr;
+
               // ignore: deprecated_member_use
               SemanticsService.announce(
                 t.alertClosedAnnouncement,
-                TextDirection.rtl,
+                resolvedDirection,
               );
             }
           } catch (_) {}

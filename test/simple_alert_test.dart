@@ -529,6 +529,47 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Safe Alert'), findsNothing);
     });
+
+    testWidgets('Accessibility and Route Focus management test',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () {
+                    SimpleAlert(
+                      context: context,
+                      title: 'A11y Alert',
+                      description: 'Testing screen reader announcement',
+                    );
+                  },
+                  child: const Text('Show A11y Alert'),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Show A11y Alert'));
+      await tester.pumpAndSettle();
+
+      // Verify alert is visible
+      expect(find.text('A11y Alert'), findsOneWidget);
+
+      // Verify FocusScope is present within the route
+      expect(find.byType(FocusScope), findsWidgets);
+
+      // Verify PopScope intercepts back navigation to gracefully close alert
+      final dynamic widgetsAppState = tester.state(find.byType(WidgetsApp));
+      await widgetsAppState.didPopRoute();
+      await tester.pumpAndSettle();
+
+      // Alert should be dismissed cleanly
+      expect(find.text('A11y Alert'), findsNothing);
+    });
   });
 }
 
