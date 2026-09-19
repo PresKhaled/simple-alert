@@ -27,8 +27,28 @@ class AlertData {
   });
 }
 
+/// Represents an active alert entry managed and rendered by [SimpleAlertHost].
+class AlertEntry {
+  /// Unique identifier for this alert instance.
+  final String id;
+
+  /// The widget representing the alert to render.
+  final Widget widget;
+
+  /// Callback to dismiss this alert.
+  final Future<void> Function({bool immediate}) dismiss;
+
+  /// Creates an [AlertEntry] instance.
+  AlertEntry({
+    required this.id,
+    required this.widget,
+    required this.dismiss,
+  });
+}
+
 /// Manages the state and lifecycle of all displayed alerts.
-/// This class separates backend from UI concerns.
+/// This class separates backend from UI concerns and provides a single source
+/// of truth for active alert entries and spatial stacking data.
 class AlertManager {
   /// Singleton instance of [AlertManager].
   static final AlertManager _instance = AlertManager._internal();
@@ -39,18 +59,63 @@ class AlertManager {
   /// Private constructor for the singleton pattern.
   AlertManager._internal();
 
-  /// A [ValueNotifier] that holds a map of currently displayed alerts,
-  /// keyed by their route names.
+  /// Tracks whether a [SimpleAlertHost] is currently active in the widget tree.
+  final ValueNotifier<bool> _isHostAttached = ValueNotifier<bool>(false);
+
+  /// Whether a [SimpleAlertHost] is currently active.
+  bool get hasHost => _isHostAttached.value;
+
+  /// Attaches a [SimpleAlertHost] to the manager.
+  void attachHost() {
+    _isHostAttached.value = true;
+  }
+
+  /// Detaches the [SimpleAlertHost] from the manager.
+  void detachHost() {
+    _isHostAttached.value = false;
+  }
+
+  /// A [ValueNotifier] holding all active [AlertEntry] items rendered by [SimpleAlertHost].
+  final ValueNotifier<Map<String, AlertEntry>> _activeEntries =
+      ValueNotifier<Map<String, AlertEntry>>({});
+
+  /// Provides access to the active alert entries.
+  ValueNotifier<Map<String, AlertEntry>> get activeEntries => _activeEntries;
+
+  /// A [ValueNotifier] that holds a map of currently displayed alert geometry data,
+  /// keyed by their route/alert names.
   final ValueNotifier<Map<String, AlertData>> _displayedAlerts =
       ValueNotifier<Map<String, AlertData>>({});
 
-  /// Provides access to the [ValueNotifier] containing the currently displayed alerts.
+  /// Provides access to the [ValueNotifier] containing the currently displayed alert geometry.
   ValueNotifier<Map<String, AlertData>> get displayedAlerts => _displayedAlerts;
 
-  /// Registers a new alert with a specified route name and its associated data.
-  ///
-  /// [routeName] The unique name of the route associated with the alert.
-  /// [data] The [AlertData] containing information about the alert.
+  /// Registers a host alert entry.
+  void registerHostAlert(AlertEntry entry) {
+    try {
+      _activeEntries.value = {
+        ..._activeEntries.value,
+        entry.id: entry,
+      };
+    } catch (e) {
+      debugPrint('AlertManager registerHostAlert safe error: $e');
+    }
+  }
+
+  /// Unregisters a host alert entry.
+  void unregisterHostAlert(String id) {
+    try {
+      if (_activeEntries.value.containsKey(id)) {
+        final newMap = Map<String, AlertEntry>.from(_activeEntries.value);
+        newMap.remove(id);
+        _activeEntries.value = newMap;
+      }
+    } catch (e) {
+      debugPrint('AlertManager unregisterHostAlert safe error: $e');
+    }
+  }
+
+  /// Registers alert geometry data with a specified alert name.
   void registerAlert(String routeName, AlertData data) {
     try {
       _displayedAlerts.value = {
@@ -62,9 +127,7 @@ class AlertManager {
     }
   }
 
-  /// Unregisters (deletes) an alert using its route name.
-  ///
-  /// [routeName] The unique name of the route associated with the alert to unregister.
+  /// Unregisters (deletes) alert geometry data using its alert name.
   void unregisterAlert(String routeName) {
     try {
       if (_displayedAlerts.value.containsKey(routeName)) {
@@ -78,9 +141,6 @@ class AlertManager {
   }
 
   /// Updates the size of an already registered alert.
-  ///
-  /// [routeName] The unique name of the route associated with the alert.
-  /// [size] The new [Size] of the alert.
   void updateAlertSize(String routeName, Size size) {
     try {
       if (_displayedAlerts.value.containsKey(routeName)) {
@@ -98,12 +158,6 @@ class AlertManager {
 
   /// Retrieves a list of alerts that share the same alignment direction
   /// as the current alert and are displayed before it.
-  ///
-  /// This is used to calculate the vertical offset for new alerts to prevent overlaps.
-  ///
-  /// [currentRouteName] The route name of the current alert.
-  /// [alignment] The [AlignmentDirectional] of the current alert.
-  /// Returns a list of [AlertData] for alerts in the same direction.
   List<AlertData> getAlertsInSameDirection(
     String currentRouteName,
     AlignmentDirectional alignment,
@@ -140,6 +194,20 @@ class AlertManager {
     }
   }
 
+  /// Dismisses all currently active alerts.
+  Future<void> dismissAll({bool immediate = false}) async {
+    try {
+      final entries = _activeEntries.value.values.toList();
+      for (final entry in entries) {
+        try {
+          entry.dismiss(immediate: immediate);
+        } catch (_) {}
+      }
+    } catch (e) {
+      debugPrint('AlertManager dismissAll safe error: $e');
+    }
+  }
+
   /// Checks if the specified alignment is top-aligned.
   static bool isTopAligned(AlignmentDirectional alignment) {
     return [
@@ -167,8 +235,10 @@ class AlertManager {
     ].contains(alignment);
   }
 
-  /// Disposes of the [_displayedAlerts] [ValueNotifier] to prevent memory leaks.
+  /// Disposes of all value notifiers to prevent memory leaks.
   void dispose() {
     _displayedAlerts.dispose();
+    _activeEntries.dispose();
+    _isHostAttached.dispose();
   }
 }

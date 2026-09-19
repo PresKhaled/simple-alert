@@ -17,7 +17,7 @@ import 'backend/alert_timer_controller.dart';
 import 'misc/constants.dart';
 import 'mixins/simple_alert_opacity_animation_mixin.dart';
 import 'mixins/simple_alert_width_animation_mixin.dart';
-import 'widgets/simple_alert_route_content.dart';
+import 'widgets/simple_alert_host_content.dart';
 
 /// A comprehensive alert system that displays customizable alerts using `Overlay` and `Route`.
 ///
@@ -142,17 +142,11 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   /// The unique route name for this specific alert instance.
   late final String _routeName;
 
-  /// The Flutter route object for this alert.
-  late final Route<void> _route;
-
   /// The controller for managing the alert's auto-dismissal timer.
   late final AlertTimerController _timerController;
 
   /// A global key used to obtain the render box of the alert for size calculations.
   final GlobalKey _alertKey = GlobalKey();
-
-  /// The build context of the alert's route, available once the route is built.
-  BuildContext? _routeContext;
 
   /// A flag indicating if the alert is currently in the process of closing.
   bool _isClosing = false;
@@ -196,8 +190,6 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
       _setupTimerController();
       // Configure the listener for the external removal signal.
       _setupRemovalSignal();
-      // Build the Flutter route for displaying the alert.
-      _buildRoute();
       // Display the alert automatically upon creation.
       show();
     } catch (e) {
@@ -298,32 +290,41 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
     }
   }
 
-  /// Builds the [SimpleAlertRoute] instance using the resolved route name
-  void _buildRoute() {
+  /// Builds the widget to be rendered inside [SimpleAlertHost].
+  Widget _buildHostWidget() {
     final String alertAnnouncement =
         (description != null && description!.trim().isNotEmpty)
             ? '$title. $description'
             : title;
 
-    _route = SimpleAlertRoute(
-      settings: RouteSettings(name: _routeName),
-      announcement: alertAnnouncement,
-      textDirection: textDirection ?? SimpleAlertPreferences().textDirection,
-      builder: (BuildContext routeContext) {
-        _routeContext = routeContext; // Assign the routeContext to the field.
+    ThemeData? callerTheme;
+    try {
+      if (context.mounted) {
+        callerTheme = Theme.of(context);
+      }
+    } catch (_) {}
 
-        final screenWidth = (routeContext.mounted
-                ? MediaQuery.maybeSizeOf(routeContext)?.width
+    final resolvedDirection = textDirection ??
+        (context.mounted ? Directionality.maybeOf(context) : null) ??
+        SimpleAlertPreferences().textDirection;
+
+    return Builder(
+      builder: (BuildContext hostContext) {
+        final screenWidth = (hostContext.mounted
+                ? MediaQuery.maybeSizeOf(hostContext)?.width
                 : null) ??
             (context.mounted ? MediaQuery.maybeSizeOf(context)?.width : null) ??
             400.0;
 
-        return SimpleAlertRouteContent(
-          routeContext: routeContext,
+        return SimpleAlertHostContent(
           onFirstFrameBuilt: _onFirstFrameBuilt,
           closeAlert: _close,
-          onOpacityAnimationControllerCreated: (controller) => opacityAnimationController = controller,
+          onOpacityAnimationControllerCreated: (controller) =>
+              opacityAnimationController = controller,
           animatedOpacityDuration: animatedOpacityDuration,
+          themeData: callerTheme,
+          textDirection: resolvedDirection,
+          announcement: alertAnnouncement,
           // Properties for SimpleAlertSafeAreaWrapper
           alertKey: _alertKey,
           resolvedAlignment: _resolvedAlignment,
@@ -335,7 +336,6 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
           // Pass-through properties for [SimpleAlertInteractiveContainer].
           title: title,
           description: description,
-          textDirection: textDirection,
           withProgressBar: withProgressBar,
           closeOnPress: closeOnPress,
           onTap: _handleTap,
@@ -348,7 +348,8 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
           centerContent: centerContent,
           actions: actions,
           withClose: withClose,
-          onWidthAnimationControllerCreated: (controller) => widthAnimationController = controller,
+          onWidthAnimationControllerCreated: (controller) =>
+              widthAnimationController = controller,
           resolvedDuration: _resolvedDuration,
           getForegroundColor: _getForegroundColor,
           getIcon: _getIcon,
@@ -614,7 +615,7 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
   /// Initiates the closing sequence for the alert.
   ///
   /// If [immediate] is true (e.g. when swiped off-screen by the user or on error),
-  /// the reverse opacity animation is skipped and the route is removed instantly.
+  /// the reverse opacity animation is skipped and the alert is removed instantly.
   Future<void> _close({bool immediate = false}) async {
     if (_isClosing) return;
     _isClosing = true;
@@ -623,32 +624,22 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
       // Cancel the timer immediately to prevent further completion callbacks.
       _timerController.cancel();
 
-      // Attempt reverse animation only if not immediate and routeContext is mounted.
-      if (!immediate && _routeContext != null && _routeContext!.mounted) {
+      // Attempt reverse animation only if not immediate and controller is available.
+      if (!immediate && opacityAnimationController != null) {
         try {
-          await opacityAnimationController
-              ?.reverse()
+          await opacityAnimationController!
+              .reverse()
               .timeout(animatedOpacityDuration + const Duration(milliseconds: 100));
         } catch (_) {
           // Ignore animation errors to ensure the alert still closes.
         }
       }
-
-      // Remove the route if it is still active.
-      try {
-        if (_route.isActive) {
-          final NavigatorState? navigator = (_routeContext != null &&
-                  _routeContext!.mounted)
-              ? Navigator.maybeOf(_routeContext!)
-              : (context.mounted ? Navigator.maybeOf(context) : null);
-          if (navigator != null && _route.isActive) {
-            navigator.removeRoute(_route);
-          }
-        }
-      } catch (_) {}
     } catch (e) {
       debugPrint('SimpleAlert safe close error: $e');
     } finally {
+      try {
+        _alertManager.unregisterHostAlert(_routeName);
+      } catch (_) {}
       try {
         _alertManager.unregisterAlert(_routeName);
       } catch (_) {}
@@ -671,25 +662,15 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
       _timerController.dispose();
       opacityAnimationController = null;
       widthAnimationController = null;
-      _routeContext = null; // Clear the context when resources are freed.
     } catch (_) {}
   }
 
-  /// Displays the [SimpleAlert] by pushing its route onto the Navigator.
+  /// Displays the [SimpleAlert] by registering it with [SimpleAlertHost].
   ///
   /// Safely fails in silence if the context is not mounted or an unexpected
   /// error occurs, guaranteeing that the host application is never disrupted.
   void show() {
     try {
-      if (!context.mounted) return;
-
-      final navigator = Navigator.maybeOf(context);
-      if (navigator == null) {
-        debugPrint('SimpleAlert: No Navigator found in context. Alert dismissed silently.');
-        _close(immediate: true);
-        return;
-      }
-
       final haptic =
           enableHapticFeedback ?? SimpleAlertPreferences().enableHapticFeedback;
       if (haptic) {
@@ -705,15 +686,30 @@ class SimpleAlert with OpacityAnimationMixin, WidthAnimationMixin {
         } catch (_) {}
       }
 
-      // Push the alert's route onto the navigator and call _close when it completes.
-      navigator.push(_route).whenComplete(() {
-        _close();
-      });
+      if (!_alertManager.hasHost) {
+        debugPrint(
+          '[SimpleAlert] Warning: SimpleAlertHost is not registered in MaterialApp.builder. '
+          'Wrap your MaterialApp.builder with SimpleAlertHost(child: child!) to display alerts.',
+        );
+      }
+
+      final entry = AlertEntry(
+        id: _routeName,
+        widget: _buildHostWidget(),
+        dismiss: _close,
+      );
+
+      _alertManager.registerHostAlert(entry);
     } catch (e) {
       debugPrint('SimpleAlert show safe error: $e');
       try {
         _close(immediate: true);
       } catch (_) {}
     }
+  }
+
+  /// Dismisses all currently active alerts across the application.
+  static Future<void> dismissAll({bool immediate = false}) {
+    return AlertManager().dismissAll(immediate: immediate);
   }
 }

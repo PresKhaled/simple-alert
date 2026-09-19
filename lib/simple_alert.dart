@@ -5,6 +5,7 @@
 library simple_alert;
 
 export 'src/simple_alert.dart' show SimpleAlert;
+export 'src/widgets/simple_alert_host.dart';
 export 'src/simple_alert_route.dart';
 export 'src/simple_alert_preferences.dart';
 export 'src/enums/simple_alert_type.dart';

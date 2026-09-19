@@ -458,6 +458,7 @@ void main() {
         (tester) async {
       await tester.pumpWidget(
         MaterialApp(
+          builder: (context, child) => SimpleAlertHost(child: child!),
           home: Scaffold(
             body: Builder(
               builder: (context) {
@@ -499,6 +500,7 @@ void main() {
         (tester) async {
       await tester.pumpWidget(
         MaterialApp(
+          builder: (context, child) => SimpleAlertHost(child: child!),
           home: Scaffold(
             body: Builder(
               builder: (context) {
@@ -530,10 +532,11 @@ void main() {
       expect(find.text('Safe Alert'), findsNothing);
     });
 
-    testWidgets('Accessibility and Route Focus management test',
+    testWidgets('Accessibility and Focus management test',
         (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
+          builder: (context, child) => SimpleAlertHost(child: child!),
           home: Scaffold(
             body: Builder(
               builder: (context) {
@@ -554,21 +557,114 @@ void main() {
       );
 
       await tester.tap(find.text('Show A11y Alert'));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 350));
 
       // Verify alert is visible
       expect(find.text('A11y Alert'), findsOneWidget);
 
-      // Verify FocusScope is present within the route
-      expect(find.byType(FocusScope), findsWidgets);
+      // Verify liveRegion semantics is enabled
+      final semanticsFinder = find.byWidgetPredicate(
+        (widget) => widget is Semantics && widget.properties.liveRegion == true,
+      );
+      expect(semanticsFinder, findsWidgets);
 
-      // Verify PopScope intercepts back navigation to gracefully close alert
-      final dynamic widgetsAppState = tester.state(find.byType(WidgetsApp));
-      await widgetsAppState.didPopRoute();
-      await tester.pumpAndSettle();
+      // Verify non-focus-stealing FocusScope is present
+      final focusScopeFinder = find.byWidgetPredicate(
+        (widget) => widget is FocusScope && widget.canRequestFocus == false,
+      );
+      expect(focusScopeFinder, findsWidgets);
 
-      // Alert should be dismissed cleanly
+      // Dismiss all alerts
+      await SimpleAlert.dismissAll();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 350));
       expect(find.text('A11y Alert'), findsNothing);
+    });
+
+    testWidgets(
+        'Alert persists and remains visible above newly pushed routes and dialogs',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => SimpleAlertHost(child: child!),
+          home: Scaffold(
+            appBar: AppBar(title: const Text('Screen 1')),
+            body: Builder(
+              builder: (context) {
+                return Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        SimpleAlert(
+                          context: context,
+                          title: 'Persistent Alert',
+                          duration: SimpleAlertDuration.long,
+                        );
+                      },
+                      child: const Text('Show Persistent Alert'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => Scaffold(
+                              appBar: AppBar(title: const Text('Screen 2')),
+                              body: const Center(child: Text('Screen 2 Content')),
+                            ),
+                          ),
+                        );
+                      },
+                      child: const Text('Push Screen 2'),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      // 1. Trigger the alert on Screen 1
+      await tester.tap(find.text('Show Persistent Alert'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 350));
+      expect(find.text('Persistent Alert'), findsOneWidget);
+
+      // 2. Navigate to Screen 2
+      await tester.tap(find.text('Push Screen 2'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 350));
+
+      // Verify Screen 2 is active
+      expect(find.text('Screen 2 Content'), findsOneWidget);
+
+      // CRITICAL: Verify the alert is STILL visible above Screen 2!
+      expect(find.text('Persistent Alert'), findsOneWidget);
+
+      // 3. Show a modal dialog on Screen 2
+      final BuildContext screen2Context =
+          tester.element(find.text('Screen 2 Content'));
+      showDialog(
+        context: screen2Context,
+        builder: (_) => const AlertDialog(
+          title: Text('Modal Dialog'),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 350));
+
+      // Dialog is visible
+      expect(find.text('Modal Dialog'), findsOneWidget);
+
+      // CRITICAL: The alert is STILL visible above the modal dialog!
+      expect(find.text('Persistent Alert'), findsOneWidget);
+
+      // Dismiss all alerts
+      await SimpleAlert.dismissAll();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 350));
+      expect(find.text('Persistent Alert'), findsNothing);
     });
   });
 }
@@ -581,6 +677,7 @@ class AlertTestHelpers {
     ThemeData? theme,
   }) {
     return MaterialApp(
+      builder: (context, c) => SimpleAlertHost(child: c!),
       theme: theme ?? ThemeData.light(),
       home: Scaffold(
         body: child,

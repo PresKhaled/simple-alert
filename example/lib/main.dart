@@ -35,6 +35,7 @@ class _SimpleAlertExampleState extends State<SimpleAlertExample>
     return MaterialApp(
       title: 'SimpleAlert',
       debugShowCheckedModeBanner: false,
+      builder: (context, child) => SimpleAlertHost(child: child!),
       theme: ThemeData(
         primarySwatch: Colors.teal,
       ),
@@ -328,7 +329,7 @@ class _MainPageState extends State<MainPage> {
                               type: alertTypes[(i - 1) % alertTypes.length],
                               title: 'تنبيه رقم $i متزامن',
                               description:
-                                  'اسحب للإغلاق لمشاهدة انزلاق باقي التنبيهات بسلاسة',
+                                   'اسحب للإغلاق لمشاهدة انزلاق باقي التنبيهات بسلاسة',
                               alignmentDirectional:
                                   AlignmentDirectional.topCenter,
                               duration: SimpleAlertDuration.long,
@@ -339,6 +340,68 @@ class _MainPageState extends State<MainPage> {
                         }
                       },
                       child: const Text('Stack 3 Simultaneous Alerts (انزلاق متزامن)'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 25.0),
+                Text(
+                  'Persistent Across Routes & Dialogs (الصمود عبر الصفحات)',
+                  style: titleStyle,
+                ),
+                Wrap(
+                  spacing: spacing,
+                  children: <Widget>[
+                    ElevatedButton(
+                      onPressed: () {
+                        SimpleAlert(
+                          context: context,
+                          type: SimpleAlertType.success,
+                          title: 'تنبيه مستمر عبر التنقل',
+                          description:
+                              'لاحظ بقاء هذا الإشعار في القمة رغم الانتقال لشاشة جديدة بالكامل!',
+                          duration: SimpleAlertDuration.long,
+                          withClose: true,
+                          withProgressBar: true,
+                        );
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => Scaffold(
+                              appBar: AppBar(title: const Text('صفحة جديدة')),
+                              body: const Center(
+                                child: Text('هذه صفحة جديدة، والإشعار بالأعلى يواصل العمل!'),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      child: const Text('Push New Route (فتح صفحة جديدة)'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        SimpleAlert(
+                          context: context,
+                          type: SimpleAlertType.warning,
+                          title: 'تنبيه يطفو فوق النوافذ المنبثقة',
+                          description: 'الإشعار يظهر بأعلى الـ Dialog دون أن يحجبه!',
+                          duration: SimpleAlertDuration.long,
+                          withClose: true,
+                          withProgressBar: true,
+                        );
+                        showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            title: const Text('نافذة منبثقة (Modal Dialog)'),
+                            content: const Text('الإشعار يطفو بأعلى هذه النافذة بكل سلاسة.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('إغلاق'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      child: const Text('Show Dialog (فتح نافذة منبثقة)'),
                     ),
                   ],
                 ),

@@ -109,6 +109,9 @@ class SimpleAlertPositionedContainer extends StatelessWidget {
                   screenHeight,
                 );
 
+                final keyboardBottom =
+                    MediaQuery.maybeViewInsetsOf(context)?.bottom ?? 0.0;
+
                 return AnimatedPositioned(
                   key: alertKey, // Key to identify the alert's render box.
                   duration: DEFAULT_REPOSITION_DURATION,
@@ -119,35 +122,40 @@ class SimpleAlertPositionedContainer extends StatelessWidget {
                           AlertManager.isCenterAligned(resolvedAlignment))
                       ? offsetY
                       : null,
-                  // Position from bottom if aligned to bottom, otherwise null.
+                  // Position from bottom if aligned to bottom, adjusting for software keyboard.
                   bottom: AlertManager.isBottomAligned(resolvedAlignment)
-                      ? offsetY
+                      ? (offsetY + keyboardBottom)
                       : null,
-                  child: SimpleAlertInteractiveContainer(
-                    routeName: routeName,
-                    alertWidth: alertWidth,
-                    title: title,
-                    description: description,
-                    textDirection: textDirection,
-                    withProgressBar: withProgressBar,
-                    closeOnPress: closeOnPress,
-                    onTap: onTap,
-                    onTapDown: onTapDown,
-                    onTapUp: onTapUp,
-                    onTapCancel: onTapCancel,
-                    getBorderRadius: getBorderRadius,
-                    getBackgroundColor: getBackgroundColor,
-                    loading: loading,
-                    centerContent: centerContent,
-                    actions: actions,
-                    withClose: withClose,
-                    onWidthAnimationControllerCreated:
-                        onWidthAnimationControllerCreated,
-                    resolvedDuration: resolvedDuration,
-                    getForegroundColor: getForegroundColor,
-                    getIcon: getIcon,
-                    onClosePressed: onClosePressed,
-                    onDismissedImmediate: onDismissedImmediate,
+                  child: FocusScope(
+                    canRequestFocus: false, // Prevents stealing input focus from active pages
+                    child: FocusTraversalGroup(
+                      child: SimpleAlertInteractiveContainer(
+                        routeName: routeName,
+                        alertWidth: alertWidth,
+                        title: title,
+                        description: description,
+                        textDirection: textDirection,
+                        withProgressBar: withProgressBar,
+                        closeOnPress: closeOnPress,
+                        onTap: onTap,
+                        onTapDown: onTapDown,
+                        onTapUp: onTapUp,
+                        onTapCancel: onTapCancel,
+                        getBorderRadius: getBorderRadius,
+                        getBackgroundColor: getBackgroundColor,
+                        loading: loading,
+                        centerContent: centerContent,
+                        actions: actions,
+                        withClose: withClose,
+                        onWidthAnimationControllerCreated:
+                            onWidthAnimationControllerCreated,
+                        resolvedDuration: resolvedDuration,
+                        getForegroundColor: getForegroundColor,
+                        getIcon: getIcon,
+                        onClosePressed: onClosePressed,
+                        onDismissedImmediate: onDismissedImmediate,
+                      ),
+                    ),
                   ),
                 );
               } catch (e) {
