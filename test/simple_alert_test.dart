@@ -190,105 +190,6 @@ void main() {
     });
   });
 
-  /*group('AlertA11yUtils Tests', () {
-    test('getTypeSemanticLabel returns correct labels', () {
-      expect(
-        AlertA11yUtils.getTypeSemanticLabel(SimpleAlertType.success),
-        'تنبيه نجاح',
-      );
-      expect(
-        AlertA11yUtils.getTypeSemanticLabel(SimpleAlertType.danger),
-        'تنبيه خطر',
-      );
-      expect(
-        AlertA11yUtils.getTypeSemanticLabel(SimpleAlertType.warning),
-        'تنبيه تحذير',
-      );
-    });
-
-    test('getSemanticHint for loading alert', () {
-      final hint = AlertA11yUtils.getSemanticHint(
-        closeOnPress: false,
-        withProgressBar: false,
-        loading: true,
-      );
-      expect(hint, contains('جاري التحميل'));
-    });
-
-    test('getSemanticHint for progress bar alert', () {
-      final hint = AlertA11yUtils.getSemanticHint(
-        closeOnPress: false,
-        withProgressBar: true,
-        loading: false,
-      );
-      expect(hint, contains('اضغط مع الاستمرار'));
-    });
-
-    test('getSemanticHint for closeable alert', () {
-      final hint = AlertA11yUtils.getSemanticHint(
-        closeOnPress: true,
-        withProgressBar: false,
-        loading: false,
-      );
-      expect(hint, contains('اضغط للإغلاق'));
-    });
-  });*/
-
-  /*group('Extension Methods Tests', () {
-    test('Duration.toReadableString for days', () {
-      expect(
-        const Duration(days: 2).toReadableString(),
-        '2 يوم',
-      );
-    });
-
-    test('Duration.toReadableString for hours', () {
-      expect(
-        const Duration(hours: 3).toReadableString(),
-        '3 ساعة',
-      );
-    });
-
-    test('Duration.toReadableString for minutes', () {
-      expect(
-        const Duration(minutes: 5).toReadableString(),
-        '5 دقيقة',
-      );
-    });
-
-    test('Duration.toReadableString for seconds', () {
-      expect(
-        const Duration(seconds: 30).toReadableString(),
-        '30 ثانية',
-      );
-    });
-
-    test('Duration.isInstant returns true for very short durations', () {
-      expect(const Duration(milliseconds: 10).isInstant, isTrue);
-      expect(const Duration(milliseconds: 50).isInstant, isTrue);
-    });
-
-    test('Duration.isInstant returns false for longer durations', () {
-      expect(const Duration(milliseconds: 100).isInstant, isFalse);
-      expect(const Duration(seconds: 1).isInstant, isFalse);
-    });
-
-    test('SimpleAlertType.priority returns correct values', () {
-      expect(SimpleAlertType.danger.priority, 4);
-      expect(SimpleAlertType.warning.priority, 3);
-      expect(SimpleAlertType.info.priority, 2);
-      expect(SimpleAlertType.success.priority, 1);
-      expect(SimpleAlertType.normal.priority, 0);
-    });
-
-    test('SimpleAlertType.isCritical identifies critical alerts', () {
-      expect(SimpleAlertType.danger.isCritical, isTrue);
-      expect(SimpleAlertType.warning.isCritical, isTrue);
-      expect(SimpleAlertType.info.isCritical, isFalse);
-      expect(SimpleAlertType.success.isCritical, isFalse);
-    });
-  });*/
-
   group('_AlertManager Tests', () {
     late AlertManager manager;
 
@@ -610,7 +511,8 @@ void main() {
                           MaterialPageRoute(
                             builder: (_) => Scaffold(
                               appBar: AppBar(title: const Text('Screen 2')),
-                              body: const Center(child: Text('Screen 2 Content')),
+                              body:
+                                  const Center(child: Text('Screen 2 Content')),
                             ),
                           ),
                         );
@@ -666,48 +568,61 @@ void main() {
       await tester.pump(const Duration(milliseconds: 350));
       expect(find.text('Persistent Alert'), findsNothing);
     });
+
+    testWidgets(
+        'Tooltip inside SimpleAlert finds Overlay ancestor and renders without error',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => SimpleAlertHost(child: child!),
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () {
+                    SimpleAlert(
+                      context: context,
+                      title: 'Tooltip Test Alert',
+                      withClose: true,
+                    );
+                  },
+                  child: const Text('Show Tooltip Alert'),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Show Tooltip Alert'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 350));
+
+      expect(find.text('Tooltip Test Alert'), findsOneWidget);
+
+      // Verify that Tooltip exists in the alert and has an Overlay ancestor without throwing assertions
+      final tooltipFinder = find.byType(Tooltip);
+      expect(tooltipFinder, findsWidgets);
+
+      await SimpleAlert.dismissAll();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 350));
+      expect(find.text('Tooltip Test Alert'), findsNothing);
+    });
+
+    test(
+        'SimpleAlertPreferences retains values when instantiated without arguments',
+        () {
+      SimpleAlertPreferences(
+        titleStyle: const TextStyle(fontSize: 42.0, color: Colors.purple),
+        iconsColor: Colors.deepOrange,
+      );
+
+      // Subsequent call without arguments must retain configured preferences
+      final prefs = SimpleAlertPreferences();
+      expect(prefs.titleStyle.fontSize, 42.0);
+      expect(prefs.titleStyle.color, Colors.purple);
+      expect(prefs.iconsColor, Colors.deepOrange);
+    });
   });
-}
-
-// Additional helper functions for widget testing
-class AlertTestHelpers {
-  /// Creates a test app wrapper for alert testing
-  static Widget createTestApp({
-    required Widget child,
-    ThemeData? theme,
-  }) {
-    return MaterialApp(
-      builder: (context, c) => SimpleAlertHost(child: c!),
-      theme: theme ?? ThemeData.light(),
-      home: Scaffold(
-        body: child,
-      ),
-    );
-  }
-
-  /// Finds alert widget in widget tree
-  static Finder findAlert() {
-    return find.byType(SimpleAlert);
-  }
-
-  /// Waits for alert to appear
-  static Future<void> waitForAlert(WidgetTester tester) async {
-    await tester.pumpAndSettle();
-  }
-
-  /// Taps on alert
-  static Future<void> tapAlert(WidgetTester tester) async {
-    await tester.tap(findAlert());
-    await tester.pumpAndSettle();
-  }
-
-  /// Verifies alert is visible
-  static void verifyAlertVisible(WidgetTester tester) {
-    expect(findAlert(), findsOneWidget);
-  }
-
-  /// Verifies alert is not visible
-  static void verifyAlertNotVisible(WidgetTester tester) {
-    expect(findAlert(), findsNothing);
-  }
 }

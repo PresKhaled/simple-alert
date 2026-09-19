@@ -1,93 +1,83 @@
-import 'package:flutter/material.dart'
-    show
-        AlignmentDirectional,
-        BorderRadius,
-        BuildContext,
-        Color,
-        FontWeight,
-        TextStyle,
-        Theme,
-        ThemeData,
-        TooltipThemeData,
-        Colors,
-        TextDirection;
+/*
+* This file is a part of "SimpleAlert" project.
+* Khaled Mohsen <pres.kbayomy@gmail.com>
+* Copyrights (BSD-3-Clause), LICENSE.
+*/
 
-import '../i18n/translations.g.dart';
+import 'package:flutter/material.dart';
+
 import 'enums/simple_alert_duration.dart';
 import 'enums/simple_alert_shape.dart';
 import 'enums/simple_alert_type.dart';
 import 'misc/simple_alert_icons.dart';
+import 'misc/simple_alert_localizations.dart';
 
-/// A singleton class for managing and providing default preferences for [SimpleAlert] widgets.
+/// A singleton class for managing and providing global default preferences for [SimpleAlert].
 ///
 /// This class allows for global configuration of various alert properties such as
-/// alignment, shape, colors, text styles, and durations. Preferences can be set
-/// once and will be applied to all subsequent [SimpleAlert] instances unless
-/// overridden locally.
-///
-/// Example of initializing preferences globally:
-/// ```dart
-/// // In your main.dart or a similar setup file:
-/// SimpleAlertPreferences(
-///   context: context,
-///   alignmentDirectional: AlignmentDirectional.topEnd,
-///   duration: SimpleAlertDuration.long,
-///   iconsColor: Colors.amber,
-/// );
-///
-/// // Later, when showing an alert:
-/// SimpleAlert(
-///   context: context,
-///   title: 'Customized Alert',
-/// ); // Will use the globally set preferences.
-/// ```
+/// alignment, shape, colors, text styles, and durations. Preferences can be configured
+/// once and will persist across all alerts unless overridden locally.
 class SimpleAlertPreferences {
-  late AlignmentDirectional? _alignmentDirectional;
-  late double Function()? _getWidth;
-  late SimpleAlertShape? _shape;
-  late BorderRadius? _borderRadius;
-  late SimpleAlertType? _type;
-  late SimpleAlertIcons? _icons;
-  late double? _iconsSize;
-  late Color? _iconsColor;
-  late TextStyle? _titleStyle;
-  late TextStyle? _descriptionStyle;
-  late TooltipThemeData? _tooltipThemeData;
-  late String? _closeTooltip;
-  late SimpleAlertDuration? _duration;
-  late TextDirection? _textDirection;
-  late bool? _enableHapticFeedback;
+  AlignmentDirectional? _alignmentDirectional;
+  double Function()? _getWidth;
+  SimpleAlertShape? _shape;
+  BorderRadius? _borderRadius;
+  SimpleAlertType? _type;
+  SimpleAlertIcons? _icons;
+  double? _iconsSize;
+  Color? _iconsColor;
+  TextStyle? _titleStyle;
+  TextStyle? _descriptionStyle;
+  TooltipThemeData? _tooltipThemeData;
+  String? _closeTooltip;
+  SimpleAlertDuration? _duration;
+  TextDirection? _textDirection;
+  bool? _enableHapticFeedback;
 
   /// The default alignment direction for alerts.
-  AlignmentDirectional get alignmentDirectional => _alignmentDirectional!;
+  AlignmentDirectional get alignmentDirectional =>
+      _alignmentDirectional ?? AlignmentDirectional.topCenter;
 
   /// A function that returns the default width for alerts.
-  /// If `null`, alerts will use their intrinsic width or screen width.
   double Function()? get getWidth => _getWidth;
 
   /// The default shape for alert corners.
-  SimpleAlertShape get shape => _shape!;
+  SimpleAlertShape get shape => _shape ?? SimpleAlertShape.defaultRadius;
 
   /// The default border radius for alerts. Takes precedence over [shape].
   BorderRadius? get borderRadius => _borderRadius;
 
   /// The default semantic type for alerts (e.g., info, success, warning).
-  SimpleAlertType get type => _type!;
+  SimpleAlertType get type => _type ?? SimpleAlertType.info;
 
   /// The default set of icons to use for different alert types.
-  SimpleAlertIcons get icons => _icons!;
+  SimpleAlertIcons get icons => _icons ?? const SimpleAlertIcons();
 
   /// The default size for alert icons.
-  double get iconsSize => _iconsSize!;
+  double get iconsSize => _iconsSize ?? 28.0;
 
   /// The default color for alert icons.
   Color? get iconsColor => _iconsColor;
 
   /// The default text style for the alert title.
-  TextStyle get titleStyle => _titleStyle!;
+  TextStyle get titleStyle =>
+      _titleStyle ??
+      const TextStyle(
+        fontSize: 17.0,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.2,
+        color: Colors.white,
+      );
 
   /// The default text style for the alert description.
-  TextStyle get descriptionStyle => _descriptionStyle!;
+  TextStyle get descriptionStyle =>
+      _descriptionStyle ??
+      const TextStyle(
+        fontSize: 15.0,
+        fontWeight: FontWeight.w400,
+        height: 1.35,
+        color: Colors.white70,
+      );
 
   /// The default tooltip theme data for interactive elements within alerts.
   TooltipThemeData? get tooltipThemeData => _tooltipThemeData;
@@ -96,7 +86,7 @@ class SimpleAlertPreferences {
   String get closeTooltip => _closeTooltip ?? t.closeButtonTooltip;
 
   /// The default display duration for alerts.
-  SimpleAlertDuration get duration => _duration!;
+  SimpleAlertDuration get duration => _duration ?? SimpleAlertDuration.medium;
 
   /// The default text direction for alerts. If null, automatically resolved.
   TextDirection? get textDirection => _textDirection;
@@ -109,76 +99,101 @@ class SimpleAlertPreferences {
 
   /// Creates or retrieves the singleton instance of [SimpleAlertPreferences].
   ///
-  /// All parameters are optional and serve to initialize or update the global
-  /// preferences. If a parameter is not specified, its existing value (or a
-  /// hardcoded default) is retained.
+  /// Safe against parameter erasure: providing no parameters retains existing
+  /// configurations without resetting them to null or defaults.
   factory SimpleAlertPreferences({
-    /// The [BuildContext] to resolve theme-dependent styles.
-    /// It's crucial to provide a [context] if theme-based text styles are desired.
     BuildContext? context,
-    AlignmentDirectional alignmentDirectional = AlignmentDirectional.topCenter,
+    AlignmentDirectional? alignmentDirectional,
     double Function()? getWidth,
-    SimpleAlertShape shape = SimpleAlertShape.defaultRadius,
+    SimpleAlertShape? shape,
     BorderRadius? borderRadius,
-    SimpleAlertType type = SimpleAlertType.info,
-    SimpleAlertIcons icons = const SimpleAlertIcons(),
-    double iconsSize = 28.0,
+    SimpleAlertType? type,
+    SimpleAlertIcons? icons,
+    double? iconsSize,
     Color? iconsColor,
     TextStyle? titleStyle,
     TextStyle? descriptionStyle,
     TooltipThemeData? tooltipThemeData,
     String? closeTooltip,
-    SimpleAlertDuration duration = SimpleAlertDuration.medium,
+    SimpleAlertDuration? duration,
     TextDirection? textDirection,
-    bool enableHapticFeedback = true,
+    bool? enableHapticFeedback,
   }) {
     final ThemeData? themeData =
         ((context != null && context.mounted) ? Theme.of(context) : null);
 
-    _instance._alignmentDirectional ??= alignmentDirectional;
-    _instance._getWidth ??= getWidth;
-    _instance._shape ??= shape;
-    _instance._borderRadius ??= borderRadius;
-    _instance._type ??= type;
-    _instance._icons ??= icons;
-    _instance._iconsSize ??= iconsSize;
-    _instance._iconsColor = iconsColor;
-    _instance._titleStyle = (titleStyle ??
-        themeData?.textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.w600,
-          letterSpacing: -0.2,
-        ) ??
-        const TextStyle(
-          fontSize: 17.0,
-          fontWeight: FontWeight.w600,
-          letterSpacing: -0.2,
-          color: Colors.white, // Default color if no theme is available.
-        ));
-    _instance._descriptionStyle = (descriptionStyle ??
-        themeData?.textTheme.bodyMedium?.copyWith(
-          fontWeight: FontWeight.w400,
-          height: 1.35,
-        ) ??
-        const TextStyle(
-          fontSize: 15.0,
-          fontWeight: FontWeight.w400,
-          height: 1.35,
-          color: Colors.white70, // Default color if no theme is available.
-        ));
-    _instance._tooltipThemeData = tooltipThemeData;
-    _instance._closeTooltip = (closeTooltip ?? t.closeButtonTooltip);
-    _instance._duration ??= duration;
-    _instance._textDirection = textDirection;
-    _instance._enableHapticFeedback = enableHapticFeedback;
+    if (alignmentDirectional != null) {
+      _instance._alignmentDirectional = alignmentDirectional;
+    }
+    if (getWidth != null) {
+      _instance._getWidth = getWidth;
+    }
+    if (shape != null) {
+      _instance._shape = shape;
+    }
+    if (borderRadius != null) {
+      _instance._borderRadius = borderRadius;
+    }
+    if (type != null) {
+      _instance._type = type;
+    }
+    if (icons != null) {
+      _instance._icons = icons;
+    }
+    if (iconsSize != null) {
+      _instance._iconsSize = iconsSize;
+    }
+    if (iconsColor != null) {
+      _instance._iconsColor = iconsColor;
+    }
+
+    if (titleStyle != null) {
+      _instance._titleStyle = titleStyle;
+    } else if (themeData != null && _instance._titleStyle == null) {
+      _instance._titleStyle = themeData.textTheme.titleMedium?.copyWith(
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.2,
+      );
+    }
+
+    if (descriptionStyle != null) {
+      _instance._descriptionStyle = descriptionStyle;
+    } else if (themeData != null && _instance._descriptionStyle == null) {
+      _instance._descriptionStyle = themeData.textTheme.bodyMedium?.copyWith(
+        fontWeight: FontWeight.w400,
+        height: 1.35,
+      );
+    }
+
+    if (tooltipThemeData != null) {
+      _instance._tooltipThemeData = tooltipThemeData;
+    }
+    if (closeTooltip != null) {
+      _instance._closeTooltip = closeTooltip;
+    }
+    if (duration != null) {
+      _instance._duration = duration;
+    }
+    if (textDirection != null) {
+      _instance._textDirection = textDirection;
+    }
+    if (enableHapticFeedback != null) {
+      _instance._enableHapticFeedback = enableHapticFeedback;
+    }
 
     return _instance;
   }
 
-  /// Private constructor for the singleton instance.
-  ///
-  /// Initializes all internal fields to `null`.
-  /// They are populated lazily by the factory constructor.
-  SimpleAlertPreferences._internal() {
+  SimpleAlertPreferences._internal();
+
+  /// Sets the active locale code for translations (e.g., 'en', 'ar', 'ur', 'tr', 'id', 'pt').
+  void setLocale(String locale) {
+    SimpleAlertLocalizations.setLocale(locale);
+  }
+
+  /// Resets all global preferences to defaults (primarily used in testing).
+  @visibleForTesting
+  void reset() {
     _alignmentDirectional = null;
     _getWidth = null;
     _shape = null;
@@ -194,15 +209,5 @@ class SimpleAlertPreferences {
     _duration = null;
     _textDirection = null;
     _enableHapticFeedback = null;
-  }
-
-  /// Sets the locale for the package's translations.
-  ///
-  /// This method allows for changing the language of the provided tooltips
-  /// (e.g., 'Close') dynamically. It uses the `slang` generated `LocaleSettings`
-  /// to update the locale.
-  /// [locale] A string representing the language code (e.g., 'en', 'ar').
-  void setLocale(String locale) {
-    LocaleSettings.setLocaleRawSync(locale);
   }
 }

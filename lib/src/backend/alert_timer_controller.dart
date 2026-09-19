@@ -48,7 +48,8 @@ class AlertTimerController {
             remainingMilliseconds.value -= 100;
 
             if (remainingMilliseconds.value <= 0) {
-              timer.cancel(); // Prevent further periodic ticks after completion.
+              timer
+                  .cancel(); // Prevent further periodic ticks after completion.
               try {
                 onComplete();
               } catch (e) {

@@ -1,8 +1,16 @@
+/*
+* This file is a part of "SimpleAlert" project.
+* Khaled Mohsen <pres.kbayomy@gmail.com>
+* Copyrights (BSD-3-Clause), LICENSE.
+*/
+
 import 'package:flutter/material.dart';
 
-/// Data model for alert information, including its size and alignment properties.
+import '../misc/constants.dart';
+
+/// Data model for alert layout geometry and alignment.
 class AlertData {
-  /// The current size of the alert.
+  /// The measured size of the alert.
   Size size;
 
   /// The alignment of the alert on screen.
@@ -46,20 +54,15 @@ class AlertEntry {
   });
 }
 
-/// Manages the state and lifecycle of all displayed alerts.
-/// This class separates backend from UI concerns and provides a single source
-/// of truth for active alert entries and spatial stacking data.
+/// Manages the state, registration, and spatial stacking of all active alerts.
 class AlertManager {
-  /// Singleton instance of [AlertManager].
   static final AlertManager _instance = AlertManager._internal();
 
   /// Factory constructor to return the singleton instance.
   factory AlertManager() => _instance;
 
-  /// Private constructor for the singleton pattern.
   AlertManager._internal();
 
-  /// Tracks whether a [SimpleAlertHost] is currently active in the widget tree.
   final ValueNotifier<bool> _isHostAttached = ValueNotifier<bool>(false);
 
   /// Whether a [SimpleAlertHost] is currently active.
@@ -75,19 +78,16 @@ class AlertManager {
     _isHostAttached.value = false;
   }
 
-  /// A [ValueNotifier] holding all active [AlertEntry] items rendered by [SimpleAlertHost].
   final ValueNotifier<Map<String, AlertEntry>> _activeEntries =
       ValueNotifier<Map<String, AlertEntry>>({});
 
   /// Provides access to the active alert entries.
   ValueNotifier<Map<String, AlertEntry>> get activeEntries => _activeEntries;
 
-  /// A [ValueNotifier] that holds a map of currently displayed alert geometry data,
-  /// keyed by their route/alert names.
   final ValueNotifier<Map<String, AlertData>> _displayedAlerts =
       ValueNotifier<Map<String, AlertData>>({});
 
-  /// Provides access to the [ValueNotifier] containing the currently displayed alert geometry.
+  /// Provides access to the geometry data of currently displayed alerts.
   ValueNotifier<Map<String, AlertData>> get displayedAlerts => _displayedAlerts;
 
   /// Registers a host alert entry.
@@ -127,7 +127,7 @@ class AlertManager {
     }
   }
 
-  /// Unregisters (deletes) alert geometry data using its alert name.
+  /// Unregisters alert geometry data using its alert name.
   void unregisterAlert(String routeName) {
     try {
       if (_displayedAlerts.value.containsKey(routeName)) {
@@ -157,7 +157,7 @@ class AlertManager {
   }
 
   /// Retrieves a list of alerts that share the same alignment direction
-  /// as the current alert and are displayed before it.
+  /// as the current alert and were registered before it.
   List<AlertData> getAlertsInSameDirection(
     String currentRouteName,
     AlignmentDirectional alignment,
@@ -169,13 +169,10 @@ class AlertManager {
 
       if (currentIndex == -1) return [];
 
-      // Determine the vertical alignment direction of the current alert.
       final bool fromTop = isTopAligned(alignment);
       final bool fromCenter = isCenterAligned(alignment);
       final bool fromBottom = isBottomAligned(alignment);
 
-      // Filter alerts that are displayed before the current one, share the same
-      // vertical direction and horizontal alignment slot.
       return keys
           .take(currentIndex)
           .map((key) => alerts[key])
@@ -194,7 +191,29 @@ class AlertManager {
     }
   }
 
-  /// Dismisses all currently active alerts.
+  /// Calculates the vertical stacking offset for an alert.
+  double calculateVerticalOffset({
+    required String routeName,
+    required AlignmentDirectional alignment,
+    required Orientation orientation,
+    required double screenHeight,
+  }) {
+    final previousAlerts = getAlertsInSameDirection(routeName, alignment);
+
+    final baseOffset = isCenterAligned(alignment)
+        ? (screenHeight / 2) -
+            (orientation == Orientation.portrait
+                ? AVERAGE_PORTRAIT_HEIGHT
+                : AVERAGE_LANDSCAPE_HEIGHT)
+        : 0.0;
+
+    return previousAlerts.fold<double>(
+      baseOffset,
+      (offset, data) => offset + data.size.height + ALERT_VERTICAL_SPACING,
+    );
+  }
+
+  /// Dismisses all currently active alerts across the application.
   Future<void> dismissAll({bool immediate = false}) async {
     try {
       final entries = _activeEntries.value.values.toList();
@@ -235,10 +254,14 @@ class AlertManager {
     ].contains(alignment);
   }
 
-  /// Disposes of all value notifiers to prevent memory leaks.
+  /// Clears active alerts without destroying internal listeners.
+  void clear() {
+    _displayedAlerts.value = {};
+    _activeEntries.value = {};
+  }
+
+  /// Safe disposal method for testing teardown that preserves reusability.
   void dispose() {
-    _displayedAlerts.dispose();
-    _activeEntries.dispose();
-    _isHostAttached.dispose();
+    clear();
   }
 }

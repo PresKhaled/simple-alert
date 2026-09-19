@@ -1,3 +1,9 @@
+/*
+* This file is a part of "SimpleAlert" project.
+* Khaled Mohsen <pres.kbayomy@gmail.com>
+* Copyrights (BSD-3-Clause), LICENSE.
+*/
+
 import 'package:flutter/material.dart';
 
 import '../backend/alert_manager.dart';
@@ -48,25 +54,33 @@ class _SimpleAlertHostState extends State<SimpleAlertHost> {
       clipBehavior: Clip.none,
       fit: StackFit.expand,
       children: [
-        // The underlying application (Navigator, pages, dialogs, etc.)
+        // The underlying application (Navigator, routes, modal dialogs, etc.)
         widget.child,
 
-        // The floating alert layer
-        ValueListenableBuilder<Map<String, AlertEntry>>(
-          valueListenable: _alertManager.activeEntries,
-          builder: (context, entries, _) {
-            if (entries.isEmpty) {
-              return const SizedBox.shrink();
-            }
+        // The floating alert layer, encapsulated within an Overlay so tooltips,
+        // popups, and raw tooltips have an ancestor Overlay and render without errors.
+        Overlay(
+          initialEntries: [
+            OverlayEntry(
+              builder: (context) =>
+                  ValueListenableBuilder<Map<String, AlertEntry>>(
+                valueListenable: _alertManager.activeEntries,
+                builder: (context, entries, _) {
+                  if (entries.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
 
-            return Stack(
-              clipBehavior: Clip.none,
-              fit: StackFit.expand,
-              children: [
-                for (final entry in entries.values) entry.widget,
-              ],
-            );
-          },
+                  return Stack(
+                    clipBehavior: Clip.none,
+                    fit: StackFit.expand,
+                    children: [
+                      for (final entry in entries.values) entry.widget,
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ],
     );

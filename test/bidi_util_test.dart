@@ -12,9 +12,12 @@ void main() {
     });
 
     test('detectDirection detects correct primary script', () {
-      expect(SimpleAlertBidiUtil.detectDirection('تنبيه هام'), equals(TextDirection.rtl));
-      expect(SimpleAlertBidiUtil.detectDirection('Warning: something broke'), equals(TextDirection.ltr));
-      expect(SimpleAlertBidiUtil.detectDirection('12345'), equals(TextDirection.ltr));
+      expect(SimpleAlertBidiUtil.detectDirection('تنبيه هام'),
+          equals(TextDirection.rtl));
+      expect(SimpleAlertBidiUtil.detectDirection('Warning: something broke'),
+          equals(TextDirection.ltr));
+      expect(SimpleAlertBidiUtil.detectDirection('12345'),
+          equals(TextDirection.ltr));
     });
 
     test('resolveDirection respects explicit override', () {
@@ -34,16 +37,22 @@ void main() {
       );
     });
 
-    test('isolateBiDi isolates file paths and extensions within Arabic text', () {
-      const arabicWithPath = 'تعذر فتح الملف /storage/emulated/0/Books/read.epub للتعديل';
+    test('isolateBiDi isolates file paths and extensions within Arabic text',
+        () {
+      const arabicWithPath =
+          'تعذر فتح الملف /storage/emulated/0/Books/read.epub للتعديل';
       final isolated = SimpleAlertBidiUtil.isolateBiDi(arabicWithPath);
 
       expect(isolated, contains(SimpleAlertBidiUtil.lri));
       expect(isolated, contains(SimpleAlertBidiUtil.pdi));
-      expect(isolated, contains('${SimpleAlertBidiUtil.lri}/storage/emulated/0/Books/read.epub${SimpleAlertBidiUtil.pdi}'));
+      expect(
+          isolated,
+          contains(
+              '${SimpleAlertBidiUtil.lri}/storage/emulated/0/Books/read.epub${SimpleAlertBidiUtil.pdi}'));
     });
 
-    test('isolateBiDi does not alter purely LTR text without RTL characters', () {
+    test('isolateBiDi does not alter purely LTR text without RTL characters',
+        () {
       const ltr = 'Error 404: /api/v1/users not found';
       expect(SimpleAlertBidiUtil.isolateBiDi(ltr), equals(ltr));
     });

@@ -1,12 +1,16 @@
+/*
+* This file is a part of "SimpleAlert" project.
+* Khaled Mohsen <pres.kbayomy@gmail.com>
+* Copyrights (BSD-3-Clause), LICENSE.
+*/
+
 import 'dart:async';
 import 'dart:math';
-import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
-import '../../i18n/translations.g.dart';
-import '../../simple_alert.dart';
+import '../enums/simple_alert_type.dart';
+import 'simple_alert_localizations.dart';
 
 // ============================================================================
 // Constants
@@ -132,19 +136,17 @@ class AlertValidator {
 
 /// Utilities for optimizing alert performance
 class AlertPerformanceUtils {
+  static Timer? _debounceTimer;
+
   /// Calculates optimal alert width based on screen size
   static double calculateOptimalWidth(double screenWidth) {
     if (screenWidth <= 360) {
-      // Small phones
       return screenWidth * 0.95;
     } else if (screenWidth <= 600) {
-      // Normal phones
       return screenWidth * 0.90;
     } else if (screenWidth <= 840) {
-      // Tablets portrait
       return screenWidth * 0.70;
     } else {
-      // Large tablets and desktops
       return screenWidth.clamp(MIN_ALERT_WIDTH, MAX_ALERT_WIDTH);
     }
   }
@@ -153,7 +155,7 @@ class AlertPerformanceUtils {
   static bool isTablet(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
     final diagonal = sqrt(size.width * size.width + size.height * size.height);
-    return diagonal > 1100; // Rough estimate for tablets
+    return diagonal > 1100;
   }
 
   /// Gets appropriate average height based on orientation and device
@@ -168,16 +170,13 @@ class AlertPerformanceUtils {
     }
   }
 
-  /// Debounce rapid successive calls (useful for orientation changes)
+  /// Debounce rapid successive calls
   static void debounce(
     VoidCallback callback, {
     Duration delay = const Duration(milliseconds: 300),
   }) {
-    Timer? timer;
-    return () {
-      timer?.cancel();
-      timer = Timer(delay, callback);
-    }();
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(delay, callback);
   }
 }
 
@@ -235,27 +234,6 @@ class AlertA11yUtils {
     }
     return normalDuration;
   }
-
-  /// Announces alert to screen readers
-  static Future<void> announceAlert({
-    required String title,
-    String? description,
-    required SimpleAlertType type,
-    ui.TextDirection? textDirection,
-  }) async {
-    try {
-      final typeLabel = getTypeSemanticLabel(type);
-      final message = description != null && description.trim().isNotEmpty
-          ? '$typeLabel: $title. $description'
-          : '$typeLabel: $title';
-
-      // ignore: deprecated_member_use
-      await SemanticsService.announce(
-        message,
-        textDirection ?? ui.TextDirection.rtl,
-      );
-    } catch (_) {}
-  }
 }
 
 // ============================================================================
@@ -289,20 +267,5 @@ class AlertColorUtils {
   static Color getContrastingColor(Color background) {
     final luminance = background.computeLuminance();
     return luminance > 0.5 ? Colors.black : Colors.white;
-  }
-
-  /// Validates color contrast and warns if insufficient
-  static void validateColorContrast({
-    required Color foreground,
-    required Color background,
-    required String context,
-  }) {
-    if (!meetsWCAGAA(foreground, background)) {
-      final ratio = calculateContrastRatio(foreground, background);
-      debugPrint(
-        'Warning: Color contrast in $context (${ratio.toStringAsFixed(2)}:1) '
-        'does not meet WCAG AA standards (4.5:1)',
-      );
-    }
   }
 }

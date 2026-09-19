@@ -61,8 +61,7 @@ class SimpleAlertTextContent extends StatelessWidget {
             )
           : null;
 
-      final titleAlign =
-          centerContent ? TextAlign.center : TextAlign.start;
+      final titleAlign = centerContent ? TextAlign.center : TextAlign.start;
       final descriptionAlign =
           centerContent ? TextAlign.center : TextAlign.start;
 

@@ -1,5 +1,12 @@
+/*
+* This file is a part of "SimpleAlert" project.
+* Khaled Mohsen <pres.kbayomy@gmail.com>
+* Copyrights (BSD-3-Clause), LICENSE.
+*/
+
 import 'package:flutter/material.dart';
-import '../../i18n/translations.g.dart';
+
+import '../misc/simple_alert_localizations.dart';
 
 /// A widget that displays the leading icon or a loading indicator for a [SimpleAlert].
 class SimpleAlertLeadingIcon extends StatelessWidget {
@@ -45,8 +52,7 @@ class SimpleAlertLeadingIcon extends StatelessWidget {
           ),
           child: loading
               ? Semantics(
-                  label: t
-                      .loadingIndicatorSemanticLabel, // Semantic label for loading indicator.
+                  label: t.loadingIndicatorSemanticLabel,
                   child: SizedBox.square(
                     dimension: iconsSize - 4,
                     child: CircularProgressIndicator(
@@ -55,7 +61,7 @@ class SimpleAlertLeadingIcon extends StatelessWidget {
                     ),
                   ),
                 )
-              : getIcon(), // Display type-specific icon.
+              : getIcon(),
         ),
       );
     } catch (e) {

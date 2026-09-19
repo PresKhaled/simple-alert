@@ -76,10 +76,7 @@ class _MainPageState extends State<MainPage> {
         padding: const EdgeInsets.only(bottom: 100),
         child: ElevatedButton(
           onPressed: () {
-            Navigator.popUntil(
-              context,
-              (route) => (route.settings.name == '/'),
-            );
+            SimpleAlert.dismissAll();
           },
           child: const Text('Close all'),
         ),
@@ -323,13 +320,14 @@ class _MainPageState extends State<MainPage> {
                     ElevatedButton(
                       onPressed: () {
                         for (int i = 1; i <= 3; i++) {
-                          Future.delayed(Duration(milliseconds: (i - 1) * 200), () {
+                          Future.delayed(Duration(milliseconds: (i - 1) * 200),
+                              () {
                             SimpleAlert(
                               context: context,
                               type: alertTypes[(i - 1) % alertTypes.length],
                               title: 'تنبيه رقم $i متزامن',
                               description:
-                                   'اسحب للإغلاق لمشاهدة انزلاق باقي التنبيهات بسلاسة',
+                                  'اسحب للإغلاق لمشاهدة انزلاق باقي التنبيهات بسلاسة',
                               alignmentDirectional:
                                   AlignmentDirectional.topCenter,
                               duration: SimpleAlertDuration.long,
@@ -339,7 +337,8 @@ class _MainPageState extends State<MainPage> {
                           });
                         }
                       },
-                      child: const Text('Stack 3 Simultaneous Alerts (انزلاق متزامن)'),
+                      child: const Text(
+                          'Stack 3 Simultaneous Alerts (انزلاق متزامن)'),
                     ),
                   ],
                 ),
@@ -368,7 +367,8 @@ class _MainPageState extends State<MainPage> {
                             builder: (_) => Scaffold(
                               appBar: AppBar(title: const Text('صفحة جديدة')),
                               body: const Center(
-                                child: Text('هذه صفحة جديدة، والإشعار بالأعلى يواصل العمل!'),
+                                child: Text(
+                                    'هذه صفحة جديدة، والإشعار بالأعلى يواصل العمل!'),
                               ),
                             ),
                           ),
@@ -382,7 +382,8 @@ class _MainPageState extends State<MainPage> {
                           context: context,
                           type: SimpleAlertType.warning,
                           title: 'تنبيه يطفو فوق النوافذ المنبثقة',
-                          description: 'الإشعار يظهر بأعلى الـ Dialog دون أن يحجبه!',
+                          description:
+                              'الإشعار يظهر بأعلى الـ Dialog دون أن يحجبه!',
                           duration: SimpleAlertDuration.long,
                           withClose: true,
                           withProgressBar: true,
@@ -391,7 +392,8 @@ class _MainPageState extends State<MainPage> {
                           context: context,
                           builder: (_) => AlertDialog(
                             title: const Text('نافذة منبثقة (Modal Dialog)'),
-                            content: const Text('الإشعار يطفو بأعلى هذه النافذة بكل سلاسة.'),
+                            content: const Text(
+                                'الإشعار يطفو بأعلى هذه النافذة بكل سلاسة.'),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(context),

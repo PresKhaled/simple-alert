@@ -33,8 +33,8 @@ class SimpleAlertActionsSection extends StatelessWidget {
         constraints:
             const BoxConstraints(maxWidth: 92.0), // Limit width for actions.
         child: SingleChildScrollView(
-          scrollDirection:
-              Axis.horizontal, // Allow horizontal scrolling for multiple actions.
+          scrollDirection: Axis
+              .horizontal, // Allow horizontal scrolling for multiple actions.
           child: Row(
             mainAxisSize: MainAxisSize.min, // Take minimum horizontal space.
             children: [
