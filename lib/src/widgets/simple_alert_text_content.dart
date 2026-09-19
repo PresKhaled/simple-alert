@@ -45,7 +45,10 @@ class SimpleAlertTextContent extends StatelessWidget {
         baseDirection: primaryDirection,
       );
 
-      final descriptionDirection = description != null
+      final hasDescription =
+          description != null && description!.trim().isNotEmpty;
+
+      final descriptionDirection = hasDescription
           ? SimpleAlertBidiUtil.resolveDirection(
               text: description,
               explicitDirection:
@@ -54,9 +57,9 @@ class SimpleAlertTextContent extends StatelessWidget {
             )
           : primaryDirection;
 
-      final formattedDescription = description != null
+      final formattedDescription = hasDescription
           ? SimpleAlertBidiUtil.isolateBiDi(
-              description!,
+              description!.trim(),
               baseDirection: descriptionDirection,
             )
           : null;
@@ -64,6 +67,16 @@ class SimpleAlertTextContent extends StatelessWidget {
       final titleAlign = centerContent ? TextAlign.center : TextAlign.start;
       final descriptionAlign =
           centerContent ? TextAlign.center : TextAlign.start;
+
+      final prefTitleStyle = SimpleAlertPreferences().titleStyle;
+      final effectiveTitleStyle = prefTitleStyle.copyWith(
+        color: prefTitleStyle.color ?? foregroundColor,
+      );
+
+      final prefDescStyle = SimpleAlertPreferences().descriptionStyle;
+      final effectiveDescStyle = prefDescStyle.copyWith(
+        color: prefDescStyle.color ?? foregroundColor.withValues(alpha: 0.90),
+      );
 
       return Directionality(
         textDirection: primaryDirection,
@@ -75,21 +88,21 @@ class SimpleAlertTextContent extends StatelessWidget {
           children: [
             Text(
               formattedTitle,
+              semanticsLabel: title,
               textAlign: titleAlign,
               textDirection: primaryDirection,
-              style: SimpleAlertPreferences().titleStyle.copyWith(
-                    color: foregroundColor,
-                  ),
+              softWrap: true,
+              style: effectiveTitleStyle,
             ),
             if (formattedDescription != null) ...[
               const SizedBox(height: 5.0),
               Text(
                 formattedDescription,
+                semanticsLabel: description!.trim(),
                 textAlign: descriptionAlign,
                 textDirection: descriptionDirection,
-                style: SimpleAlertPreferences().descriptionStyle.copyWith(
-                      color: foregroundColor.withValues(alpha: 0.90),
-                    ),
+                softWrap: true,
+                style: effectiveDescStyle,
               ),
             ],
           ],

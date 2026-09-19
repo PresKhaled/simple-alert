@@ -24,22 +24,26 @@ class SimpleAlertActionsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     try {
+      final hasActions = actions != null && actions!.isNotEmpty;
+
       // If no actions and no close button, return an empty box to save space.
-      if (actions == null && !withClose) {
+      if (!hasActions && !withClose) {
         return const SizedBox.shrink();
       }
 
+      final buttonCount =
+          (hasActions ? actions!.length : 0) + (withClose ? 1 : 0);
+      final maxAllowedWidth = (buttonCount * 44.0).clamp(44.0, 140.0);
+
       return ConstrainedBox(
-        constraints:
-            const BoxConstraints(maxWidth: 92.0), // Limit width for actions.
+        constraints: BoxConstraints(maxWidth: maxAllowedWidth),
         child: SingleChildScrollView(
-          scrollDirection: Axis
-              .horizontal, // Allow horizontal scrolling for multiple actions.
+          scrollDirection: Axis.horizontal,
+          physics: const ClampingScrollPhysics(),
           child: Row(
             mainAxisSize: MainAxisSize.min, // Take minimum horizontal space.
             children: [
-              if (actions != null)
-                ...actions!, // Display specified action buttons.
+              if (hasActions) ...actions!, // Display specified action buttons.
               if (withClose) // Conditionally display a close button.
                 IconButton(
                   onPressed: () {
@@ -54,6 +58,11 @@ class SimpleAlertActionsSection extends StatelessWidget {
                       .close), // Close icon from preferences.
                   splashRadius: ICON_BUTTON_SPLASH_RADIUS,
                   tooltip: SimpleAlertPreferences().closeTooltip,
+                  constraints: const BoxConstraints(
+                    minWidth: 40.0,
+                    minHeight: 40.0,
+                  ),
+                  visualDensity: VisualDensity.compact,
                 ),
             ],
           ),

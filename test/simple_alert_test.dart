@@ -4,6 +4,9 @@ import 'package:simple_alert/simple_alert.dart';
 import 'package:simple_alert/src/backend/alert_manager.dart';
 import 'package:simple_alert/src/backend/alert_timer_controller.dart';
 import 'package:simple_alert/src/misc/constants.dart';
+import 'package:simple_alert/src/widgets/simple_alert_actions_section.dart';
+import 'package:simple_alert/src/widgets/simple_alert_leading_icon.dart';
+import 'package:simple_alert/src/widgets/simple_alert_text_content.dart';
 
 // Import your alert files
 // import 'package:your_package/simple_alert.dart';
@@ -623,6 +626,147 @@ void main() {
       expect(prefs.titleStyle.fontSize, 42.0);
       expect(prefs.titleStyle.color, Colors.purple);
       expect(prefs.iconsColor, Colors.deepOrange);
+    });
+  });
+
+  group('UI Sub-Widgets Accessibility & Behavior Tests', () {
+    testWidgets(
+        'SimpleAlertTextContent renders title cleanly and ignores whitespace-only description',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: SimpleAlertTextContent(
+              title: 'Clean Title',
+              description: '   ',
+              foregroundColor: Colors.white,
+              centerContent: false,
+            ),
+          ),
+        ),
+      );
+
+      // Only 1 Text widget should exist (for the title), no empty description widget
+      expect(find.byType(Text), findsOneWidget);
+      final textWidget = tester.widget<Text>(find.text('Clean Title'));
+      expect(textWidget.semanticsLabel, 'Clean Title');
+      expect(textWidget.softWrap, isTrue);
+    });
+
+    testWidgets(
+        'SimpleAlertTextContent renders description when valid and sets clean semanticsLabel',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: SimpleAlertTextContent(
+              title: 'Title Text',
+              description: 'Description Text',
+              foregroundColor: Colors.white,
+              centerContent: false,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(Text), findsNWidgets(2));
+      final titleWidget = tester.widget<Text>(find.text('Title Text'));
+      expect(titleWidget.semanticsLabel, 'Title Text');
+      final descWidget = tester.widget<Text>(find.text('Description Text'));
+      expect(descWidget.semanticsLabel, 'Description Text');
+    });
+
+    testWidgets(
+        'SimpleAlertActionsSection returns SizedBox.shrink when empty and withClose is false',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SimpleAlertActionsSection(
+              actions: const [],
+              withClose: false,
+              onClosePressed: () {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(IconButton), findsNothing);
+      expect(find.byType(SizedBox), findsOneWidget);
+    });
+
+    testWidgets(
+        'SimpleAlertActionsSection renders close button and triggers onClosePressed callback',
+        (WidgetTester tester) async {
+      bool closed = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SimpleAlertActionsSection(
+              withClose: true,
+              onClosePressed: () => closed = true,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(IconButton), findsOneWidget);
+      await tester.tap(find.byType(IconButton));
+      expect(closed, isTrue);
+    });
+
+    testWidgets(
+        'SimpleAlertLeadingIcon wraps static icon in ExcludeSemantics and loading indicator in Semantics',
+        (WidgetTester tester) async {
+      // 1. Static icon: ExcludeSemantics should be true
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SimpleAlertLeadingIcon(
+              loading: false,
+              foregroundColor: Colors.white,
+              getBackgroundColor: () => Colors.teal,
+              getIcon: () => const Icon(Icons.info),
+              iconsSize: 28.0,
+            ),
+          ),
+        ),
+      );
+
+      final excludeSemanticsFinder = find.descendant(
+        of: find.byType(SimpleAlertLeadingIcon),
+        matching: find.byWidgetPredicate(
+          (w) => w is ExcludeSemantics && w.excluding == true,
+        ),
+      );
+      expect(excludeSemanticsFinder, findsAtLeastNWidgets(1));
+
+      // 2. Loading state: Semantics with loading label should be present
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SimpleAlertLeadingIcon(
+              loading: true,
+              foregroundColor: Colors.white,
+              getBackgroundColor: () => Colors.teal,
+              getIcon: () => const Icon(Icons.info),
+              iconsSize: 28.0,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      final semanticsFinder = find.descendant(
+        of: find.byType(SimpleAlertLeadingIcon),
+        matching: find.byWidgetPredicate(
+          (w) =>
+              w is Semantics &&
+              w.properties.label != null &&
+              w.properties.label!.isNotEmpty,
+        ),
+      );
+      expect(semanticsFinder, findsOneWidget);
     });
   });
 }

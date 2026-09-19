@@ -38,6 +38,8 @@ class SimpleAlertLeadingIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     try {
+      final effectiveIconSize = iconsSize.clamp(16.0, 48.0);
+
       return Padding(
         padding: const EdgeInsetsDirectional.only(start: 2.0, end: 12.0),
         child: Container(
@@ -54,14 +56,17 @@ class SimpleAlertLeadingIcon extends StatelessWidget {
               ? Semantics(
                   label: t.loadingIndicatorSemanticLabel,
                   child: SizedBox.square(
-                    dimension: iconsSize - 4,
+                    dimension: (effectiveIconSize - 4.0).clamp(14.0, 44.0),
                     child: CircularProgressIndicator(
                       color: foregroundColor,
                       strokeWidth: 2.5,
                     ),
                   ),
                 )
-              : getIcon(),
+              : ExcludeSemantics(
+                  excluding: true,
+                  child: getIcon(),
+                ),
         ),
       );
     } catch (e) {

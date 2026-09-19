@@ -66,7 +66,6 @@ class SimpleAlertPreferences {
         fontSize: 17.0,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.2,
-        color: Colors.white,
       );
 
   /// The default text style for the alert description.
@@ -76,7 +75,6 @@ class SimpleAlertPreferences {
         fontSize: 15.0,
         fontWeight: FontWeight.w400,
         height: 1.35,
-        color: Colors.white70,
       );
 
   /// The default tooltip theme data for interactive elements within alerts.
