@@ -1,8 +1,13 @@
-import 'package:flutter/material.dart';
-import '../../simple_alert.dart';
+/*
+* This file is a part of "SimpleAlert" project.
+* Khaled Mohsen <pres.kbayomy@gmail.com>
+* Copyrights (BSD-3-Clause), LICENSE.
+*/
 
-/// A widget that displays the title and an optional description for a [SimpleAlert]
-/// with intelligent BiDi support for mixed-script text and file paths.
+import 'package:flutter/material.dart';
+import '../simple_alert_preferences.dart';
+
+/// A widget that displays the title and an optional description for a [SimpleAlert].
 class SimpleAlertTextContent extends StatelessWidget {
   /// Creates a [SimpleAlertTextContent] instance.
   const SimpleAlertTextContent({
@@ -32,37 +37,13 @@ class SimpleAlertTextContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     try {
-      final contextDirection = Directionality.maybeOf(context);
-      final primaryDirection = SimpleAlertBidiUtil.resolveDirection(
-        text: title,
-        explicitDirection:
-            textDirection ?? SimpleAlertPreferences().textDirection,
-        fallbackDirection: contextDirection,
-      );
-
-      final formattedTitle = SimpleAlertBidiUtil.isolateBiDi(
-        title,
-        baseDirection: primaryDirection,
-      );
+      final effectiveDirection = textDirection ??
+          SimpleAlertPreferences().textDirection ??
+          Directionality.maybeOf(context) ??
+          TextDirection.ltr;
 
       final hasDescription =
           description != null && description!.trim().isNotEmpty;
-
-      final descriptionDirection = hasDescription
-          ? SimpleAlertBidiUtil.resolveDirection(
-              text: description,
-              explicitDirection:
-                  textDirection ?? SimpleAlertPreferences().textDirection,
-              fallbackDirection: primaryDirection,
-            )
-          : primaryDirection;
-
-      final formattedDescription = hasDescription
-          ? SimpleAlertBidiUtil.isolateBiDi(
-              description!.trim(),
-              baseDirection: descriptionDirection,
-            )
-          : null;
 
       final titleAlign = centerContent ? TextAlign.center : TextAlign.start;
       final descriptionAlign =
@@ -79,7 +60,7 @@ class SimpleAlertTextContent extends StatelessWidget {
       );
 
       return Directionality(
-        textDirection: primaryDirection,
+        textDirection: effectiveDirection,
         child: Column(
           mainAxisSize: MainAxisSize.min, // Take minimum vertical space.
           crossAxisAlignment: centerContent
@@ -87,20 +68,18 @@ class SimpleAlertTextContent extends StatelessWidget {
               : CrossAxisAlignment.stretch,
           children: [
             Text(
-              formattedTitle,
+              title,
               semanticsLabel: title,
               textAlign: titleAlign,
-              textDirection: primaryDirection,
               softWrap: true,
               style: effectiveTitleStyle,
             ),
-            if (formattedDescription != null) ...[
+            if (hasDescription) ...[
               const SizedBox(height: 5.0),
               Text(
-                formattedDescription,
+                description!.trim(),
                 semanticsLabel: description!.trim(),
                 textAlign: descriptionAlign,
-                textDirection: descriptionDirection,
                 softWrap: true,
                 style: effectiveDescStyle,
               ),

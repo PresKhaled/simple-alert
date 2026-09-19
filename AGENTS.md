@@ -26,7 +26,6 @@ lib/
     │   ├── simple_alert_shape.dart      # Container border-radius shapes
     │   └── simple_alert_type.dart       # Semantic alert variants
     ├── misc/
-    │   ├── bidi_util.dart               # BiDi detection & Unicode isolation
     │   ├── constants.dart               # Dimensions, durations, validation & WCAG
     │   ├── simple_alert_icons.dart      # Material icon definitions per alert type
     │   └── simple_alert_localizations.dart # Zero-dependency i18n (en, ar, ur, tr, id, pt)
@@ -35,7 +34,7 @@ lib/
         ├── simple_alert_card.dart       # Core animated card & physics handler
         ├── simple_alert_host.dart       # Root stack/overlay host widget
         ├── simple_alert_leading_icon.dart # Leading type icon or loading spinner
-        └── simple_alert_text_content.dart # Title & description with BiDi isolation
+        └── simple_alert_text_content.dart # Title & description content layout
 ```
 
 ### Component Roles & Data Flow
@@ -63,9 +62,9 @@ lib/
    - Listens to tap events to pause countdown on tap-down and resume on tap-up.
    - Automatically reports measured box dimensions to `AlertManager` post-frame.
 
-5. **Bidirectional Text Engine (`SimpleAlertBidiUtil`)**:
-   - Analyzes script runes to identify RTL characters.
-   - Injects Unicode directional formatting isolates (`\u2066` LRI and `\u2069` PDI) around file paths, URLs, and Latin technical identifiers within RTL contexts to guarantee correct visual ordering.
+5. **Native Bidirectional (BiDi) & Text Direction Handling**:
+   - Leverages Flutter's native text engine (HarfBuzz / UAX #9) to cleanly lay out mixed-script content (e.g., Arabic & Latin) without intrusive string mutations.
+   - Accurately respects ambient `Directionality`, per-alert `textDirection`, or global `SimpleAlertPreferences().textDirection`.
 
 ---
 
@@ -74,7 +73,7 @@ lib/
 When modifying or expanding this codebase, agents MUST adhere to the following invariants:
 
 ### 1. Zero External Runtime Dependencies
-The package must strictly rely on the Flutter SDK (`flutter: sdk: flutter`). **DO NOT** add third-party dependencies to `dependencies` in `pubspec.yaml`. All animations, physics, localizations, icons, and BiDi algorithms must be implemented using pure Flutter primitives.
+The package must strictly rely on the Flutter SDK (`flutter: sdk: flutter`). **DO NOT** add third-party dependencies to `dependencies` in `pubspec.yaml`. All animations, physics, localizations, icons, and layout handling must be implemented using pure Flutter primitives.
 
 ### 2. Fail-Safe / Non-Crashing Guarantee
 Alerts are supplementary UI elements and must **NEVER** crash the host application under any circumstances:
@@ -111,7 +110,7 @@ Execute the full unit and widget test suite:
 ```bash
 flutter test
 ```
-- Tests are located in `test/` (`simple_alert_test.dart`, `bidi_util_test.dart`, `simple_alert_preferences_test.dart`).
+- Tests are located in `test/` (`simple_alert_test.dart`, `simple_alert_preferences_test.dart`).
 - When adding new features or fixing bugs, create corresponding test cases in `test/` to maintain high test coverage.
 
 ### 3. Example App Verification
@@ -120,7 +119,7 @@ Validate the example application in `example/`:
 cd example
 flutter run
 ```
-- Verify that interactive features (stacking, BiDi file paths, route transitions, dialog overlays, progress bar hold-to-pause) behave smoothly.
+- Verify that interactive features (stacking, mixed-script text, route transitions, dialog overlays, progress bar hold-to-pause) behave smoothly.
 
 ---
 

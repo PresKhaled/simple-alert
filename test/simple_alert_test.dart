@@ -858,5 +858,84 @@ void main() {
       final darkTitle = tester.widget<Text>(find.text('Dark Alert'));
       expect(darkTitle.style?.color, Colors.white);
     });
+
+    testWidgets(
+        'SimpleAlertTextContent renders mixed-script text cleanly without invisible isolate markers',
+        (WidgetTester tester) async {
+      const mixedText =
+          '"ريادة الأعمال" has been added to your \'Read Later\' list.';
+      const descText = 'Path: /storage/emulated/0/Books/read.epub';
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: SimpleAlertTextContent(
+              title: mixedText,
+              description: descText,
+              foregroundColor: Colors.white,
+              centerContent: false,
+            ),
+          ),
+        ),
+      );
+
+      final titleFinder = find.text(mixedText);
+      expect(titleFinder, findsOneWidget);
+
+      final titleWidget = tester.widget<Text>(titleFinder);
+      expect(titleWidget.data, mixedText);
+      expect(titleWidget.data?.contains('\u2066'), isFalse);
+      expect(titleWidget.data?.contains('\u2069'), isFalse);
+
+      final descFinder = find.text(descText);
+      expect(descFinder, findsOneWidget);
+      final descWidget = tester.widget<Text>(descFinder);
+      expect(descWidget.data, descText);
+      expect(descWidget.data?.contains('\u2066'), isFalse);
+      expect(descWidget.data?.contains('\u2069'), isFalse);
+    });
+
+    testWidgets(
+        'SimpleAlertTextContent respects explicit textDirection override and fallback',
+        (WidgetTester tester) async {
+      SimpleAlertPreferences().reset();
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: SimpleAlertTextContent(
+              title: 'RTL Title',
+              textDirection: TextDirection.rtl,
+              foregroundColor: Colors.white,
+              centerContent: false,
+            ),
+          ),
+        ),
+      );
+
+      final rtlDirectionality =
+          tester.widget<Directionality>(find.byType(Directionality).last);
+      expect(rtlDirectionality.textDirection, TextDirection.rtl);
+
+      // Now test preferences override
+      SimpleAlertPreferences(textDirection: TextDirection.rtl);
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: SimpleAlertTextContent(
+              title: 'Pref RTL Title',
+              foregroundColor: Colors.white,
+              centerContent: false,
+            ),
+          ),
+        ),
+      );
+
+      final prefRtlDirectionality =
+          tester.widget<Directionality>(find.byType(Directionality).last);
+      expect(prefRtlDirectionality.textDirection, TextDirection.rtl);
+      SimpleAlertPreferences().reset();
+    });
   });
 }
+

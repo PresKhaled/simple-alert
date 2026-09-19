@@ -18,7 +18,7 @@ Engineered with a root overlay architecture, `SimpleAlert` renders notifications
 - **Dynamic Vertical Stacking**: Automatically calculates spatial offsets to stack multiple concurrent notifications smoothly without visual overlapping.
 - **Interactive Countdown Progress Bar**: Visual progress indicator that pauses on tap-and-hold and resumes on release.
 - **Fluid Swipe-to-Dismiss Physics**: Natural horizontal drag interactions with velocity threshold detection, fling transitions, and spring-back recovery.
-- **Smart BiDi & Technical Token Isolation**: Built-in `SimpleAlertBidiUtil` with Unicode isolation markers (`U+2066` / `U+2069`) preventing URLs, file paths, and LTR identifiers from flipping in RTL languages (Arabic, Urdu, etc.).
+- **Native Bidirectional (BiDi) Support**: Native support for RTL and LTR languages (Arabic, Urdu, English, etc.) respecting ambient directionality and Flutter's text engine without intrusive string mutations.
 - **Zero External Dependencies**: Built exclusively on Flutter SDK primitives for maximum stability and minimal footprint.
 - **Built-in Multi-language Support**: Zero-dependency localization for English, Arabic, Urdu, Turkish, Indonesian, and Portuguese.
 - **WCAG-Compliant Accessibility**: Full screen-reader support via `SemanticsService.announce`, live regions, and automatic reduced-motion adaptation (`disableAnimations`).
@@ -178,16 +178,15 @@ stopSignal.value = true;
 
 ---
 
-### 5. Smart BiDi & File Path Isolation
+### 5. Native Bidirectional (BiDi) & Text Direction
 
-Prevent punctuation inversion and reversed path segments in RTL interfaces:
+Cleanly renders mixed-script text, RTL languages (such as Arabic and Urdu), and LTR technical terms adhering to Flutter's native text engine and ambient `Directionality`:
 
 ```dart
 SimpleAlert(
   context: context,
   type: SimpleAlertType.success,
   title: 'تم حفظ الملف بنجاح',
-  // Slashes and extensions remain cleanly ordered: /storage/emulated/0/Books/Clean_Architecture.epub
   description: 'تم التخزين في: /storage/emulated/0/Books/Clean_Architecture.epub',
   duration: SimpleAlertDuration.long,
   withClose: true,

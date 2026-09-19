@@ -13,7 +13,6 @@ library simple_alert;
 export 'src/enums/simple_alert_duration.dart';
 export 'src/enums/simple_alert_shape.dart';
 export 'src/enums/simple_alert_type.dart';
-export 'src/misc/bidi_util.dart';
 export 'src/misc/simple_alert_icons.dart';
 export 'src/misc/simple_alert_localizations.dart';
 export 'src/simple_alert.dart' show SimpleAlert;
