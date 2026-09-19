@@ -22,7 +22,7 @@ import 'simple_alert_text_content.dart';
 /// A self-contained, high-performance widget representing a single alert card.
 ///
 /// Handles its own entrance/exit animations, touch gestures, swipe-to-dismiss physics,
-/// auto-dismiss timer, progress bar rendering, and spatial size reporting.
+/// auto-dismiss timer, progress bar rendering, accessibility semantics, and spatial size reporting.
 class SimpleAlertCard extends StatefulWidget {
   /// Unique identifier for this alert instance.
   final String routeName;
@@ -301,12 +301,15 @@ class SimpleAlertCardState extends State<SimpleAlertCard>
     _dismissTimer?.cancel();
     _dismissTimer = null;
 
+    final reduceMotion =
+        mounted && (MediaQuery.maybeDisableAnimationsOf(context) ?? false);
+
     try {
       if (widget.withProgressBar && _progressController != null) {
         _progressController!.stop();
       }
 
-      if (!immediate) {
+      if (!immediate && !reduceMotion) {
         try {
           await _transitionController.reverse().timeout(
               widget.animatedOpacityDuration +
@@ -523,41 +526,48 @@ class SimpleAlertCardState extends State<SimpleAlertCard>
                         : null,
                     child: FocusScope(
                       canRequestFocus: false,
-                      child: Semantics(
-                        container: true,
-                        liveRegion: true,
-                        label: widget.description != null &&
-                                widget.description!.trim().isNotEmpty
-                            ? '${t.alertSemanticLabel(title: widget.title)}. ${widget.description}'
-                            : t.alertSemanticLabel(title: widget.title),
-                        hint: AlertA11yUtils.getSemanticHint(
-                          closeOnPress: widget.closeOnPress,
-                          withProgressBar: widget.withProgressBar,
-                          loading: widget.loading,
-                        ),
-                        child: Directionality(
-                          textDirection: resolvedDirection,
-                          child: Theme(
-                            data: theme.copyWith(
-                              iconTheme: theme.iconTheme.copyWith(
-                                color: (SimpleAlertPreferences().iconsColor ??
-                                    foregroundColor),
-                              ),
-                              iconButtonTheme: IconButtonThemeData(
-                                style: ButtonStyle(
-                                  foregroundColor:
-                                      WidgetStatePropertyAll<Color>(
-                                    (SimpleAlertPreferences().iconsColor ??
-                                        foregroundColor),
+                      child: FocusTraversalGroup(
+                        child: Semantics(
+                          container: true,
+                          liveRegion: true,
+                          label: widget.description != null &&
+                                  widget.description!.trim().isNotEmpty
+                              ? '${t.alertSemanticLabel(title: widget.title)}. ${widget.description}'
+                              : t.alertSemanticLabel(title: widget.title),
+                          hint: AlertA11yUtils.getSemanticHint(
+                            closeOnPress: widget.closeOnPress,
+                            withProgressBar: widget.withProgressBar,
+                            loading: widget.loading,
+                          ),
+                          onDismiss: () => dismiss(),
+                          onTap:
+                              (widget.closeOnPress && !widget.withProgressBar)
+                                  ? () => dismiss()
+                                  : null,
+                          child: Directionality(
+                            textDirection: resolvedDirection,
+                            child: Theme(
+                              data: theme.copyWith(
+                                iconTheme: theme.iconTheme.copyWith(
+                                  color: (SimpleAlertPreferences().iconsColor ??
+                                      foregroundColor),
+                                ),
+                                iconButtonTheme: IconButtonThemeData(
+                                  style: ButtonStyle(
+                                    foregroundColor:
+                                        WidgetStatePropertyAll<Color>(
+                                      (SimpleAlertPreferences().iconsColor ??
+                                          foregroundColor),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            child: _buildCardBody(
-                              alertWidth: alertWidth,
-                              backgroundColor: backgroundColor,
-                              foregroundColor: foregroundColor,
-                              borderRadius: borderRadius,
+                              child: _buildCardBody(
+                                alertWidth: alertWidth,
+                                backgroundColor: backgroundColor,
+                                foregroundColor: foregroundColor,
+                                borderRadius: borderRadius,
+                              ),
                             ),
                           ),
                         ),
@@ -670,25 +680,18 @@ class SimpleAlertCardState extends State<SimpleAlertCard>
                             iconsSize: SimpleAlertPreferences().iconsSize,
                           ),
                           Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: SimpleAlertTextContent(
-                                    title: widget.title,
-                                    description: widget.description,
-                                    textDirection: widget.textDirection,
-                                    foregroundColor: foregroundColor,
-                                    centerContent: widget.centerContent,
-                                  ),
-                                ),
-                                SimpleAlertActionsSection(
-                                  actions: widget.actions,
-                                  withClose: widget.withClose,
-                                  onClosePressed: () => dismiss(),
-                                ),
-                              ],
+                            child: SimpleAlertTextContent(
+                              title: widget.title,
+                              description: widget.description,
+                              textDirection: widget.textDirection,
+                              foregroundColor: foregroundColor,
+                              centerContent: widget.centerContent,
                             ),
+                          ),
+                          SimpleAlertActionsSection(
+                            actions: widget.actions,
+                            withClose: widget.withClose,
+                            onClosePressed: () => dismiss(),
                           ),
                         ],
                       ),
@@ -701,31 +704,35 @@ class SimpleAlertCardState extends State<SimpleAlertCard>
                               final fraction =
                                   (1.0 - _progressController!.value)
                                       .clamp(0.0, 1.0);
-                              return LayoutBuilder(
-                                builder: (context, constraints) {
-                                  final totalWidth = constraints.maxWidth;
-                                  return ClipRRect(
-                                    borderRadius: BorderRadius.circular(4.0),
-                                    child: Container(
-                                      width: totalWidth,
-                                      height: 3.5,
-                                      color: foregroundColor.withValues(
-                                          alpha: 0.18),
-                                      alignment:
-                                          AlignmentDirectional.centerStart,
+                              return Semantics(
+                                label: t.alertTimerSemanticLabel,
+                                value: '${(fraction * 100).round()}%',
+                                child: LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    final totalWidth = constraints.maxWidth;
+                                    return ClipRRect(
+                                      borderRadius: BorderRadius.circular(4.0),
                                       child: Container(
-                                        width: totalWidth * fraction,
+                                        width: totalWidth,
                                         height: 3.5,
-                                        decoration: BoxDecoration(
-                                          color: foregroundColor.withValues(
-                                              alpha: 0.90),
-                                          borderRadius:
-                                              BorderRadius.circular(4.0),
+                                        color: foregroundColor.withValues(
+                                            alpha: 0.18),
+                                        alignment:
+                                            AlignmentDirectional.centerStart,
+                                        child: Container(
+                                          width: totalWidth * fraction,
+                                          height: 3.5,
+                                          decoration: BoxDecoration(
+                                            color: foregroundColor.withValues(
+                                                alpha: 0.90),
+                                            borderRadius:
+                                                BorderRadius.circular(4.0),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                },
+                                    );
+                                  },
+                                ),
                               );
                             },
                           ),
