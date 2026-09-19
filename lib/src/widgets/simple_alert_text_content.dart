@@ -70,12 +70,12 @@ class SimpleAlertTextContent extends StatelessWidget {
 
       final prefTitleStyle = SimpleAlertPreferences().titleStyle;
       final effectiveTitleStyle = prefTitleStyle.copyWith(
-        color: prefTitleStyle.color ?? foregroundColor,
+        color: foregroundColor,
       );
 
       final prefDescStyle = SimpleAlertPreferences().descriptionStyle;
       final effectiveDescStyle = prefDescStyle.copyWith(
-        color: prefDescStyle.color ?? foregroundColor.withValues(alpha: 0.90),
+        color: foregroundColor.withValues(alpha: 0.90),
       );
 
       return Directionality(

@@ -263,9 +263,10 @@ class AlertColorUtils {
     return calculateContrastRatio(foreground, background) >= 7.0;
   }
 
-  /// Gets appropriate foreground color based on background
+  /// Gets appropriate foreground color based on background using WCAG contrast ratios.
   static Color getContrastingColor(Color background) {
-    final luminance = background.computeLuminance();
-    return luminance > 0.5 ? Colors.black : Colors.white;
+    final contrastWithWhite = calculateContrastRatio(Colors.white, background);
+    final contrastWithBlack = calculateContrastRatio(Colors.black, background);
+    return contrastWithBlack >= contrastWithWhite ? Colors.black : Colors.white;
   }
 }

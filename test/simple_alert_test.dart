@@ -830,7 +830,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final lightTitle = tester.widget<Text>(find.text('Light Alert'));
-      expect(lightTitle.style?.color, Colors.white);
+      expect(lightTitle.style?.color, Colors.black);
 
       // Test Brightness.dark
       await tester.pumpWidget(
@@ -856,7 +856,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final darkTitle = tester.widget<Text>(find.text('Dark Alert'));
-      expect(darkTitle.style?.color, Colors.black);
+      expect(darkTitle.style?.color, Colors.white);
     });
   });
 }

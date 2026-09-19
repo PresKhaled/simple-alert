@@ -417,26 +417,26 @@ class SimpleAlertCardState extends State<SimpleAlertCard>
     final isLight = (brightness == Brightness.light);
     return switch (widget.type) {
       SimpleAlertType.normal => isLight
-          ? const Color.fromRGBO(82, 82, 91, 1.0)
-          : const Color.fromRGBO(228, 228, 231, 1.0),
+          ? const Color.fromRGBO(228, 228, 231, 1.0)
+          : const Color.fromRGBO(82, 82, 91, 1.0),
       SimpleAlertType.success => isLight
-          ? const Color.fromRGBO(22, 135, 80, 1.0)
-          : const Color.fromRGBO(74, 210, 130, 1.0),
+          ? const Color.fromRGBO(74, 210, 130, 1.0)
+          : const Color.fromRGBO(22, 135, 80, 1.0),
       SimpleAlertType.warning => isLight
-          ? const Color.fromRGBO(217, 142, 11, 1.0)
-          : const Color.fromRGBO(252, 196, 25, 1.0),
+          ? const Color.fromRGBO(252, 196, 25, 1.0)
+          : const Color.fromRGBO(217, 142, 11, 1.0),
       SimpleAlertType.danger => isLight
-          ? const Color.fromRGBO(190, 24, 58, 1.0)
-          : const Color.fromRGBO(248, 105, 125, 1.0),
+          ? const Color.fromRGBO(248, 105, 125, 1.0)
+          : const Color.fromRGBO(190, 24, 58, 1.0),
       SimpleAlertType.info => isLight
-          ? const Color.fromRGBO(30, 72, 156, 1.0)
-          : const Color.fromRGBO(120, 195, 252, 1.0),
+          ? const Color.fromRGBO(120, 195, 252, 1.0)
+          : const Color.fromRGBO(30, 72, 156, 1.0),
     };
   }
 
-  Color _resolveForegroundColor(Brightness brightness) {
+  Color _resolveForegroundColor(Color backgroundColor) {
     if (widget.foregroundColor != null) return widget.foregroundColor!;
-    return brightness == Brightness.dark ? Colors.black : Colors.white;
+    return AlertColorUtils.getContrastingColor(backgroundColor);
   }
 
   BorderRadius _resolveBorderRadius() {
@@ -496,7 +496,7 @@ class SimpleAlertCardState extends State<SimpleAlertCard>
             SimpleAlertPreferences().brightness ??
             theme.brightness;
         final backgroundColor = _resolveBackgroundColor(brightness);
-        final foregroundColor = _resolveForegroundColor(brightness);
+        final foregroundColor = _resolveForegroundColor(backgroundColor);
         final borderRadius = _resolveBorderRadius();
 
         final resolvedDirection = widget.textDirection ??
