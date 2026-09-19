@@ -768,5 +768,95 @@ void main() {
       );
       expect(semanticsFinder, findsOneWidget);
     });
+
+    testWidgets(
+        'SimpleAlertTextContent applies foregroundColor even when SimpleAlertPreferences initialized with context',
+        (WidgetTester tester) async {
+      SimpleAlertPreferences().reset();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData.light(),
+          home: Builder(
+            builder: (context) {
+              SimpleAlertPreferences(context: context);
+              return const Scaffold(
+                body: SimpleAlertTextContent(
+                  title: 'White Title Text',
+                  description: 'White Description Text',
+                  foregroundColor: Colors.white,
+                  centerContent: false,
+                ),
+              );
+            },
+          ),
+        ),
+      );
+
+      final titleWidget = tester.widget<Text>(find.text('White Title Text'));
+      expect(titleWidget.style?.color, Colors.white);
+
+      final descWidget =
+          tester.widget<Text>(find.text('White Description Text'));
+      expect(descWidget.style?.color, Colors.white.withValues(alpha: 0.90));
+    });
+
+    testWidgets(
+        'SimpleAlertCard resolves correct foreground and background colors for Brightness.light and Brightness.dark',
+        (WidgetTester tester) async {
+      SimpleAlertPreferences().reset();
+
+      // Test Brightness.light
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => SimpleAlertHost(child: child!),
+          home: Builder(
+            builder: (context) {
+              return Scaffold(
+                body: SimpleAlertCard(
+                  routeName: 'test_light',
+                  title: 'Light Alert',
+                  alignment: AlignmentDirectional.topCenter,
+                  type: SimpleAlertType.danger,
+                  brightness: Brightness.light,
+                  duration: const Duration(seconds: 5),
+                  onDismissed: () {},
+                ),
+              );
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final lightTitle = tester.widget<Text>(find.text('Light Alert'));
+      expect(lightTitle.style?.color, Colors.white);
+
+      // Test Brightness.dark
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => SimpleAlertHost(child: child!),
+          home: Builder(
+            builder: (context) {
+              return Scaffold(
+                body: SimpleAlertCard(
+                  routeName: 'test_dark',
+                  title: 'Dark Alert',
+                  alignment: AlignmentDirectional.topCenter,
+                  type: SimpleAlertType.danger,
+                  brightness: Brightness.dark,
+                  duration: const Duration(seconds: 5),
+                  onDismissed: () {},
+                ),
+              );
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final darkTitle = tester.widget<Text>(find.text('Dark Alert'));
+      expect(darkTitle.style?.color, Colors.black);
+    });
   });
 }

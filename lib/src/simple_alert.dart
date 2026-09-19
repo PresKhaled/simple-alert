@@ -168,6 +168,7 @@ class SimpleAlert {
   SimpleAlert.loading({
     required BuildContext context,
     required String title,
+    Brightness? brightness,
     SimpleAlertType? type,
     SimpleAlertShape? shape,
     BorderRadius? borderRadius,
@@ -176,6 +177,7 @@ class SimpleAlert {
     ValueNotifier<bool>? removalSignal,
   }) : this(
           context: context,
+          brightness: brightness,
           type: type,
           shape: shape,
           borderRadius: borderRadius,
@@ -295,6 +297,7 @@ class SimpleAlert {
         width: width,
         shape: shape,
         borderRadius: borderRadius,
+        brightness: brightness,
         type: _resolvedType,
         backgroundColor: backgroundColor,
         foregroundColor: foregroundColor,

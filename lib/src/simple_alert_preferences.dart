@@ -22,6 +22,7 @@ class SimpleAlertPreferences {
   double Function()? _getWidth;
   SimpleAlertShape? _shape;
   BorderRadius? _borderRadius;
+  Brightness? _brightness;
   SimpleAlertType? _type;
   SimpleAlertIcons? _icons;
   double? _iconsSize;
@@ -46,6 +47,9 @@ class SimpleAlertPreferences {
 
   /// The default border radius for alerts. Takes precedence over [shape].
   BorderRadius? get borderRadius => _borderRadius;
+
+  /// The default brightness for alerts. If null, resolves from context theme.
+  Brightness? get brightness => _brightness;
 
   /// The default semantic type for alerts (e.g., info, success, warning).
   SimpleAlertType get type => _type ?? SimpleAlertType.info;
@@ -105,6 +109,7 @@ class SimpleAlertPreferences {
     double Function()? getWidth,
     SimpleAlertShape? shape,
     BorderRadius? borderRadius,
+    Brightness? brightness,
     SimpleAlertType? type,
     SimpleAlertIcons? icons,
     double? iconsSize,
@@ -132,6 +137,9 @@ class SimpleAlertPreferences {
     if (borderRadius != null) {
       _instance._borderRadius = borderRadius;
     }
+    if (brightness != null) {
+      _instance._brightness = brightness;
+    }
     if (type != null) {
       _instance._type = type;
     }
@@ -148,19 +156,61 @@ class SimpleAlertPreferences {
     if (titleStyle != null) {
       _instance._titleStyle = titleStyle;
     } else if (themeData != null && _instance._titleStyle == null) {
-      _instance._titleStyle = themeData.textTheme.titleMedium?.copyWith(
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.2,
-      );
+      final base = themeData.textTheme.titleMedium;
+      if (base != null) {
+        _instance._titleStyle = TextStyle(
+          inherit: base.inherit,
+          fontFamily: base.fontFamily,
+          fontFamilyFallback: base.fontFamilyFallback,
+          fontSize: base.fontSize ?? 17.0,
+          fontWeight: FontWeight.w600,
+          letterSpacing: -0.2,
+          fontStyle: base.fontStyle,
+          textBaseline: base.textBaseline,
+          height: base.height,
+          leadingDistribution: base.leadingDistribution,
+          locale: base.locale,
+          shadows: base.shadows,
+          fontFeatures: base.fontFeatures,
+          fontVariations: base.fontVariations,
+          decoration: base.decoration,
+          decorationColor: base.decorationColor,
+          decorationStyle: base.decorationStyle,
+          decorationThickness: base.decorationThickness,
+          debugLabel: base.debugLabel,
+          overflow: base.overflow,
+        );
+      }
     }
 
     if (descriptionStyle != null) {
       _instance._descriptionStyle = descriptionStyle;
     } else if (themeData != null && _instance._descriptionStyle == null) {
-      _instance._descriptionStyle = themeData.textTheme.bodyMedium?.copyWith(
-        fontWeight: FontWeight.w400,
-        height: 1.35,
-      );
+      final base = themeData.textTheme.bodyMedium;
+      if (base != null) {
+        _instance._descriptionStyle = TextStyle(
+          inherit: base.inherit,
+          fontFamily: base.fontFamily,
+          fontFamilyFallback: base.fontFamilyFallback,
+          fontSize: base.fontSize ?? 15.0,
+          fontWeight: FontWeight.w400,
+          letterSpacing: base.letterSpacing,
+          fontStyle: base.fontStyle,
+          textBaseline: base.textBaseline,
+          height: 1.35,
+          leadingDistribution: base.leadingDistribution,
+          locale: base.locale,
+          shadows: base.shadows,
+          fontFeatures: base.fontFeatures,
+          fontVariations: base.fontVariations,
+          decoration: base.decoration,
+          decorationColor: base.decorationColor,
+          decorationStyle: base.decorationStyle,
+          decorationThickness: base.decorationThickness,
+          debugLabel: base.debugLabel,
+          overflow: base.overflow,
+        );
+      }
     }
 
     if (tooltipThemeData != null) {
@@ -196,6 +246,7 @@ class SimpleAlertPreferences {
     _getWidth = null;
     _shape = null;
     _borderRadius = null;
+    _brightness = null;
     _type = null;
     _icons = null;
     _iconsSize = null;

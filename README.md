@@ -4,7 +4,7 @@
 [![Dart SDK Version](https://img.shields.io/badge/dart-%3E%3D3.3.0-0175C2.svg?style=flat-square&logo=dart)](https://dart.dev)
 [![Flutter](https://img.shields.io/badge/flutter-%3E%3D3.19.0-02569B.svg?style=flat-square&logo=flutter)](https://flutter.dev)
 [![License: BSD-3-Clause](https://img.shields.io/badge/License-BSD--3--Clause-blue.svg?style=flat-square)](https://opensource.org/licenses/BSD-3-Clause)
-[![Tests](https://img.shields.io/badge/tests-46%20passed-success?style=flat-square)](https://github.com/PresKhaled/simple-alert)
+[![Tests](https://img.shields.io/badge/tests-49%20passed-success?style=flat-square)](https://github.com/PresKhaled/simple-alert)
 
 A lightweight, robust, and accessible Flutter package for displaying responsive, beautifully styled, and dynamically stacked in-app alerts.
 
@@ -224,6 +224,7 @@ Configure global aesthetics during app initialization. Properties are safely pre
 SimpleAlertPreferences(
   context: context,
   alignmentDirectional: AlignmentDirectional.topCenter,
+  brightness: Brightness.light, // or Brightness.dark
   shape: SimpleAlertShape.rounded,
   duration: SimpleAlertDuration.medium,
   enableHapticFeedback: true,
@@ -237,6 +238,8 @@ SimpleAlertPreferences(
   ),
 ).setLocale('en'); // Supports 'en', 'ar', 'ur', 'tr', 'id', 'pt'
 ```
+
+> **Typography & Contrast Isolation**: When `context` is provided, `SimpleAlertPreferences` inherits your application's typography (font family, font size, letter spacing) while preserving dynamic color resolution. Alert text colors automatically adapt to the background (`Colors.white` for dark saturated cards in `Brightness.light`, `Colors.black` for pastel cards in `Brightness.dark`), ensuring WCAG-compliant contrast.
 
 ---
 
@@ -266,6 +269,7 @@ await SimpleAlert.dismissAll(immediate: true);
 | `description` | `String?` | `null` | Optional descriptive message. |
 | `alignmentDirectional` | `AlignmentDirectional?` | Global preference (`topCenter`) | On-screen placement alignment. |
 | `width` | `double?` | Screen-calculated optimal | Explicit alert width. |
+| `brightness` | `Brightness?` | Global preference / Theme | Brightness palette (`Brightness.light` or `Brightness.dark`). |
 | `type` | `SimpleAlertType?` | Global preference (`info`) | Semantic preset (`normal`, `info`, `success`, `warning`, `danger`). |
 | `duration` | `SimpleAlertDuration?` | Global preference (`medium`) | Predefined display duration. |
 | `customDuration` | `Duration?` | `null` | Custom duration override. |

@@ -45,6 +45,9 @@ class SimpleAlertCard extends StatefulWidget {
   /// The border radius for the alert's corners. Overrides [shape] if specified.
   final BorderRadius? borderRadius;
 
+  /// The brightness theme for the alert.
+  final Brightness? brightness;
+
   /// The predefined semantic type of the alert.
   final SimpleAlertType type;
 
@@ -97,6 +100,7 @@ class SimpleAlertCard extends StatefulWidget {
     this.width,
     this.shape,
     this.borderRadius,
+    this.brightness,
     required this.type,
     this.backgroundColor,
     this.foregroundColor,
@@ -488,7 +492,9 @@ class SimpleAlertCardState extends State<SimpleAlertCard>
         final keyboardBottom =
             MediaQuery.maybeViewInsetsOf(context)?.bottom ?? 0.0;
         final theme = widget.themeData ?? Theme.of(context);
-        final brightness = theme.brightness;
+        final brightness = widget.brightness ??
+            SimpleAlertPreferences().brightness ??
+            theme.brightness;
         final backgroundColor = _resolveBackgroundColor(brightness);
         final foregroundColor = _resolveForegroundColor(brightness);
         final borderRadius = _resolveBorderRadius();

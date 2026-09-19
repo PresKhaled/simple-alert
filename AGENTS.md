@@ -84,6 +84,7 @@ Alerts are supplementary UI elements and must **NEVER** crash the host applicati
 ### 3. Non-Destructive Singleton Factory
 `SimpleAlertPreferences` maintains global configurations across the app lifecycle. The factory constructor must preserve previously set values:
 - Omitting a parameter when calling `SimpleAlertPreferences(...)` must **NOT** reset existing properties to null or defaults. Only explicitly provided non-null values should override the state.
+- When `context` is provided, text styles derived from `ThemeData` must leave their `color` property null to prevent light/dark theme text colors from overriding dynamic high-contrast foreground colors on colored alert cards.
 
 ### 4. Accessibility & Reduced Motion
 - Always verify reduced-motion preferences via `MediaQuery.maybeDisableAnimationsOf(context)` or `MediaQuery.maybeOf(context)?.disableAnimations`.

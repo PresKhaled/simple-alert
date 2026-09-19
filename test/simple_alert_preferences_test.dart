@@ -29,6 +29,7 @@ void main() {
     );
     const String closeTooltip = 'Close the alert';
     const SimpleAlertDuration duration = SimpleAlertDuration.long;
+    const Brightness brightness = Brightness.dark;
 
     final SimpleAlertPreferences singleton = SimpleAlertPreferences(
       // context: context,
@@ -36,6 +37,7 @@ void main() {
       alignmentDirectional: alignmentDirectional,
       shape: shape,
       borderRadius: borderRadius,
+      brightness: brightness,
       type: type,
       icons: simpleAlertIcons,
       iconsSize: iconsSize,
@@ -52,6 +54,7 @@ void main() {
     assert(singleton.alignmentDirectional == alignmentDirectional);
     assert(singleton.shape == shape);
     assert(singleton.borderRadius == borderRadius);
+    assert(singleton.brightness == brightness);
     assert(singleton.type == type);
     assert(singleton.icons == simpleAlertIcons);
     assert(singleton.iconsSize == iconsSize);
@@ -61,5 +64,27 @@ void main() {
     assert(singleton.tooltipThemeData == tooltipThemeData);
     assert(singleton.closeTooltip == closeTooltip);
     assert(singleton.duration == duration);
+  });
+
+  testWidgets(
+      'SimpleAlertPreferences with context preserves typography without forcing black text color',
+      (WidgetTester tester) async {
+    SimpleAlertPreferences().reset();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData.light(),
+        home: Builder(
+          builder: (context) {
+            SimpleAlertPreferences(context: context);
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+
+    // Verify titleStyle and descriptionStyle colors are null so foregroundColor can be applied
+    expect(SimpleAlertPreferences().titleStyle.color, isNull);
+    expect(SimpleAlertPreferences().descriptionStyle.color, isNull);
   });
 }
